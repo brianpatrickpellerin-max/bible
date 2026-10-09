@@ -66,7 +66,9 @@ body{padding-bottom:calc(140px + env(safe-area-inset-bottom));padding-top:env(sa
 .qrow{display:flex;gap:8px}.qrow input{flex:1;padding:10px;min-height:44px}.qrow button{padding:10px 14px}
 #dock input{font-size:16px}
 body.dark #dock{background:rgba(18,18,18,.97);border-color:#333}
-#pop{bottom:calc(132px + env(safe-area-inset-bottom))!important;max-height:55vh;overflow:auto;z-index:6}
+#pop{bottom:calc(132px + env(safe-area-inset-bottom))!important;max-height:calc(100vh - 150px - env(safe-area-inset-bottom) - env(safe-area-inset-top));max-height:calc(100dvh - 150px - env(safe-area-inset-bottom) - env(safe-area-inset-top));overflow:auto;z-index:6;box-sizing:border-box}
+#pop .x{position:sticky;top:0;float:right;margin:-6px -6px 0 8px;width:44px;padding:0;font-size:1.1em}
+body.loading #dock{padding-top:4px} body.loading #pop{bottom:calc(150px + env(safe-area-inset-bottom))!important} body.loading{padding-bottom:calc(158px + env(safe-area-inset-bottom))}
 #picker,#fpanel{margin:12px}
 .acts{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 2px}.acts button{font-size:.78em;padding:8px 11px}
 .hlrow{display:flex;gap:10px;align-items:center;margin:8px 0 2px;flex-wrap:wrap}
@@ -96,7 +98,9 @@ body.dark .barrow .bt{background:#2c2c2c} body.dark .barrow .bt div{background:#
 body.dark .glist a{color:#cfe3c4;border-color:#333}
 .stat{display:flex;gap:10px;margin-top:10px}.stat div{flex:1;background:#f1ede3;border-radius:10px;padding:8px;text-align:center;font-size:.8em}.stat b{display:block;font-size:1.5em}
 body.dark .stat div{background:#2a2a2a}
-#loadnote{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(132px + env(safe-area-inset-bottom));background:rgba(61,74,52,.92);color:#fff;font-size:.72em;padding:5px 12px;border-radius:12px;display:none;z-index:4;pointer-events:none;white-space:nowrap}
+#loadnote{font-size:.7em;color:#5a6550;text-align:center;margin:0 0 4px;display:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.dark #loadnote{color:#a8b89c}
+.ctl select{flex:1 1 150px}
 #sheet{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;z-index:10;align-items:flex-end;justify-content:center}
 .sheetbox{background:#fff;width:100%;max-width:520px;border-radius:16px 16px 0 0;padding:14px 14px calc(14px + env(safe-area-inset-bottom));max-height:92vh;overflow:auto;box-sizing:border-box}
 .sheetbox img{width:100%;border-radius:10px;display:block;margin:8px 0;box-shadow:0 2px 10px rgba(0,0,0,.15)}
@@ -111,20 +115,65 @@ body.reading .chap .ref{font-size:1.15em;text-align:center;margin-bottom:8px}
 <header><h1 id="home">Bible lookup</h1>
 <p class="sub" style="margin:0 0 8px;color:#444;font-size:.85em">Type a phrase, a reference like "Psalm 119:9", or a Hebrew or Greek word. It finds the verse across many English translations and shows the Hebrew or Greek under it. Tap a Hebrew or Greek word for its meanings.</p>
 </header>
-<div id="dock"><div class="row scroll"><button class="alt" id="homeb">Home</button><button class="alt" id="minus">A−</button><button class="alt" id="plus">A+</button><button class="alt" id="filt">Filter: All</button><button class="alt" id="pick">Translations</button><button class="alt" id="books">Books</button><button class="alt" id="plan">Reading plan</button><button class="alt" id="saved">★ Saved</button><button class="alt" id="dark">Dark</button><button class="alt" id="rand">Random</button></div><div class="qrow"><input id="q" value="" placeholder="Search a phrase or Psalm 23" enterkeyhint="search" autocomplete="off"><button id="go2">Search</button></div></div>
+<div id="dock"><div id="loadnote"></div><div class="row scroll"><button class="alt" id="homeb">Home</button><button class="alt" id="minus">A−</button><button class="alt" id="plus">A+</button><button class="alt" id="filt">Filter: All</button><button class="alt" id="pick">Translations</button><button class="alt" id="books">Books</button><button class="alt" id="plan">Reading plan</button><button class="alt" id="saved">★ Saved</button><button class="alt" id="dark">Dark</button><button class="alt" id="rand">Random</button></div><div class="qrow"><input id="q" value="" placeholder="Search a phrase or Psalm 23" enterkeyhint="search" autocomplete="off"><button id="go2">Search</button></div></div>
 <div id="picker" class="card" style="display:none"></div>
 <div id="fpanel" class="card" style="display:none"></div>
 <div id="remind"></div>
 <div id="recent"></div>
 <div id="out"></div>
-<div id="pop"></div><div id="toast"></div><div id="loadnote"></div>
+<div id="pop"></div><div id="toast"></div>
 <div id="sheet"><div class="sheetbox" id="sheetbox"></div></div>
 <button id="rexit">✕ Exit reading mode</button>
+<script type="text/plain" id="wsrc">// index worker: builds the word index, Hebrew/Greek spelling index and root index off the main thread
+const DC="bible-data";let POS=null,NTR=0,done=0,ilDone=false,finished=false,lastSnap=-1;const A=new Map(),SNAPS=new Set([1,2,5,8,11,14,17]);
+async function unpack(u){let txt;if(u[0]===0x1f&&u[1]===0x8b)txt=await new Response(new Blob([u]).stream().pipeThrough(new DecompressionStream("gzip"))).text();else txt=new TextDecoder().decode(u);return JSON.parse(txt);}
+async function getJSON(url){let r=null;try{if(self.caches){const c=await caches.open(DC);r=await c.match(url);}}catch(e){r=null;}
+  if(!r){r=await fetch(url);if(!r.ok)throw new Error("HTTP "+r.status);}return unpack(new Uint8Array(await r.arrayBuffer()));}
+function merge(a,b){const o=new Int32Array(a.length+b.length);let i=0,j=0,k=0,last=-1;
+  while(i<a.length||j<b.length){const v=(j>=b.length||(i<a.length&&a[i]<=b[j]))?a[i++]:b[j++];if(v!==last){o[k++]=v;last=v;}}return o.slice(0,k);}
+function addTr(obj){const P=new Map();
+  for(const r in obj){const i=POS.get(r);if(i===undefined)continue;const t=obj[r];if(!t)continue;const tk=t.toLowerCase().match(/[a-z']+/g);if(!tk)continue;const seen=new Set();
+    for(const w of tk){if(seen.has(w))continue;seen.add(w);let p=P.get(w);if(!p){p=[];P.set(w,p);}p.push(i);}}
+  for(const [w,p] of P){const b=Int32Array.from(p).sort();const a=A.get(w);A.set(w,a?merge(a,b):merge(new Int32Array(0),b));}
+  done++;if(SNAPS.has(done)&&done<NTR)snap();}
+function pack(map,type,extra){const words=[...map.keys()];const off=new Uint32Array(words.length+1);let tot=0;words.forEach((w,k)=>{off[k]=tot;tot+=map.get(w).length;});off[words.length]=tot;
+  const post=new Int32Array(tot);words.forEach((w,k)=>post.set(map.get(w),off[k]));postMessage(Object.assign({type,words,off,post},extra||{}),[off.buffer,post.buffer]);}
+function snap(){if(lastSnap===done)return;lastSnap=done;pack(A,"index",{ntr:done});}
+function norm(s){return s.normalize("NFD").replace(/[\u0300-\u036f\u0591-\u05C7]/g,"").replace(/[־׃׀·,.;:·’'\[\]()]/g,"").replace(/ς/g,"σ").toLowerCase().trim();}
+let ILN=0;const O=new Map(),R=new Map();
+function addIl(il,parts){
+  for(const r in il){const i=POS.get(r);if(i===undefined)continue;for(const x of il[r]){const k=norm(x[0]);let a=O.get(k);if(!a){a=[];O.set(k,a);}if(a[a.length-1]!==i)a.push(i);
+    const s=x[4];if(s){let b=R.get(s);if(!b){b=[];R.set(s,b);}if(b[b.length-1]!==i)b.push(i);}}}
+  ILN++;if(parts&&ILN<parts)return;
+  for(const m of [O,R])for(const [k,a] of m)m.set(k,Int32Array.from(a).sort());
+  pack(O,"oindex");pack(R,"rindex");ilDone=true;}
+function finish(){if(finished)return;finished=true;snap();postMessage({type:"done"});}
+function maybeDone(){if(done>=NTR&&ilDone)finish();}
+async function handle(m){
+  if(m.cmd==="init"){POS=new Map(m.refs.map((r,i)=>[r,i]));NTR=m.ntr;return;}
+  if(m.cmd==="tr"){addTr(await getJSON(m.url));if(done>=NTR){if(ilDone)finish();else snap();}return;}
+  if(m.cmd==="il"){addIl(await getJSON(m.url),m.parts);maybeDone();return;}
+  if(m.cmd==="finish"){finish();return;}
+  if(m.cmd==="all"){const d=await unpack(new Uint8Array(m.bytes));m.bytes=null;POS=new Map(d.refs.map((r,i)=>[r,i]));NTR=d.order.length;
+    const order=["KJV","WEB",...d.order.filter(n=>n!=="KJV"&&n!=="WEB")];
+    for(const n of order){addTr(d.tr[n]);d.tr[n]=null;}snap();addIl(d.il);d.il=null;finish();}
+}
+let chain=Promise.resolve();
+onmessage=e=>{chain=chain.then(()=>handle(e.data)).catch(err=>postMessage({type:"error",msg:String(err&&err.message||err)}));};
+</script>
 <script>
-const FILES={"meta": "data/meta.c552085acb.json.gz", "KJV": "data/KJV.e7b9ede062.json.gz", "AKJV": "data/AKJV.dc8019063e.json.gz", "ASV": "data/ASV.8cba7a78aa.json.gz", "Webster": "data/Webster.b901e53df3.json.gz", "RWebster": "data/RWebster.78e17250c4.json.gz", "Darby": "data/Darby.f4309af123.json.gz", "YLT": "data/YLT.fb0ab84c54.json.gz", "Geneva": "data/Geneva.1caafc259c.json.gz", "Wycliffe": "data/Wycliffe.66c871c789.json.gz", "BBE": "data/BBE.d70dee73be.json.gz", "DRC": "data/DRC.e7dd1c66e8.json.gz", "JPS": "data/JPS.23ad041036.json.gz", "CPDV": "data/CPDV.893aec34d8.json.gz", "Rotherham": "data/Rotherham.ab93419c89.json.gz", "Tyndale": "data/Tyndale.b89e3bce76.json.gz", "Anderson": "data/Anderson.eb66b95257.json.gz", "Haweis": "data/Haweis.ab4b74e830.json.gz", "Noyes": "data/Noyes.7241b8877b.json.gz", "OEB": "data/OEB.4ea7fdedd2.json.gz", "WEB": "data/WEB.ca7fe1c32c.json.gz", "il": "data/il.05cdcf2e20.json.gz", "xr": "data/xr.a51e06755d.json.gz", "lex": "data/lex.6caa2f7edb.json.gz"};
+const FILES={"meta": "data/meta.cd88091618.json.gz", "KJV": "data/KJV.e7b9ede062.json.gz", "AKJV": "data/AKJV.dc8019063e.json.gz", "ASV": "data/ASV.8cba7a78aa.json.gz", "Webster": "data/Webster.b901e53df3.json.gz", "RWebster": "data/RWebster.78e17250c4.json.gz", "Darby": "data/Darby.f4309af123.json.gz", "YLT": "data/YLT.fb0ab84c54.json.gz", "Geneva": "data/Geneva.1caafc259c.json.gz", "Wycliffe": "data/Wycliffe.66c871c789.json.gz", "BBE": "data/BBE.d70dee73be.json.gz", "DRC": "data/DRC.e7dd1c66e8.json.gz", "JPS": "data/JPS.23ad041036.json.gz", "CPDV": "data/CPDV.893aec34d8.json.gz", "Rotherham": "data/Rotherham.ab93419c89.json.gz", "Tyndale": "data/Tyndale.b89e3bce76.json.gz", "Anderson": "data/Anderson.eb66b95257.json.gz", "Haweis": "data/Haweis.ab4b74e830.json.gz", "Noyes": "data/Noyes.7241b8877b.json.gz", "OEB": "data/OEB.4ea7fdedd2.json.gz", "WEB": "data/WEB.ca7fe1c32c.json.gz", "xr": "data/xr.a51e06755d.json.gz", "lex": "data/lex.6caa2f7edb.json.gz", "il0": "data/il0.be46a44f65.json.gz", "il1": "data/il1.da2ca2f39e.json.gz", "il2": "data/il2.a03088da59.json.gz", "il3": "data/il3.d126638d3e.json.gz", "il4": "data/il4.f15b9b518b.json.gz", "il5": "data/il5.0b885925c8.json.gz"};
 let DATA={order:[],tr:{},il:{},xr:{},lex:{}},META=null,HOOK=null;
 const LOADED=new Set(),FAILED=new Set(),WAITS=[];
 const DCACHE="bible-data";
+// index worker (word index + Hebrew/Greek + root indexes built off the main thread)
+let IW=null;const IWQ=[];
+function startWorker(){try{const el=document.getElementById("wsrc");if(!el||!window.Worker||!window.DecompressionStream||location.protocol==="file:")return;
+  IW=new Worker(URL.createObjectURL(new Blob([el.textContent],{type:"text/javascript"})));
+  IW.onmessage=e=>{if(HOOK)HOOK("idx",e.data);else IWQ.push(e.data);};
+  IW.onerror=e=>{if(e&&e.preventDefault)e.preventDefault();const m={type:"error",msg:"worker"};if(HOOK)HOOK("idx",m);else IWQ.push(m);};}catch(e){IW=null;}}
+function toWorker(m,tr){if(IW){try{IW.postMessage(m,tr||[]);}catch(e){}}}
+const absU=u=>new URL(u,location.href).href;
 async function unpack(buf){const u=new Uint8Array(buf);let txt;
   if(u[0]===0x1f&&u[1]===0x8b)txt=await new Response(new Blob([u]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
   else txt=new TextDecoder().decode(u);
@@ -133,19 +182,24 @@ async function getFile(url){let r=null,c=null;
   try{if(window.caches&&location.protocol.startsWith("http")){c=await caches.open(DCACHE);r=await c.match(url);}}catch(e){c=null;r=null;}
   if(!r){r=await fetch(url);if(!r.ok)throw new Error("HTTP "+r.status+" "+url);if(c){try{await c.put(url,r.clone());}catch(e){}}}
   return unpack(await r.arrayBuffer());}
-function gotData(k,v){if(k==="il"||k==="xr"||k==="lex")DATA[k]=v;else DATA.tr[k]=v;LOADED.add(k);
+function gotData(k,v){const ilp=/^il\d+$/.test(k);
+  if(ilp){Object.assign(DATA.il,v);}else if(k==="il"||k==="xr"||k==="lex")DATA[k]=v;else DATA.tr[k]=v;LOADED.add(k);
+  if(FILES&&k!=="xr"&&k!=="lex")toWorker(ilp?{cmd:"il",url:absU(FILES[k]),parts:META.ilparts}:{cmd:"tr",url:absU(FILES[k])});
+  if(ilp){for(let j=0;j<META.ilparts;j++)if(!LOADED.has("il"+j))return;k="il";LOADED.add("il");}
   for(let i=WAITS.length-1;i>=0;i--)if(WAITS[i][0]===k){WAITS[i][1]();WAITS.splice(i,1);}
   if(HOOK)HOOK(k);}
 function waitFor(k){if(LOADED.has(k))return Promise.resolve();if(FAILED.has(k))return Promise.reject(new Error(k));return new Promise((res,rej)=>WAITS.push([k,res,rej]));}
 async function loadRest(){
   let pref=[];try{pref=JSON.parse(localStorage.getItem("bl_tr")||"[]")||[];}catch(e){}
-  const todo=[...new Set(["xr","lex","il",...META.order.filter(n=>pref.includes(n)),...META.order])].filter(k=>!LOADED.has(k));
+  const ilp=[];for(let j=0;j<META.ilparts;j++)ilp.push("il"+j);
+  const todo=[...new Set(["WEB","xr","lex",...ilp,...META.order.filter(n=>pref.includes(n)),...META.order])].filter(k=>!LOADED.has(k));
   let i=0;
   const worker=async()=>{while(i<todo.length){const k=todo[i++];
     for(let a=0;a<3;a++){try{gotData(k,await getFile(FILES[k]));break;}
-      catch(e){if(a===2){FAILED.add(k);for(let j=WAITS.length-1;j>=0;j--)if(WAITS[j][0]===k){WAITS[j][2](e);WAITS.splice(j,1);}if(HOOK)HOOK("fail");}
+      catch(e){if(a===2){FAILED.add(k);if(/^il\d+$/.test(k))FAILED.add("il");for(let j=WAITS.length-1;j>=0;j--)if(WAITS[j][0]===k||(WAITS[j][0]==="il"&&FAILED.has("il"))){WAITS[j][2](e);WAITS.splice(j,1);}if(HOOK)HOOK("fail");}
         else await new Promise(r=>setTimeout(r,1500*(a+1)));}}}};
   await Promise.all([worker(),worker()]);
+  toWorker({cmd:"finish"});
   if(HOOK)HOOK("done");
   try{if(window.caches&&!FAILED.size){const c=await caches.open(DCACHE);const keep=new Set(Object.values(FILES).map(u=>new URL(u,location.href).href));
     for(const r of await c.keys())if(!keep.has(r.url))await c.delete(r);}}catch(e){}
@@ -155,14 +209,16 @@ async function loadRest(){
   out.innerHTML="<div class='card'>Opening the Bible…</div>";
   try{
     if(FILES){
-      const first=["KJV","WEB"];
+      const first=["KJV"];
       const got=await Promise.all([getFile(FILES.meta),...first.map(n=>getFile(FILES[n]))]);
       META=got[0];DATA.order=META.order;for(const n of META.order)DATA.tr[n]={};
-      first.forEach((n,i)=>{DATA.tr[n]=got[i+1];LOADED.add(n);});
+      startWorker();toWorker({cmd:"init",refs:META.refs,ntr:META.order.length});
+      first.forEach((n,i)=>{DATA.tr[n]=got[i+1];LOADED.add(n);toWorker({cmd:"tr",url:absU(FILES[n])});});
     }else{
       const b64=document.getElementById("bd").textContent;
-      const res=await fetch("data:application/octet-stream;base64,"+b64);
-      const all=JSON.parse(await new Response(res.body.pipeThrough(new DecompressionStream("gzip"))).text());
+      const buf=new Uint8Array(await (await fetch("data:application/octet-stream;base64,"+b64)).arrayBuffer());
+      startWorker();if(IW){const cp=buf.slice(0);toWorker({cmd:"all",bytes:cp.buffer},[cp.buffer]);}
+      const all=await unpack(buf);
       META={order:all.order,refs:all.refs,nil:all.nil};DATA={order:all.order,tr:all.tr,il:all.il,xr:all.xr,lex:all.lex};
       for(const k of ["il","xr","lex",...all.order])LOADED.add(k);
     }
@@ -230,17 +286,39 @@ function passer(f){if(f.t==="ot")return i=>OTSET.has(REFBOOK[i]);if(f.t==="nt")r
 function norm(s){return s.normalize("NFD").replace(/[\u0300-\u036f\u0591-\u05C7]/g,"").replace(/[־׃׀·,.;:·’'\[\]()]/g,"").replace(/ς/g,"σ").toLowerCase().trim();}
 const ORIG=/[\u0590-\u05FF\u0370-\u03FF\u1F00-\u1FFF]/;
 let OINDEX=null;
-function buildOIndex(){OINDEX=new Map();ORDERREFS.forEach((r,i)=>{for(const x of DATA.il[r]||[]){const k=norm(x[0]);let a=OINDEX.get(k);if(!a){a=[];OINDEX.set(k,a);}if(a[a.length-1]!==i)a.push(i);}});}
+// fallback builders (no worker): run in small slices so the screen never freezes; finish at once if a search needs them now
+const BST={};
+function stepBuild(kind,ms){let s=BST[kind];if(!s){s=BST[kind]={i:0,M:new Map(),names:trLoaded()};}const t0=performance.now(),M=s.M,N=ORDERREFS.length;
+  while(s.i<N){const i=s.i++,r=ORDERREFS[i];
+    if(kind==="w"){const seen=new Set();for(const n of s.names){const t=DATA.tr[n][r];if(!t)continue;for(const w of t.toLowerCase().match(/[a-z']+/g)||[]){if(seen.has(w))continue;seen.add(w);let a=M.get(w);if(!a){a=[];M.set(w,a);}a.push(i);}}}
+    else for(const x of DATA.il[r]||[]){const k=kind==="o"?norm(x[0]):x[4];if(!k)continue;let a=M.get(k);if(!a){a=[];M.set(k,a);}if(a[a.length-1]!==i)a.push(i);}
+    if(ms&&(i&63)===0&&performance.now()-t0>ms)return false;}
+  delete BST[kind];
+  if(kind==="w"){INDEX=M;INDEXNTR=s.names.length;FCACHE.clear();XCACHE.clear();}else if(kind==="o")OINDEX=M;else RINDEX=M;return true;}
+function idleBuild(){if(!IWFAIL)return;const jobs=[["w",()=>INDEX],["o",()=>OINDEX||!LOADED.has("il")],["r",()=>RINDEX||!LOADED.has("il")]];
+  const tick=()=>{const j=jobs.find(j=>!j[1]());if(!j)return;stepBuild(j[0],10);setTimeout(tick,0);};setTimeout(tick,100);}
+function buildOIndex(){stepBuild("o",0);}
 function applyF(a,f){const p=passer(f);return p?a.filter(p):a;}
-function origSearch(q,f){if(!OINDEX)buildOIndex();const k=norm(q);const all=OINDEX.get(k)||[];const a=applyF(all,f);return {list:a.map(i=>[ORDERREFS[i],null]),qw:[],orig:q.trim().replace(/[־׃]/g,""),total:a.length,allTotal:all.length};}
-let INDEX=null;
-function buildIndex(){
-  INDEX=new Map();FCACHE.clear();XCACHE.clear();
-  ORDERREFS.forEach((r,i)=>{const seen=new Set();for(const n of DATA.order){const t=DATA.tr[n][r];if(!t)continue;for(const w of t.toLowerCase().match(/[a-z']+/g)||[]){if(seen.has(w))continue;seen.add(w);let a=INDEX.get(w);if(!a){a=[];INDEX.set(w,a);}a.push(i);}}});
-}
+function origSearch(q,f){if(!OINDEX)buildOIndex();const k=norm(q);const all=Array.from(OINDEX.get(k)||[]);const a=applyF(all,f);return {list:a.map(i=>[ORDERREFS[i],null]),qw:[],orig:q.trim().replace(/[־׃]/g,""),total:a.length,allTotal:all.length};}
+let INDEX=null,INDEXNTR=0,IWFAIL=!IW;const IWAIT=[];
+// compact index from the worker: words + offsets + positions
+function mkIndex(d){const m=new Map();d.words.forEach((w,k)=>m.set(w,k));return {has:w=>m.has(w),get:w=>{const k=m.get(w);return k===undefined?undefined:d.post.subarray(d.off[k],d.off[k+1]);}};}
+function idxMsg(d){
+  if(d.type==="index"){INDEX=mkIndex(d);INDEXNTR=d.ntr;FCACHE.clear();XCACHE.clear();}
+  else if(d.type==="oindex")OINDEX=mkIndex(d);
+  else if(d.type==="rindex")RINDEX=mkIndex(d);
+  else if(d.type==="done"){try{IW.terminate();}catch(e){}IWDONE=true;}
+  else if(d.type==="error"){IWFAIL=true;try{IW.terminate();}catch(e){}if(INDEXNTR<trLoaded().length){INDEX=null;FCACHE.clear();XCACHE.clear();}if(LOADED.has("il")&&!OINDEX)idleBuild();}
+  for(let i=IWAIT.length-1;i>=0;i--)if(IWAIT[i][0]()){IWAIT[i][1]();IWAIT.splice(i,1);}}
+let IWDONE=false;
+// wait (up to ms) for the worker to deliver something; falls back to building on this thread
+function waitIdx(test,ms){if(test()||IWFAIL||IWDONE)return Promise.resolve();return new Promise(res=>{const t=setTimeout(()=>{const k=IWAIT.findIndex(x=>x[1]===done);if(k>=0)IWAIT.splice(k,1);res();},ms);const done=()=>{clearTimeout(t);res();};IWAIT.push([()=>test()||IWFAIL||IWDONE,done]);});}
+async function ensureIdx(q){if(needsIl(q)){if(ORIG.test(q))await waitIdx(()=>OINDEX,30000);else await waitIdx(()=>RINDEX,30000);}
+  else if(!parseRef(q))await waitIdx(()=>INDEX&&(INDEXNTR>=trLoaded().length||trLoaded().length+FAILED.size<DATA.order.length),30000);}
+function buildIndex(){stepBuild("w",0);}
 let RINDEX=null;
-function buildRIndex(){RINDEX=new Map();ORDERREFS.forEach((r,i)=>{for(const x of DATA.il[r]||[]){const k=x[4];if(!k)continue;let a=RINDEX.get(k);if(!a){a=[];RINDEX.set(k,a);}if(a[a.length-1]!==i)a.push(i);}});}
-function rootSearch(code,f){if(!RINDEX)buildRIndex();const all=RINDEX.get(code)||[];const a=applyF(all,f);const lx=(DATA.lex||{})[code]||"";return {list:a.map(i=>[ORDERREFS[i],null]),qw:[],orig:`Root ${code}${lx?" ("+lx+")":""}`,root:code,total:a.length,allTotal:all.length};}
+function buildRIndex(){stepBuild("r",0);}
+function rootSearch(code,f){if(!RINDEX)buildRIndex();const all=Array.from(RINDEX.get(code)||[]);const a=applyF(all,f);const lx=(DATA.lex||{})[code]||"";return {list:a.map(i=>[ORDERREFS[i],null]),qw:[],orig:`Root ${code}${lx?" ("+lx+")":""}`,root:code,total:a.length,allTotal:all.length};}
 function needsIl(q){return /^(?:root\s*)?[HG]\d{1,5}$/i.test(q.trim())||ORIG.test(q);}
 function search(q,f){
   f=f||getFilter();
@@ -254,16 +332,28 @@ function search(q,f){
   const pass=passer(f);
   const cnt=new Map();
   for(const w of qw){const hit=new Set();for(const x of expand(w))for(const i of INDEX.get(x)||[])if(!pass||pass(i))hit.add(i);for(const i of hit)cnt.set(i,(cnt.get(i)||0)+wt(w));}
-  const ents=[...cnt.entries()].sort((a,b)=>b[1]-a[1]||a[0]-b[0]).slice(0,3000);
+  let ents=[...cnt.entries()].sort((a,b)=>b[1]-a[1]||a[0]-b[0]).slice(0,3000);
+  // only the top score levels can reach the final 8 (same order as before, much less work)
+  const lev=c=>Math.round(c-.4);if(ents.length>8){const l8=lev(ents[7][1]);let e=8;while(e<ents.length&&lev(ents[e][1])>=l8)e++;ents=ents.slice(0,e);}
   const phrase=q.toLowerCase().replace(/[^a-z' ]+/g," ").replace(/\s+/g," ").trim();
   const usePhrase=phrase.split(" ").length>=3;
-  const rescored=ents.map(([i,c])=>{const r=ORDERREFS[i];let cov=0,ph=0;
-    let dir=0,near=0;
+  const K=qw.length,W=qw.map(wt),E=qw.map(w=>new Set(expand(w))),F=qw.map(w=>new Set(forms(w)));
+  const SK=[];qw.forEach((w,k)=>{if(!WEAK.has(w))SK.push(k);});
+  const hE=new Uint8Array(K),hF=new Uint8Array(K);
+  const spanOf=tk=>{const ev=[];SK.forEach((k,m)=>{const e=E[k];for(let i=0;i<tk.length;i++)if(e.has(tk[i]))ev.push([i,m]);});
+    const need=new Set(ev.map(x=>x[1])).size;if(need<2)return 99;ev.sort((a,b)=>a[0]-b[0]);
+    const c=new Map();let l=0,best=99;for(let r=0;r<ev.length;r++){c.set(ev[r][1],(c.get(ev[r][1])||0)+1);
+      while(c.size===need){best=Math.min(best,ev[r][0]-ev[l][0]);const k=ev[l][1];c.set(k,c.get(k)-1);if(!c.get(k))c.delete(k);l++;}}
+    return best;};
+  const rescored=ents.map(([i,c])=>{const r=ORDERREFS[i];let cov=0,ph=0,dir=0,near=0;
     for(const n of DATA.order){const t=DATA.tr[n][r];if(!t)continue;
-      if(score(t,qw)===c)cov++;
-      const set=new Set(t.toLowerCase().match(/[a-z']+/g)||[]);for(const w of qw)if(forms(w).some(x=>set.has(x)))dir+=wt(w);
-      if(score(t,qw)===c&&span(t,qw)<=5)near++;
-      if(usePhrase&&!ph&&t.toLowerCase().replace(/[^a-z' ]+/g," ").replace(/\s+/g," ").includes(phrase))ph=1;}
+      const tk=t.toLowerCase().match(/[a-z']+/g)||[];hE.fill(0);hF.fill(0);
+      for(const x of tk)for(let k=0;k<K;k++){if(!hE[k]&&E[k].has(x))hE[k]=1;if(!hF[k]&&F[k].has(x))hF[k]=1;}
+      let sc=0;for(let k=0;k<K;k++)if(hE[k])sc+=W[k];
+      if(sc===c)cov++;
+      for(let k=0;k<K;k++)if(hF[k])dir+=W[k];
+      if(sc===c&&spanOf(tk)<=5)near++;
+      if(usePhrase&&!ph&&tk.join(" ").includes(phrase))ph=1;}
     return [r,c,ph,cov,dir,near];});
   rescored.sort((a,b)=>Math.round(b[1]-.4)-Math.round(a[1]-.4)||b[2]-a[2]||(b[5]>0)-(a[5]>0)||b[1]-a[1]||b[4]+b[5]-a[4]-a[5]||b[3]-a[3]);
   return {list:rescored.slice(0,8).map(x=>[x[0],x[1]]),qw};
@@ -547,7 +637,7 @@ async function needIl(){if(LOADED.has("il"))return true;const out=$("out");out.i
   try{await waitFor("il");return true;}catch(e){out.innerHTML="<div class='card'>The Hebrew and Greek part couldn't download. Connect to the internet and try again.</div>";return false;}}
 async function showStudy(code){hidePop();if(!await needIl())return;
   const back=VIEW&&VIEW.t==="verse"?{ref:VIEW.ref,ctx:LAST}:null;
-  setView({t:"study",code});if(!RINDEX)buildRIndex();
+  await waitIdx(()=>RINDEX,30000);setView({t:"study",code});if(!RINDEX)buildRIndex();
   const vs=RINDEX.get(code)||[];let occ=0;const books=new Map(),gl=new Map(),sp=new Map();
   for(const i of vs){const r=ORDERREFS[i];for(const x of DATA.il[r]||[])if(x[4]===code){occ++;const b=REFBOOK[i];books.set(b,(books.get(b)||0)+1);
     const g0=(x[1]||"").trim()||"—",g=g0.toLowerCase();let e=gl.get(g);if(!e){e={n:0,v:[],d:g0};gl.set(g,e);}e.n++;if(e.v[e.v.length-1]!==i)e.v.push(i);
@@ -588,8 +678,9 @@ async function render(q){
   $("fpanel").style.display="none";
   out.innerHTML="<div class='card'>Searching…</div>";
   if(needsIl(q)&&!await needIl())return;
+  await ensureIdx(q);
   await new Promise(r=>setTimeout(r,20));
-  const fl=getFilter();const res=search(q,fl);res.q=q;res.fl=fl;res.nTr=trLoaded().length;
+  const fl=getFilter();const res=search(q,fl);res.q=q;res.fl=fl;res.nTr=INDEX?INDEXNTR:trLoaded().length;
   if(!res.list.length){setView({t:"none"});
     out.innerHTML=`<div class='card'>${res.bad?"That reference isn't in the Bible. Check the book, chapter and verse.":fl.t!=="all"?`No verse found in ${esc(filterName(fl))}.`:"No verse found."}</div>`+(fl.t!=="all"&&!res.bad?`<div class="row" style="margin:0 12px"><button data-clrf="1">Search the whole Bible</button></div>`:"");
     const cf=out.querySelector("[data-clrf]");if(cf)cf.onclick=()=>{setFilter({t:"all"});render(q);};return;}
@@ -598,14 +689,14 @@ async function render(q){
 function showPop(i,el){
   document.querySelectorAll(".w.on").forEach(x=>x.classList.remove("on")); el.classList.add("on");
   const [w,g,gray,m,sn]=CUR[i]; const p=$("pop"); const lx=sn?((DATA.lex||{})[sn]||""):"";
-  p.innerHTML=`<div class="heb">${esc(w)}</div><div style="color:#2f6b3a">${esc(g||"—")}</div>`+
+  p.innerHTML=`<button class="alt x" id="closepop" aria-label="Close">✕</button><div class="heb">${esc(w)}</div><div style="color:#2f6b3a">${esc(g||"—")}</div>`+
     `<div class="lbl">Other meanings</div><div class="gray">${esc(gray||"none listed")}</div>`+
     `<div class="lbl">Parsing</div><div class="morph">${esc(m||"—")}</div>`+
     (sn?`<div class="lbl">Root word</div><div class="gray">${esc(lx||sn)} <small>(${sn})</small></div>`:"")+
-    `<div class="row">${sn?`<button id="findr">Every verse with this root</button><button id="study">📊 Word study</button>`:""}<button class="alt" id="findw">This exact spelling</button><button class="alt" id="closepop">Close</button></div>`;
+    `<div class="row">${sn?`<button id="findr">Every verse with this root</button><button id="study">📊 Word study</button>`:""}<button class="alt" id="findw">This exact spelling</button></div>`;
   $("findw").onclick=()=>{$("q").value=w;render(w);};
   if(sn){$("findr").onclick=()=>{const q="root "+sn;$("q").value=q;render(q);};$("study").onclick=()=>showStudy(sn);}
-  p.style.display="block";
+  p.style.display="block";p.scrollTop=0;
   $("closepop").onclick=hidePop;
 }
 function hidePop(){$("pop").style.display="none";document.querySelectorAll(".w.on").forEach(x=>x.classList.remove("on"));}
@@ -629,17 +720,17 @@ document.addEventListener("keydown",e=>{if(e.target.id==="q"||!VIEW||VIEW.t!=="v
     else if(VIEW.t==="chapter"){const m=chapterOf(VIEW.ref).match(/^(.*) (\d+)$/);const r=`${m[1]} ${+m[2]+d}:1`;if(hasRef(r)){showChapter(r,VIEW.tn,VIEW.tn2);window.scrollTo(0,0);}}
   },{passive:true});})();
 // ---- background loading
-function note(t){const e=$("loadnote");e.textContent=t;e.style.display=t?"block":"none";}
+function note(t){const e=$("loadnote");e.textContent=t;e.style.display=t?"block":"none";document.body.classList.toggle("loading",!!t);}
 function progress(){const n=trLoaded().length,N=DATA.order.length;note(n<N||!LOADED.has("il")?`Loading the rest of the Bible… ${n} of ${N} translations`:"");}
 function refreshMaybe(){if(!VIEW||SPEAKING)return;if($("pop").style.display==="block"||$("sheet").style.display==="flex")return;
   const ae=document.activeElement;if(ae&&/TEXTAREA|INPUT|SELECT/.test(ae.tagName))return;
   if(VIEW.t==="verse"){const y=window.scrollY;show(VIEW.ref,LAST,true);window.scrollTo(0,y);}else if(VIEW.t==="home")showHome();}
 let FAILNOTE=false;
-HOOK=k=>{
+HOOK=(k,d)=>{
+  if(k==="idx"){idxMsg(d);return;}
   if(k==="fail"){note("");if(!FAILNOTE){FAILNOTE=true;toast("Part of the Bible couldn't download. Open the page again when you're online.");}return;}
-  if(k==="done"){note("");refreshMaybe();return;}
-  if(DATA.order.includes(k)){INDEX=null;FCACHE.clear();XCACHE.clear();}
-  if(k==="il"){OINDEX=null;RINDEX=null;}
+  if(k==="done"){note("");window.__blAll=true;idleBuild();try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});}catch(e){}refreshMaybe();return;}
+  if(IWFAIL){if(DATA.order.includes(k)){INDEX=null;delete BST.w;FCACHE.clear();XCACHE.clear();}if(k==="il"){OINDEX=null;RINDEX=null;delete BST.o;delete BST.r;}}
   progress();if(k==="il")refreshMaybe();
 };
 if(localStorage.getItem("bl_dark")==="1"&&!localStorage.getItem("bl_theme"))localStorage.setItem("bl_theme","dark");
@@ -648,7 +739,9 @@ window.addEventListener("popstate",e=>{const r=(e.state&&e.state.ref)||decodeURI
 const startRef=decodeURIComponent(location.hash.slice(1));
 if(startRef&&hasRef(startRef)){$("q").value=startRef;show(startRef,undefined,true);} else showHome();
 if(FILES)progress();
-window.BL={showStudy,votdRef,getLast:()=>LAST,view:()=>VIEW,streaks};
+while(IWQ.length)idxMsg(IWQ.shift());
+if(!FILES){window.__blAll=true;idleBuild();}
+window.BL={showStudy,votdRef,getLast:()=>LAST,view:()=>VIEW,streaks,idx:()=>({worker:!IWFAIL,done:IWDONE,ntr:INDEXNTR,o:!!OINDEX,r:!!RINDEX})};
 window.__blReady=true;
 }
 </script>

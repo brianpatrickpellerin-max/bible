@@ -1,4 +1,4 @@
-const C="bible-v6",D="bible-data";
+const C="bible-v7",D="bible-data";
 self.addEventListener("install",e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(["./","icon.png","manifest.json"])));self.skipWaiting();});
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C&&k!==D).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
 function timeout(ms){return new Promise((_,rej)=>setTimeout(()=>rej(new Error("timeout")),ms));}

@@ -59,7 +59,8 @@ body.v-home #out{display:none}
 .sub{text-align:center;font-size:calc(var(--fs)*.72);margin:0 0 18px}
 /* quiet lists (phrase list, other matches, original-word lists) */
 .li{display:block;text-align:center;padding:16px 0 15px;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;cursor:pointer}
-.li .t{display:block;font-size:calc(var(--fs)*.98);line-height:1.5}
+.li .t{display:block;font-size:calc(var(--fs)*.98);line-height:1.5;overflow-wrap:anywhere}
+.chap p,.cmpv .vt{overflow-wrap:anywhere}
 .li .r{display:block;font-size:calc(var(--fs)*.7);letter-spacing:.04em;margin-top:6px}
 .sentinel{height:1px}
 /* chapter */
@@ -471,11 +472,15 @@ function showChapter(ref,tn,tn2){
   let html=`<div class="chap"><h2>${esc(chapName(ref))}</h2>`;
   for(const r of refs){const t=DATA.tr[tn][r]||"";const t2=tn2?(DATA.tr[tn2][r]||""):"";if(!t&&!t2)continue;
     const vn=`<sup>${r.split(":")[1]}</sup>`;
-    html+=`<p data-go="${r}" class="${r===ref?"cur":""}${tn==="HLIT"?" hlp":""}">${tn==="HLIT"?esc(t)+vn:vn+esc(t)}${tn2?`<span class="c2">${esc(t2||"—")}</span>`:""}</p>`;}
+    html+=`<p data-go="${r}" class="${r===ref?"cur":""}${tn==="HLIT"?" hlp":""}">${tn==="HLIT"?nbh(esc(t))+vn:vn+esc(t)}${tn2?`<span class="c2">${tn2==="HLIT"?nbh(esc(t2||"—")):esc(t2||"—")}</span>`:""}</p>`;}
   html+=`<div class="sub" style="margin-top:28px">${esc(NAMES[tn]||tn)}${tn2?" · "+esc(NAMES[tn2]||tn2):""}</div></div>`;
   $("out").innerHTML=html;
   const c=$("out").querySelector(".cur");if(c&&c.dataset.go!==refs[0])c.scrollIntoView({block:"center"});else window.scrollTo(0,0);
 }
+// Hyperliteral glosses stay whole on screen: non-breaking hyphens for display only (data, search, copy and share keep "-")
+const nbh=h=>h.replace(/-/g,"\u2011");
+// the text of a list row (gloss line when it's Hyperliteral)
+function rowText(r){const n=firstTr(r);const h=esc(plainText(n?DATA.tr[n][r]||"":""));return n==="HLIT"?nbh(h):h;}
 // strip the Hebrew-letter / ALL-CAPS headings some translations put at the start of a verse
 function plainText(t){return t.replace(/^[\u05D0-\u05EA]\s+[A-Z]+\.\s*|^\[?[A-Z]{3,}\.\]?\s*/,"");}
 let TT=0;function toast(t){const e=$("toast");e.textContent=t;e.style.display="block";clearTimeout(TT);TT=setTimeout(()=>e.style.display="none",1600);}
@@ -508,7 +513,7 @@ function openShare(r){const all=ALLTR().filter(n=>DATA.tr[n]&&DATA.tr[n][r]);if(
   draw();}
 // ---- the verse (one translation, centred; tap to reveal the Hebrew/Greek and related verses)
 let HID=0;const CTXS=new Map();let PHS=null,ILON=false;
-function verseHtml(r,n,phr){let t=DATA.tr[n]&&DATA.tr[n][r];if(!t)return "";t=plainText(t);return phr?markPhrase(t,phr):esc(t);}
+function verseHtml(r,n,phr){let t=DATA.tr[n]&&DATA.tr[n][r];if(!t)return "";t=plainText(t);const h=phr?markPhrase(t,phr):esc(t);return n==="HLIT"?nbh(h):h;}
 // Hyperliteral on the main verse: a centred flow of tappable glosses in original word order, read left to right (the Hebrew/Greek is in the word sheet)
 function isHl(r){return phTr()==="HLIT"&&!!(DATA.il[r]&&DATA.il[r].length&&DATA.tr.HLIT&&DATA.tr.HLIT[r]);}
 function isOT(r){return OTSET.has(bookOf(r));}
@@ -517,7 +522,7 @@ function hlMarks(il,words){const tk=[];il.forEach((x,k)=>{for(const t of phNorm(
 function hlHtml(r,phr){const il=DATA.il[r],mk=phr&&phr.length?hlMarks(il,phr):null;
   let h=`<div class="vt hl" dir="ltr">`;
   il.forEach((x,k)=>{const i=CUR.length;CUR.push(x);const g=(x[1]||"").trim();
-    h+=`<span class="w" data-i="${i}"><span class="g${mk&&mk.has(k)?" m":""}" dir="ltr">${g?esc(g):"&nbsp;"}</span></span>`;});
+    h+=`<span class="w" data-i="${i}"><span class="g${mk&&mk.has(k)?" m":""}" dir="ltr">${g?nbh(esc(g)):"&nbsp;"}</span></span>`;});
   return h+`</div>`;}
 function ilHtml(r,xrOnly){const il=xrOnly?[]:(DATA.il[r]||[]);let html="";
   if(il.length){html+=`<div class="il" dir="ltr">`;il.forEach(x=>{const i=CUR.length;CUR.push(x);html+=`<span class="w" data-i="${i}"><span class="o">${esc(x[0])}</span><span class="g">${esc(x[1])}</span></span>`;});html+=`</div>`;}
@@ -548,7 +553,7 @@ function show(ref,ctx,noPush,keepScroll){
   if(ctx.orig){
     html+=`<div class="sec">${esc(ctx.orig)}</div><div class="sub">${ctx.total} verse${ctx.total===1?"":"s"}${ctx.allTotal&&ctx.allTotal!==ctx.total?` · ${ctx.allTotal} in the whole Bible`:""}</div>`;
     if(ctx.root) html+=`<a class="link" data-study="${ctx.root}">Word study</a>`;
-    for(const [r] of others.slice(0,200))html+=liHtml(r,esc(plainText(textOf(r)||"")));
+    for(const [r] of others.slice(0,200))html+=liHtml(r,rowText(r));
     if(ctx.total>201) html+=`<div class="sub">The first 200 are shown.</div>`;
   } else if(others.length&&ctx.qw.length){
     // first screen: the 7 next-best matches; more follow as you scroll (15 at a time)
@@ -568,7 +573,7 @@ function mmRanked(){const c=MMS.ctx;return c.more?c.list.map(x=>x[0]).concat(c.m
 // next n rows not shown yet (no duplicates: the main verse and anything already listed are skipped)
 function mmRows(n){const c=MMS.ctx;let html="",k=0;
   for(;;){const R=mmRanked();
-    while(MMS.pos<R.length&&k<n){const r=R[MMS.pos++];if(MMS.seen.has(r))continue;MMS.seen.add(r);MMS.shown++;k++;html+=liHtml(r,esc(plainText(textOf(r)||"")));}
+    while(MMS.pos<R.length&&k<n){const r=R[MMS.pos++];if(MMS.seen.has(r))continue;MMS.seen.add(r);MMS.shown++;k++;html+=liHtml(r,rowText(r));}
     if(k>=n||!c.more||c.more.done)break;c.more.ensure(c.more.items.length+n-k+8);}
   return html;}
 function mmLeft(){const c=MMS.ctx,R=mmRanked();if(MMS.pos<R.length)return true;return !!(c.more&&!c.more.done);}
@@ -593,7 +598,7 @@ function phBlock(words,quoted,keepN){const n=phTr(),fl=getFilter(),h=phraseHits(
   html+=`<div class="sub">${N?`${N} verse${N===1?"":"s"}`:"No verse has these exact words"} in ${esc(NAMES[n]||n)}${N&&h.ot&&h.nt?`<br>Old Testament ${h.ot} · New Testament ${h.nt}`:""}${fl.t!=="all"?`<br>Searching only ${esc(filterName(fl))}${h.all!==N?` · ${h.all} in the whole Bible`:""}`:""}</div>`;
   html+=`<div id="phrows">${phRows(0,PHS.shown)}</div><div class="sentinel" id="phsent"></div></div>`;
   return html;}
-function phRows(a,b){const T=DATA.tr[PHS.tr];let s="";for(let k=a;k<b;k++){const r=ORDERREFS[PHS.h.ids[k]];s+=liHtml(r,markPhrase(plainText(T[r]||""),PHS.words),`data-pgo="${r}"`);}return s;}
+function phRows(a,b){const T=DATA.tr[PHS.tr];let s="";for(let k=a;k<b;k++){const r=ORDERREFS[PHS.h.ids[k]];const mh=markPhrase(plainText(T[r]||""),PHS.words);s+=liHtml(r,PHS.tr==="HLIT"?nbh(mh):mh,`data-pgo="${r}"`);}return s;}
 function phMoreTo(n){if(!PHS||!$("phrows"))return;const a=PHS.shown;PHS.shown=Math.min(PHS.h.ids.length,n);if(PHS.shown>a)$("phrows").insertAdjacentHTML("beforeend",phRows(a,PHS.shown));}
 let PHIO=null;
 function wirePh(){const s=$("phsent");if(!s)return;if(PHIO)PHIO.disconnect();
@@ -748,6 +753,8 @@ HOOK=(k,d)=>{
   if(k===phTr()){phIdle(k);if(k!=="HLIT"||(VIEW&&VIEW.hlwait))refreshMaybe();}
   progress();if(k==="il"&&ILON)refreshMaybe();
 };
+// copying selected text gives normal hyphens back
+document.addEventListener("copy",e=>{try{const s=String(window.getSelection());if(s.includes("\u2011")&&e.clipboardData){e.clipboardData.setData("text/plain",s.replace(/\u2011/g,"-"));e.preventDefault();}}catch(_){}});
 applyTheme();
 try{history.scrollRestoration="manual";}catch(e){}
 window.addEventListener("popstate",e=>{const s=e.state||{};closeSheet();if(s.pq){$("q").value=s.pq;render(s.pq,true);return;}

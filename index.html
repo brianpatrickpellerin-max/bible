@@ -97,7 +97,8 @@ body.dark .trlist label{border-color:#333}
 .wide{width:100%;text-align:left;display:flex;justify-content:space-between}
 </style></head><body>
 <header><h1 id="home">Bible lookup</h1></header>
-<div id="dock"><div id="loadnote"></div><div id="nav4"><button class="alt" id="homeb">Home</button><button class="alt" id="books">Books</button><button class="alt" id="filt">Filter</button><button class="alt" id="moreb">⋯ More</button></div><div class="qrow"><input id="q" value="" placeholder="Search a phrase or Psalm 23" enterkeyhint="search" autocomplete="off" aria-label="Search"><button id="go2">Search</button></div></div>
+<div id="dock"><div id="loadnote"></div><div id="nav4"><button class="alt" id="homeb">Home</button><button class="alt" id="books">Books</button><button class="alt" id="filt">Filter</button><button class="alt" id="moreb">⋯ More</button></div><div class="qrow"><input id="q" value="" enterkeyhint="search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Search" autofocus><button id="go2">Search</button></div></div>
+<script>(function(){var q=document.getElementById("q");function f(){if(!location.hash)try{q.focus({preventScroll:true});}catch(e){q.focus();}}f();addEventListener("load",f);addEventListener("pageshow",f);document.getElementById("homeb").addEventListener("click",function(){q.value="";setTimeout(function(){q.focus();},0);});})();</script>
 <div id="recent"></div>
 <div id="out"></div>
 <div id="pop"></div><div id="toast"></div>

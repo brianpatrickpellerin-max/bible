@@ -46,13 +46,12 @@ body.v-home #out{display:none}
 .w .o{display:block;font-size:calc(var(--fs)*1.25);line-height:1.3}
 .w .g{display:block;font-size:calc(var(--fs)*.66);margin-top:2px}
 .w.on .o{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.25em}
-.hl{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;gap:calc(var(--fs)*.9) calc(var(--fs)*.62);line-height:1.22;padding:0 2px}
-.hl .w{display:inline-flex;flex-direction:column;align-items:center;margin:0;padding:2px 1px;min-width:0;min-height:44px;max-width:100%}
+.hl{display:flex;flex-wrap:wrap;justify-content:center;align-items:baseline;gap:0 calc(var(--fs)*.42);line-height:1.42;padding:0 2px}
+.hl .w{display:inline-block;margin:0;padding:3px 1px;min-width:0;min-height:44px;max-width:100%}
 .hl .w .g{display:block;font-size:1em;margin:0;unicode-bidi:isolate;overflow-wrap:anywhere;text-align:center}
 .hl .w .o{display:block;font-size:calc(var(--fs)*.92);line-height:1.35;margin-top:calc(var(--fs)*.22);unicode-bidi:isolate}
-.vt.hl.lg{font-size:calc(var(--fs)*1.25)}.vt.hl.xl{font-size:calc(var(--fs)*1.12)}
 .hl .w .g.m{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.2em}
-.hl .w.on .o{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.3em}
+.hl .w.on .g{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.2em}
 .chap p.hlp sup{margin:0 0 0 5px}
 .xr{text-align:center;margin-top:18px;font-size:calc(var(--fs)*.8)}
 .xr a{display:inline-block;padding:11px 8px;min-height:44px}
@@ -490,15 +489,15 @@ function openShare(r){const all=ALLTR().filter(n=>DATA.tr[n]&&DATA.tr[n][r]);if(
 // ---- the verse (one translation, centred; tap to reveal the Hebrew/Greek and related verses)
 let HID=0;const CTXS=new Map();let PHS=null,ILON=false;
 function verseHtml(r,n,phr){let t=DATA.tr[n]&&DATA.tr[n][r];if(!t)return "";t=plainText(t);return phr?markPhrase(t,phr):esc(t);}
-// Hyperliteral on the main verse: a centred flow of word stacks (gloss above, Hebrew/Greek below); Hebrew flows right to left
+// Hyperliteral on the main verse: a centred flow of tappable glosses (the Hebrew/Greek is in the word sheet); Hebrew order flows right to left
 function isHl(r){return phTr()==="HLIT"&&!!(DATA.il[r]&&DATA.il[r].length&&DATA.tr.HLIT&&DATA.tr.HLIT[r]);}
 function isOT(r){return OTSET.has(bookOf(r));}
 function hlMarks(il,words){const tk=[];il.forEach((x,k)=>{for(const t of phNorm(x[1]||"").split(" "))if(t)tk.push([k,t]);});const m=new Set(),n=words.length;
   for(let i=0;i+n<=tk.length;i++){let ok=true;for(let j=0;j<n;j++)if(tk[i+j][1]!==words[j]){ok=false;break;}if(ok)for(let j=0;j<n;j++)m.add(tk[i+j][0]);}return m;}
 function hlHtml(r,phr){const il=DATA.il[r],ot=isOT(r),mk=phr&&phr.length?hlMarks(il,phr):null;
-  let h=`<div class="vt hl${il.length>36?" xl":il.length>24?" lg":""}" dir="${ot?"rtl":"ltr"}">`;
+  let h=`<div class="vt hl" dir="${ot?"rtl":"ltr"}">`;
   il.forEach((x,k)=>{const i=CUR.length;CUR.push(x);const g=(x[1]||"").trim();
-    h+=`<span class="w" data-i="${i}"><span class="g${mk&&mk.has(k)?" m":""}" dir="ltr">${g?esc(g):"&nbsp;"}</span><span class="o" lang="${ot?"he":"el"}">${esc(x[0])}</span></span>`;});
+    h+=`<span class="w" data-i="${i}"><span class="g${mk&&mk.has(k)?" m":""}" dir="ltr">${g?esc(g):"&nbsp;"}</span></span>`;});
   return h+`</div>`;}
 function ilHtml(r,xrOnly){const il=xrOnly?[]:(DATA.il[r]||[]);let html="";
   if(il.length){html+=`<div class="il" dir="${isOT(r)?"rtl":"ltr"}">`;il.forEach(x=>{const i=CUR.length;CUR.push(x);html+=`<span class="w" data-i="${i}"><span class="o">${esc(x[0])}</span><span class="g">${esc(x[1])}</span></span>`;});html+=`</div>`;}

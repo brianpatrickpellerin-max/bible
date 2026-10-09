@@ -320,7 +320,7 @@ function search(q,f){
   const pass=passer(f);
   const cnt=new Map();
   for(const w of qw){const hit=new Set();for(const x of expand(w))for(const i of INDEX.get(x)||[])if(!pass||pass(i))hit.add(i);for(const i of hit)cnt.set(i,(cnt.get(i)||0)+wt(w));}
-  let ents=[...cnt.entries()].sort((a,b)=>b[1]-a[1]||a[0]-b[0]).slice(0,3000);
+  let ents=[...cnt.entries()].sort((a,b)=>b[1]-a[1]||a[0]-b[0]).slice(0,3000);const allE=ents;
   // only the top score levels can reach the final 8 (same order as before, much less work)
   const lev=c=>Math.round(c-.4);if(ents.length>8){const l8=lev(ents[7][1]);let e=8;while(e<ents.length&&lev(ents[e][1])>=l8)e++;ents=ents.slice(0,e);}
   const phrase=q.toLowerCase().replace(/[^a-z' ]+/g," ").replace(/\s+/g," ").trim();
@@ -333,7 +333,7 @@ function search(q,f){
     const c=new Map();let l=0,best=99;for(let r=0;r<ev.length;r++){c.set(ev[r][1],(c.get(ev[r][1])||0)+1);
       while(c.size===need){best=Math.min(best,ev[r][0]-ev[l][0]);const k=ev[l][1];c.set(k,c.get(k)-1);if(!c.get(k))c.delete(k);l++;}}
     return best;};
-  const rescored=ents.map(([i,c])=>{const r=ORDERREFS[i];let cov=0,ph=0,dir=0,near=0;
+  const rs=([i,c])=>{const r=ORDERREFS[i];let cov=0,ph=0,dir=0,near=0;
     for(const n of DATA.order){const t=DATA.tr[n][r];if(!t)continue;
       const tk=t.toLowerCase().match(/[a-z']+/g)||[];hE.fill(0);hF.fill(0);
       for(const x of tk)for(let k=0;k<K;k++){if(!hE[k]&&E[k].has(x))hE[k]=1;if(!hF[k]&&F[k].has(x))hF[k]=1;}
@@ -342,10 +342,29 @@ function search(q,f){
       for(let k=0;k<K;k++)if(hF[k])dir+=W[k];
       if(sc===c&&spanOf(tk)<=5)near++;
       if(usePhrase&&!ph&&tk.join(" ").includes(phrase))ph=1;}
-    return [r,c,ph,cov,dir,near];});
-  rescored.sort((a,b)=>Math.round(b[1]-.4)-Math.round(a[1]-.4)||b[2]-a[2]||(b[5]>0)-(a[5]>0)||b[1]-a[1]||b[4]+b[5]-a[4]-a[5]||b[3]-a[3]);
-  return {list:rescored.slice(0,8).map(x=>[x[0],x[1]]),qw};
+    return [r,c,ph,cov,dir,near];};
+  const cmp=(a,b)=>Math.round(b[1]-.4)-Math.round(a[1]-.4)||b[2]-a[2]||(b[5]>0)-(a[5]>0)||b[1]-a[1]||b[4]+b[5]-a[4]-a[5]||b[3]-a[3];
+  const rescored=ents.map(rs);
+  rescored.sort(cmp);
+  return {list:rescored.slice(0,8).map(x=>[x[0],x[1]]),qw,more:moreState(rescored.slice(8,MORELIM).map(x=>x[0]),allE.slice(ents.length),rs,cmp,lev)};
 }
+// ---- more best matches (infinite scroll): the ranked list continues past the first 8, up to MORELIM.
+// Lower score levels are ranked one level at a time with the same rescoring, in small background slices.
+const MORELIM=300;
+function moreState(items,pend,rs,cmp,lev){const st={items,done:false,pend,pi:0,grp:null,cap:MORELIM-8};
+  if(st.items.length>=st.cap||!pend.length){st.items.length=Math.min(st.items.length,st.cap);st.done=true;}
+  // one slice of work: rescore entries of the current level group; when a group is complete, sort it and append
+  st.step=ms=>{const t0=performance.now();
+    while(!st.done){
+      if(!st.grp){if(st.pi>=st.pend.length){st.done=true;break;}const L=lev(st.pend[st.pi][1]);let e=st.pi;while(e<st.pend.length&&lev(st.pend[e][1])===L&&e-st.pi<600)e++;st.grp={a:st.pend.slice(st.pi,e),k:0,out:[]};st.pi=e;
+        // skip the rest of an oversized level (beyond 600 in count order)
+        while(st.pi<st.pend.length&&lev(st.pend[st.pi][1])===L)st.pi++;}
+      const g=st.grp;while(g.k<g.a.length){g.out.push(rs(g.a[g.k++]));if(ms&&(g.k&7)===0&&performance.now()-t0>ms)return false;}
+      g.out.sort(cmp);for(const x of g.out){if(st.items.length>=st.cap)break;st.items.push(x[0]);}st.grp=null;
+      if(st.items.length>=st.cap)st.done=true;}
+    return true;};
+  st.ensure=n=>{while(!st.done&&st.items.length<n)st.step(0);};
+  return st;}
 function step(ref,d){const i=POS.get(ref)+d;return (i>=0&&i<ORDERREFS.length)?ORDERREFS[i]:null;}
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
 function highlight(text,qw){
@@ -361,7 +380,8 @@ function firstTr(r){return shown().find(n=>DATA.tr[n]&&DATA.tr[n][r])||(DATA.tr.
 function textOf(r){const n=firstTr(r);return n?DATA.tr[n][r]:"";}
 // ---- small helpers
 let CUR=[],LAST=null,VIEW=null;
-function setView(v,keepSheet){VIEW=v;document.body.classList.toggle("v-home",v.t==="home");if(!keepSheet)closeSheet();showHint();}
+// leaving a verse view: remember how far its lists were loaded and the scroll position (restored on Back)
+function setView(v,keepSheet){if(VIEW&&VIEW.t==="verse"&&LAST){LAST.y=window.scrollY;if(MMS&&MMS.ctx&&MMS.ref===LAST.ref)LAST.mmN=MMS.shown;if(PHS&&LAST.phr)LAST.phN=PHS.shown;}VIEW=v;document.body.classList.toggle("v-home",v.t==="home");if(!keepSheet)closeSheet();showHint();}
 function jget(k,d){try{const v=JSON.parse(localStorage.getItem(k)||"null");return v==null?d:v;}catch(e){return d;}}
 function jset(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 // remove saved data from features that no longer exist
@@ -489,18 +509,18 @@ function openShare(r){const all=ALLTR().filter(n=>DATA.tr[n]&&DATA.tr[n][r]);if(
 // ---- the verse (one translation, centred; tap to reveal the Hebrew/Greek and related verses)
 let HID=0;const CTXS=new Map();let PHS=null,ILON=false;
 function verseHtml(r,n,phr){let t=DATA.tr[n]&&DATA.tr[n][r];if(!t)return "";t=plainText(t);return phr?markPhrase(t,phr):esc(t);}
-// Hyperliteral on the main verse: a centred flow of tappable glosses (the Hebrew/Greek is in the word sheet); Hebrew order flows right to left
+// Hyperliteral on the main verse: a centred flow of tappable glosses in original word order, read left to right (the Hebrew/Greek is in the word sheet)
 function isHl(r){return phTr()==="HLIT"&&!!(DATA.il[r]&&DATA.il[r].length&&DATA.tr.HLIT&&DATA.tr.HLIT[r]);}
 function isOT(r){return OTSET.has(bookOf(r));}
 function hlMarks(il,words){const tk=[];il.forEach((x,k)=>{for(const t of phNorm(x[1]||"").split(" "))if(t)tk.push([k,t]);});const m=new Set(),n=words.length;
   for(let i=0;i+n<=tk.length;i++){let ok=true;for(let j=0;j<n;j++)if(tk[i+j][1]!==words[j]){ok=false;break;}if(ok)for(let j=0;j<n;j++)m.add(tk[i+j][0]);}return m;}
-function hlHtml(r,phr){const il=DATA.il[r],ot=isOT(r),mk=phr&&phr.length?hlMarks(il,phr):null;
-  let h=`<div class="vt hl" dir="${ot?"rtl":"ltr"}">`;
+function hlHtml(r,phr){const il=DATA.il[r],mk=phr&&phr.length?hlMarks(il,phr):null;
+  let h=`<div class="vt hl" dir="ltr">`;
   il.forEach((x,k)=>{const i=CUR.length;CUR.push(x);const g=(x[1]||"").trim();
     h+=`<span class="w" data-i="${i}"><span class="g${mk&&mk.has(k)?" m":""}" dir="ltr">${g?esc(g):"&nbsp;"}</span></span>`;});
   return h+`</div>`;}
 function ilHtml(r,xrOnly){const il=xrOnly?[]:(DATA.il[r]||[]);let html="";
-  if(il.length){html+=`<div class="il" dir="${isOT(r)?"rtl":"ltr"}">`;il.forEach(x=>{const i=CUR.length;CUR.push(x);html+=`<span class="w" data-i="${i}"><span class="o">${esc(x[0])}</span><span class="g">${esc(x[1])}</span></span>`;});html+=`</div>`;}
+  if(il.length){html+=`<div class="il" dir="ltr">`;il.forEach(x=>{const i=CUR.length;CUR.push(x);html+=`<span class="w" data-i="${i}"><span class="o">${esc(x[0])}</span><span class="g">${esc(x[1])}</span></span>`;});html+=`</div>`;}
   else if(!xrOnly&&!LOADED.has("il")&&!FAILED.has("il")) html+=`<div class="note">Hebrew and Greek are still loading…</div>`;
   const xr=(DATA.xr||{})[r]||[];
   if(xr.length) html+=`<div class="xr">${xr.map(x=>`<a href="#" data-go="${x.split("-")[0].replace(/^(.*? \d+:\d+).*$/,"$1")}">${esc(x)}</a>`).join(" ")}</div>`;
@@ -508,7 +528,7 @@ function ilHtml(r,xrOnly){const il=xrOnly?[]:(DATA.il[r]||[]);let html="";
 function toggleIl(on){const box=$("ilbox");if(!box)return;ILON=on===undefined?!ILON:on;if(ILON&&!box.innerHTML)box.innerHTML=ilHtml(VIEW.ref,isHl(VIEW.ref));box.style.display=ILON?"block":"none";}
 function show(ref,ctx,noPush,keepScroll){
   setView({t:"verse",ref,cmp:!!(ctx&&ctx.cmp)},keepScroll);
-  ctx=ctx||{qw:[],list:[[ref,null]]}; LAST={...ctx,ref};
+  ctx=ctx||{qw:[],list:[[ref,null]]}; LAST={...ctx,ref};if(!noPush)delete LAST.y;
   if(!noPush){const id=++HID;CTXS.set(id,LAST);try{history.pushState({ref,id},"","#"+encodeURIComponent(ref));}catch(e){}}
   if(!keepScroll)ILON=false;
   CUR=[];const phr=ctx.openPhr||ctx.phr;
@@ -530,16 +550,38 @@ function show(ref,ctx,noPush,keepScroll){
     if(ctx.root) html+=`<a class="link" data-study="${ctx.root}">Word study</a>`;
     for(const [r] of others.slice(0,200))html+=liHtml(r,esc(plainText(textOf(r)||"")));
     if(ctx.total>201) html+=`<div class="sub">The first 200 are shown.</div>`;
-  } else if(others.length&&ctx.qw.length&&!ctx.phr){
-    html+=`<div class="sec">Other matches</div>`;for(const [r] of others.slice(0,7))html+=liHtml(r,esc(plainText(textOf(r)||"")));
-  } else if(others.length&&ctx.qw.length&&ctx.phr){
-    html+=`<div class="sec">Other matches</div>`;for(const [r] of others.slice(0,7))html+=liHtml(r,esc(plainText(textOf(r)||"")));}
+  } else if(others.length&&ctx.qw.length){
+    // first screen: the 7 next-best matches; more follow as you scroll (15 at a time)
+    MMS={ctx,ref,shown:0,pos:0,seen:new Set([ref])};const want=Math.max(7,noPush&&ctx.mmN||0);
+    html+=`<div class="sec">Other matches</div><div id="mmrows">${mmRows(want)}</div><div class="sentinel" id="mmsent"></div><div id="mmend"></div>`;}
+  else MMS=null;
   if(ctx.qw.length&&ctx.nTr&&ctx.nTr<DATA.order.length) html+=`<div class="note">Searched ${ctx.nTr} of ${DATA.order.length} translations while the rest were loading. Search again for full results.</div>`;
   $("out").innerHTML=html;
   if(ILON)toggleIl(true);
   if(ctx.phr)wirePh();
-  if(!keepScroll)window.scrollTo(0,0);
+  if(MMS){mmEnd();wireMM();}
+  if(!keepScroll)window.scrollTo(0,noPush&&ctx.y!=null?ctx.y:0);
 }
+// ---- more best matches: ranked continuation of the search, appended in the same quiet rows
+let MMS=null,MMIO=null,MMBUSY=false;const MMT=[];
+function mmRanked(){const c=MMS.ctx;return c.more?c.list.map(x=>x[0]).concat(c.more.items):c.list.map(x=>x[0]);}
+// next n rows not shown yet (no duplicates: the main verse and anything already listed are skipped)
+function mmRows(n){const c=MMS.ctx;let html="",k=0;
+  for(;;){const R=mmRanked();
+    while(MMS.pos<R.length&&k<n){const r=R[MMS.pos++];if(MMS.seen.has(r))continue;MMS.seen.add(r);MMS.shown++;k++;html+=liHtml(r,esc(plainText(textOf(r)||"")));}
+    if(k>=n||!c.more||c.more.done)break;c.more.ensure(c.more.items.length+n-k+8);}
+  return html;}
+function mmLeft(){const c=MMS.ctx,R=mmRanked();if(MMS.pos<R.length)return true;return !!(c.more&&!c.more.done);}
+function mmEnd(){const e=$("mmend");if(e&&!mmLeft()&&!e.innerHTML)e.innerHTML=`<div class="sub mmend">No more matches</div>`;}
+function mmMore(){if(!MMS||MMBUSY||!$("mmrows")||!mmLeft())return;MMBUSY=true;const t0=performance.now();
+  const h=mmRows(15);if(h)$("mmrows").insertAdjacentHTML("beforeend",h);mmEnd();MMT.push(Math.round((performance.now()-t0)*10)/10);
+  requestAnimationFrame(()=>{MMBUSY=false;});mmIdle();}
+// rank the next level groups in the background so each batch only has to append rows
+function mmIdle(){const m=MMS&&MMS.ctx.more;if(!m||m.done||m.idle)return;m.idle=1;const tick=()=>{if(m.step(6)){m.idle=0;if(MMS&&MMS.ctx.more===m)mmEnd();return;}setTimeout(tick,20);};setTimeout(tick,60);}
+function wireMM(){const s=$("mmsent");if(!s)return;if(MMIO)MMIO.disconnect();
+  if(window.IntersectionObserver){MMIO=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting))mmMore();},{rootMargin:"500px"});MMIO.observe(s);}
+  mmIdle();}
+window.addEventListener("scroll",()=>{if(!MMS||!$("mmsent")||!mmLeft())return;if($("mmsent").getBoundingClientRect().top<innerHeight+500)mmMore();},{passive:true});
 function liHtml(r,textHtml,attr){return `<a class="li" ${attr||`data-go="${r}"`}><span class="t">${textHtml}</span><span class="r">${esc(refName(r))}</span></a>`;}
 // ---- exact-phrase list (quiet centred lines; more load as you scroll)
 function phBlock(words,quoted,keepN){const n=phTr(),fl=getFilter(),h=phraseHits(n,words,fl);
@@ -648,7 +690,7 @@ document.addEventListener("click",e=>{
   const t=e.target;
   const w=t.closest(".w");if(w){showPop(+w.dataset.i,w);return;}
   const pg=t.closest("[data-pgo]");if(pg){e.preventDefault();openFromList(pg.dataset.pgo);return;}
-  const go=t.closest("[data-go]");if(go){e.preventDefault();if(VIEW.t==="chapter")show(go.dataset.go);else show(go.dataset.go,LAST&&LAST.list&&LAST.list.some(x=>x[0]===go.dataset.go)?LAST:undefined);return;}
+  const go=t.closest("[data-go]");if(go){e.preventDefault();if(VIEW.t==="chapter")show(go.dataset.go);else show(go.dataset.go,LAST&&LAST.list&&(LAST.list.some(x=>x[0]===go.dataset.go)||(LAST.more&&LAST.more.items.includes(go.dataset.go)))?LAST:undefined);return;}
   if(t.closest("[data-chap]")){showChapter(VIEW.ref);return;}
   const st=t.closest("[data-study]");if(st){showStudy(st.dataset.study);return;}
   if(t.closest(".vt")){toggleIl();return;}
@@ -707,6 +749,7 @@ HOOK=(k,d)=>{
   progress();if(k==="il"&&ILON)refreshMaybe();
 };
 applyTheme();
+try{history.scrollRestoration="manual";}catch(e){}
 window.addEventListener("popstate",e=>{const s=e.state||{};closeSheet();if(s.pq){$("q").value=s.pq;render(s.pq,true);return;}
   if(s.id&&CTXS.has(s.id)&&hasRef(s.ref)){show(s.ref,CTXS.get(s.id),true);return;}
   const r=s.ref||decodeURIComponent(location.hash.slice(1));if(r&&hasRef(r))show(r,undefined,true);else if(!r)showHome();});
@@ -716,7 +759,7 @@ if(FILES)progress();
 while(IWQ.length)idxMsg(IWQ.shift());
 phIdle(phTr());
 if(!FILES){window.__blAll=true;idleBuild();}
-window.BL={showStudy,ph:()=>Object.keys(PH),phraseHits:(n,q)=>{const w=phraseQuery(q).words;if(!PH[n])phStep(n,0);return phraseHits(n,w,{t:'all'}).ids.length;},getLast:()=>LAST,view:()=>VIEW,idx:()=>({worker:!IWFAIL,done:IWDONE,ntr:INDEXNTR,o:!!OINDEX,r:!!RINDEX}),sheet:()=>SHEETKIND,hl:()=>({ms:Math.round(HLMS*10)/10,loaded:LOADED.has("HLIT"),n:Object.keys(DATA.tr.HLIT||{}).length})};
+window.BL={showStudy,ph:()=>Object.keys(PH),phraseHits:(n,q)=>{const w=phraseQuery(q).words;if(!PH[n])phStep(n,0);return phraseHits(n,w,{t:'all'}).ids.length;},getLast:()=>LAST,view:()=>VIEW,idx:()=>({worker:!IWFAIL,done:IWDONE,ntr:INDEXNTR,o:!!OINDEX,r:!!RINDEX}),sheet:()=>SHEETKIND,mm:()=>MMS?{shown:MMS.shown,left:mmLeft(),items:MMS.ctx.more?MMS.ctx.more.items.length:0,done:MMS.ctx.more?MMS.ctx.more.done:true,t:MMT.slice()}:null,hl:()=>({ms:Math.round(HLMS*10)/10,loaded:LOADED.has("HLIT"),n:Object.keys(DATA.tr.HLIT||{}).length})};
 window.__blReady=true;
 }
 </script>

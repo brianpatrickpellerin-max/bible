@@ -46,6 +46,14 @@ body.v-home #out{display:none}
 .w .o{display:block;font-size:calc(var(--fs)*1.25);line-height:1.3}
 .w .g{display:block;font-size:calc(var(--fs)*.66);margin-top:2px}
 .w.on .o{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.25em}
+.hl{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;gap:calc(var(--fs)*.9) calc(var(--fs)*.62);line-height:1.22;padding:0 2px}
+.hl .w{display:inline-flex;flex-direction:column;align-items:center;margin:0;padding:2px 1px;min-width:0;min-height:44px;max-width:100%}
+.hl .w .g{display:block;font-size:1em;margin:0;unicode-bidi:isolate;overflow-wrap:anywhere;text-align:center}
+.hl .w .o{display:block;font-size:calc(var(--fs)*.92);line-height:1.35;margin-top:calc(var(--fs)*.22);unicode-bidi:isolate}
+.vt.hl.lg{font-size:calc(var(--fs)*1.25)}.vt.hl.xl{font-size:calc(var(--fs)*1.12)}
+.hl .w .g.m{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.2em}
+.hl .w.on .o{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.3em}
+.chap p.hlp sup{margin:0 0 0 5px}
 .xr{text-align:center;margin-top:18px;font-size:calc(var(--fs)*.8)}
 .xr a{display:inline-block;padding:11px 8px;min-height:44px}
 .sec{text-align:center;font-size:calc(var(--fs)*.8);letter-spacing:.04em;margin:64px 0 6px}
@@ -102,21 +110,27 @@ body.dark #sheet{background:rgba(0,0,0,.55)}
 <script>(function(){var q=document.getElementById("q");function f(){if(!location.hash)try{q.focus({preventScroll:true});}catch(e){q.focus();}}f();addEventListener("load",f);addEventListener("pageshow",f);})();</script>
 <script>
 const FILES={"meta": "data/meta.cd88091618.json.gz", "KJV": "data/KJV.e7b9ede062.json.gz", "AKJV": "data/AKJV.dc8019063e.json.gz", "ASV": "data/ASV.8cba7a78aa.json.gz", "Webster": "data/Webster.b901e53df3.json.gz", "RWebster": "data/RWebster.78e17250c4.json.gz", "Darby": "data/Darby.f4309af123.json.gz", "YLT": "data/YLT.fb0ab84c54.json.gz", "Geneva": "data/Geneva.1caafc259c.json.gz", "Wycliffe": "data/Wycliffe.66c871c789.json.gz", "BBE": "data/BBE.d70dee73be.json.gz", "DRC": "data/DRC.e7dd1c66e8.json.gz", "JPS": "data/JPS.23ad041036.json.gz", "CPDV": "data/CPDV.893aec34d8.json.gz", "Rotherham": "data/Rotherham.ab93419c89.json.gz", "Tyndale": "data/Tyndale.b89e3bce76.json.gz", "Anderson": "data/Anderson.eb66b95257.json.gz", "Haweis": "data/Haweis.ab4b74e830.json.gz", "Noyes": "data/Noyes.7241b8877b.json.gz", "OEB": "data/OEB.4ea7fdedd2.json.gz", "WEB": "data/WEB.ca7fe1c32c.json.gz", "xr": "data/xr.a51e06755d.json.gz", "lex": "data/lex.6caa2f7edb.json.gz", "il0": "data/il0.be46a44f65.json.gz", "il1": "data/il1.da2ca2f39e.json.gz", "il2": "data/il2.a03088da59.json.gz", "il3": "data/il3.d126638d3e.json.gz", "il4": "data/il4.f15b9b518b.json.gz", "il5": "data/il5.0b885925c8.json.gz"};
+try{if(!localStorage.getItem("bl_hl1")){localStorage.setItem("bl_phtr","HLIT");localStorage.setItem("bl_hl1","1");}}catch(e){}
 let DATA={order:[],tr:{},il:{},xr:{},lex:{}},META=null,HOOK=null;
 const LOADED=new Set(),FAILED=new Set(),WAITS=[];
 const DCACHE="bible-data";
 // index worker (word index + Hebrew/Greek + root indexes built off the main thread)
 let IW=null;const IWQ=[];
-const WURL="worker.4b5072c018.js";
+const WURL="worker.1ef424f8dd.js";
 function startWorker(){try{const el=document.getElementById("wsrc");if(!window.Worker||!window.DecompressionStream||location.protocol==="file:")return;
   // website: real file (cached by the service worker); single file: built from the embedded source
   let wu=null;if(WURL)IW=new Worker(WURL);else{if(!el)return;wu=URL.createObjectURL(new Blob([el.textContent],{type:"text/javascript"}));IW=new Worker(wu);}
   IW.onmessage=e=>{if(wu){URL.revokeObjectURL(wu);wu=null;}if(HOOK)HOOK("idx",e.data);else IWQ.push(e.data);};
   IW.onerror=e=>{if(e&&e.preventDefault)e.preventDefault();const m={type:"error",msg:"worker"};if(HOOK)HOOK("idx",m);else IWQ.push(m);};}catch(e){IW=null;}}
 function toWorker(m,tr){if(IW){try{IW.postMessage(m,tr||[]);}catch(e){}}}
+let HLMS=0;
+function hlFrom(il){const t0=performance.now(),T=DATA.tr.HLIT||(DATA.tr.HLIT={});
+  for(const r in il){const a=il[r];let s="";for(let k=0;k<a.length;k++){const g=a[k][1];if(g){const x=g.trim();if(x)s+=(s?" ":"")+x;}}if(s)T[r]=s;}
+  HLMS+=performance.now()-t0;}
 const absU=u=>new URL(u,location.href).href;
+function gunzip(u){const ds=new DecompressionStream("gzip"),w=ds.writable.getWriter();w.write(u).catch(()=>{});w.close().catch(()=>{});return new Response(ds.readable).text();}
 async function unpack(buf){const u=new Uint8Array(buf);let txt;
-  if(u[0]===0x1f&&u[1]===0x8b)txt=await new Response(new Blob([u]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
+  if(u[0]===0x1f&&u[1]===0x8b)txt=await gunzip(u);
   else txt=new TextDecoder().decode(u);
   return JSON.parse(txt);}
 async function getFile(url){let r=null,c=null;
@@ -124,20 +138,23 @@ async function getFile(url){let r=null,c=null;
   if(!r){r=await fetch(url);if(!r.ok)throw new Error("HTTP "+r.status+" "+url);if(c){try{await c.put(url,r.clone());}catch(e){}}}
   return unpack(await r.arrayBuffer());}
 function gotData(k,v){const ilp=/^il\d+$/.test(k);
-  if(ilp){Object.assign(DATA.il,v);}else if(k==="il"||k==="xr"||k==="lex")DATA[k]=v;else DATA.tr[k]=v;LOADED.add(k);
+  if(ilp){Object.assign(DATA.il,v);hlFrom(v);}else if(k==="il"||k==="xr"||k==="lex")DATA[k]=v;else DATA.tr[k]=v;LOADED.add(k);
   if(FILES&&k!=="xr"&&k!=="lex")toWorker(ilp?{cmd:"il",url:absU(FILES[k]),parts:META.ilparts}:{cmd:"tr",url:absU(FILES[k])});
-  if(ilp){for(let j=0;j<META.ilparts;j++)if(!LOADED.has("il"+j))return;k="il";LOADED.add("il");}
-  for(let i=WAITS.length-1;i>=0;i--)if(WAITS[i][0]===k){WAITS[i][1]();WAITS.splice(i,1);}
-  if(HOOK)HOOK(k);}
+  if(ilp){for(let j=0;j<META.ilparts;j++)if(!LOADED.has("il"+j)){if(HOOK)HOOK("ilpart");return;}k="il";LOADED.add("il");LOADED.add("HLIT");}
+  for(let i=WAITS.length-1;i>=0;i--)if(WAITS[i][0]===k||(k==="il"&&WAITS[i][0]==="HLIT")){WAITS[i][1]();WAITS.splice(i,1);}
+  if(HOOK){HOOK(k);if(k==="il")HOOK("HLIT");}}
 function waitFor(k){if(LOADED.has(k))return Promise.resolve();if(FAILED.has(k))return Promise.reject(new Error(k));return new Promise((res,rej)=>WAITS.push([k,res,rej]));}
 async function loadRest(){
   let pref=[];try{pref=[localStorage.getItem("bl_phtr")];}catch(e){}
   const ilp=[];for(let j=0;j<META.ilparts;j++)ilp.push("il"+j);
-  const todo=[...new Set(["WEB","xr","lex",...ilp,...META.order.filter(n=>pref.includes(n)),...META.order])].filter(k=>!LOADED.has(k));
+  const hl=pref.includes("HLIT");
+  // the interlinear part holding a linked verse comes first
+  try{const h=decodeURIComponent(location.hash.slice(1)),i=META.refs.indexOf(h),st=Math.ceil(META.nil/META.ilparts);if(hl&&i>=0&&i<META.nil){const j=Math.floor(i/st);ilp.splice(ilp.indexOf("il"+j),1);ilp.unshift("il"+j);}}catch(e){}
+  const todo=[...new Set([...(hl?ilp:[]),"WEB","xr","lex",...ilp,...META.order.filter(n=>pref.includes(n)),...META.order])].filter(k=>!LOADED.has(k));
   let i=0;
   const worker=async()=>{while(i<todo.length){const k=todo[i++];
     for(let a=0;a<3;a++){try{gotData(k,await getFile(FILES[k]));break;}
-      catch(e){if(a===2){FAILED.add(k);if(/^il\d+$/.test(k))FAILED.add("il");for(let j=WAITS.length-1;j>=0;j--)if(WAITS[j][0]===k||(WAITS[j][0]==="il"&&FAILED.has("il"))){WAITS[j][2](e);WAITS.splice(j,1);}if(HOOK)HOOK("fail");}
+      catch(e){if(a===2){FAILED.add(k);if(/^il\d+$/.test(k)){FAILED.add("il");FAILED.add("HLIT");}for(let j=WAITS.length-1;j>=0;j--)if(WAITS[j][0]===k||((WAITS[j][0]==="il"||WAITS[j][0]==="HLIT")&&FAILED.has("il"))){WAITS[j][2](e);WAITS.splice(j,1);}if(HOOK)HOOK("fail");}
         else await new Promise(r=>setTimeout(r,1500*(a+1)));}}}};
   await Promise.all([worker(),worker()]);
   toWorker({cmd:"finish"});
@@ -153,7 +170,7 @@ async function loadRest(){
       let ch="KJV";try{const c=localStorage.getItem("bl_phtr");if(c&&FILES[c])ch=c;}catch(e){}
       const first=[ch];
       const got=await Promise.all([getFile(FILES.meta),...first.map(n=>getFile(FILES[n]))]);
-      META=got[0];DATA.order=META.order;for(const n of META.order)DATA.tr[n]={};
+      META=got[0];DATA.order=META.order;for(const n of META.order)DATA.tr[n]={};DATA.tr.HLIT={};
       startWorker();toWorker({cmd:"init",refs:META.refs,ntr:META.order.length});
       first.forEach((n,i)=>{DATA.tr[n]=got[i+1];LOADED.add(n);toWorker({cmd:"tr",url:absU(FILES[n])});});
     }else{
@@ -161,15 +178,15 @@ async function loadRest(){
       const buf=new Uint8Array(await (await fetch("data:application/octet-stream;base64,"+b64)).arrayBuffer());
       startWorker();if(IW){const cp=buf.slice(0);toWorker({cmd:"all",bytes:cp.buffer},[cp.buffer]);}
       const all=await unpack(buf);
-      META={order:all.order,refs:all.refs,nil:all.nil};DATA={order:all.order,tr:all.tr,il:all.il,xr:all.xr,lex:all.lex};
-      for(const k of ["il","xr","lex",...all.order])LOADED.add(k);
+      META={order:all.order,refs:all.refs,nil:all.nil};DATA={order:all.order,tr:all.tr,il:all.il,xr:all.xr,lex:all.lex};hlFrom(all.il);
+      for(const k of ["il","HLIT","xr","lex",...all.order])LOADED.add(k);
     }
   }catch(e){out.innerHTML="<div class='card'>This page couldn't open the Bible data. Check your internet connection and open it again. If it keeps happening, update iOS and use Safari.</div>";return;}
   boot();
   if(FILES)loadRest();
 })();
 function boot(){
-const NAMES={KJV:"King James",AKJV:"American King James",ASV:"American Standard",Webster:"Webster",RWebster:"Revised Webster",Darby:"Darby",YLT:"Young's Literal",Geneva:"Geneva 1599",Wycliffe:"Wycliffe",BBE:"Basic English",DRC:"Douay-Rheims",JPS:"JPS 1917",CPDV:"Catholic Public Domain",Rotherham:"Rotherham",Tyndale:"Tyndale",Anderson:"Anderson",Haweis:"Haweis",Noyes:"Noyes",OEB:"Open English",WEB:"World English"};
+const NAMES={HLIT:"Hyperliteral",KJV:"King James",AKJV:"American King James",ASV:"American Standard",Webster:"Webster",RWebster:"Revised Webster",Darby:"Darby",YLT:"Young's Literal",Geneva:"Geneva 1599",Wycliffe:"Wycliffe",BBE:"Basic English",DRC:"Douay-Rheims",JPS:"JPS 1917",CPDV:"Catholic Public Domain",Rotherham:"Rotherham",Tyndale:"Tyndale",Anderson:"Anderson",Haweis:"Haweis",Noyes:"Noyes",OEB:"Open English",WEB:"World English"};
 const SYN={"pure":["pure","clean","cleanse","cleansed","cleanseth","purify","purified"],"clean":["pure","clean","cleanse","cleansed","cleanseth","purify","purified"],"cleanse":["pure","clean","cleanse","cleansed","cleanseth","purify","purified"],"cleansed":["pure","clean","cleanse","cleansed","cleanseth","purify","purified"],"cleanseth":["pure","clean","cleanse","cleansed","cleanseth","purify","purified"],"purify":["pure","clean","cleanse","cleansed","cleanseth","purify","purified"],"purified":["pure","clean","cleanse","cleansed","cleanseth","purify","purified"],"keep":["keep","keeping","kept","heed","heeding","observe","guard","guide","guiding"],"keeping":["keep","keeping","kept","heed","heeding","observe","guard","guide","guiding"],"kept":["keep","keeping","kept","heed","heeding","observe","guard","guide","guiding"],"heed":["keep","keeping","kept","heed","heeding","observe","guard","guide","guiding"],"heeding":["keep","keeping","kept","heed","heeding","observe","guard","guide","guiding"],"observe":["keep","keeping","kept","heed","heeding","observe","guard","guide","guiding"],"guard":["keep","keeping","kept","heed","heeding","observe","guard","guide","guiding"],"guide":["keep","keeping","kept","heed","heeding","observe","guard","guide","guiding"],"guiding":["keep","keeping","kept","heed","heeding","observe","guard","guide","guiding"],"way":["way","ways","path","paths","life","walk"],"ways":["way","ways","path","paths","life","walk"],"path":["way","ways","path","paths","life","walk"],"paths":["way","ways","path","paths","life","walk"],"life":["way","ways","path","paths","life","walk","live","lived","liveth","alive"],"walk":["way","ways","path","paths","life","walk"],"young":["young","youth","youths","adolescent"],"youth":["young","youth","youths","adolescent"],"youths":["young","youth","youths","adolescent"],"adolescent":["young","youth","youths","adolescent"],"man":["man","person","men","husband"],"person":["man","person","men"],"men":["man","person","men"],"word":["word","words","saying","sayings"],"words":["word","words","saying","sayings"],"saying":["word","words","saying","sayings"],"sayings":["word","words","saying","sayings"],"lord":["lord","jehovah","yahweh","hashem"],"jehovah":["lord","jehovah","yahweh","hashem"],"yahweh":["lord","jehovah","yahweh","hashem"],"hashem":["lord","jehovah","yahweh","hashem"],"god":["god","gods"],"gods":["god","gods"],"forgive":["forgive","forgiven","forgiveness","forgiveth","pardon","pardoned","remit","remission","release"],"forgiven":["forgive","forgiven","forgiveness","forgiveth","pardon","pardoned","remit","remission","release"],"forgiveness":["forgive","forgiven","forgiveness","forgiveth","pardon","pardoned","remit","remission","release"],"forgiveth":["forgive","forgiven","forgiveness","forgiveth","pardon","pardoned","remit","remission","release"],"pardon":["forgive","forgiven","forgiveness","forgiveth","pardon","pardoned","remit","remission","release"],"pardoned":["forgive","forgiven","forgiveness","forgiveth","pardon","pardoned","remit","remission","release"],"remit":["forgive","forgiven","forgiveness","forgiveth","pardon","pardoned","remit","remission","release"],"remission":["forgive","forgiven","forgiveness","forgiveth","pardon","pardoned","remit","remission","release"],"release":["forgive","forgiven","forgiveness","forgiveth","pardon","pardoned","remit","remission","release"],"sin":["sin","sins","sinned","iniquity","iniquities","transgression","transgressions","trespass","trespasses","wickedness"],"sins":["sin","sins","sinned","iniquity","iniquities","transgression","transgressions","trespass","trespasses","wickedness"],"sinned":["sin","sins","sinned","iniquity","iniquities","transgression","transgressions","trespass","trespasses","wickedness"],"iniquity":["sin","sins","sinned","iniquity","iniquities","transgression","transgressions","trespass","trespasses","wickedness"],"iniquities":["sin","sins","sinned","iniquity","iniquities","transgression","transgressions","trespass","trespasses","wickedness"],"transgression":["sin","sins","sinned","iniquity","iniquities","transgression","transgressions","trespass","trespasses","wickedness"],"transgressions":["sin","sins","sinned","iniquity","iniquities","transgression","transgressions","trespass","trespasses","wickedness"],"trespass":["sin","sins","sinned","iniquity","iniquities","transgression","transgressions","trespass","trespasses","wickedness"],"trespasses":["sin","sins","sinned","iniquity","iniquities","transgression","transgressions","trespass","trespasses","wickedness"],"wickedness":["sin","sins","sinned","iniquity","iniquities","transgression","transgressions","trespass","trespasses","wickedness"],"fear":["fear","afraid","fearful","dread","terror","terrified","fearing"],"afraid":["fear","afraid","fearful","dread","terror","terrified","fearing"],"fearful":["fear","afraid","fearful","dread","terror","terrified","fearing"],"dread":["fear","afraid","fearful","dread","terror","terrified","fearing"],"terror":["fear","afraid","fearful","dread","terror","terrified","fearing"],"terrified":["fear","afraid","fearful","dread","terror","terrified","fearing"],"fearing":["fear","afraid","fearful","dread","terror","terrified","fearing"],"love":["love","loved","loveth","loving","charity","beloved"],"loved":["love","loved","loveth","loving","charity","beloved"],"loveth":["love","loved","loveth","loving","charity","beloved"],"loving":["love","loved","loveth","loving","charity","beloved"],"charity":["love","loved","loveth","loving","charity","beloved"],"beloved":["love","loved","loveth","loving","charity","beloved"],"hate":["hate","hated","hateth","hatred"],"hated":["hate","hated","hateth","hatred"],"hateth":["hate","hated","hateth","hatred"],"hatred":["hate","hated","hateth","hatred"],"peace":["peace","rest","quiet"],"rest":["peace","rest","quiet"],"quiet":["peace","rest","quiet"],"joy":["joy","glad","gladness","rejoice","rejoiceth","happy","blessed","delight"],"glad":["joy","glad","gladness","rejoice","rejoiceth","happy","blessed","delight"],"gladness":["joy","glad","gladness","rejoice","rejoiceth","happy","blessed","delight"],"rejoice":["joy","glad","gladness","rejoice","rejoiceth","happy","blessed","delight"],"rejoiceth":["joy","glad","gladness","rejoice","rejoiceth","happy","blessed","delight"],"happy":["joy","glad","gladness","rejoice","rejoiceth","happy","blessed","delight"],"blessed":["joy","glad","gladness","rejoice","rejoiceth","happy","blessed","delight"],"delight":["joy","glad","gladness","rejoice","rejoiceth","happy","blessed","delight"],"sad":["sad","sorrow","sorrowful","grief","grieved","mourn","mourning","weep","wept"],"sorrow":["sad","sorrow","sorrowful","grief","grieved","mourn","mourning","weep","wept"],"sorrowful":["sad","sorrow","sorrowful","grief","grieved","mourn","mourning","weep","wept"],"grief":["sad","sorrow","sorrowful","grief","grieved","mourn","mourning","weep","wept"],"grieved":["sad","sorrow","sorrowful","grief","grieved","mourn","mourning","weep","wept"],"mourn":["sad","sorrow","sorrowful","grief","grieved","mourn","mourning","weep","wept"],"mourning":["sad","sorrow","sorrowful","grief","grieved","mourn","mourning","weep","wept"],"weep":["sad","sorrow","sorrowful","grief","grieved","mourn","mourning","weep","wept"],"wept":["sad","sorrow","sorrowful","grief","grieved","mourn","mourning","weep","wept"],"anger":["anger","angry","wrath","fury","indignation"],"angry":["anger","angry","wrath","fury","indignation"],"wrath":["anger","angry","wrath","fury","indignation"],"fury":["anger","angry","wrath","fury","indignation"],"indignation":["anger","angry","wrath","fury","indignation"],"worry":["worry","anxious","careful","troubled","care","anxiety"],"anxious":["worry","anxious","careful","troubled","care","anxiety"],"careful":["worry","anxious","careful","troubled","care","anxiety"],"troubled":["worry","anxious","careful","troubled","care"],"care":["worry","anxious","careful","troubled","care"],"strength":["strength","strong","strengthen","might","mighty","power"],"strong":["strength","strong","strengthen","might","mighty","power"],"strengthen":["strength","strong","strengthen","might","mighty","power"],"might":["strength","strong","strengthen","might","mighty","power"],"mighty":["strength","strong","strengthen","might","mighty","power"],"power":["strength","strong","strengthen","might","mighty","power"],"help":["help","helper","aid","succour","deliver","deliverer","save","saved"],"helper":["help","helper","aid","succour","deliver","deliverer","save","saved"],"aid":["help","helper","aid","succour","deliver","deliverer","save","saved"],"succour":["help","helper","aid","succour","deliver","deliverer","save","saved"],"deliver":["help","helper","aid","succour","deliver","deliverer","save","saved"],"deliverer":["help","helper","aid","succour","deliver","deliverer","save","saved"],"save":["help","helper","aid","succour","deliver","deliverer","save","saved","salvation","saviour","deliverance","rescue"],"saved":["help","helper","aid","succour","deliver","deliverer","save","saved","salvation","saviour","deliverance","rescue"],"salvation":["salvation","saved","save","saviour","deliverance","rescue"],"saviour":["salvation","saved","save","saviour","deliverance","rescue"],"deliverance":["salvation","saved","save","saviour","deliverance","rescue"],"rescue":["salvation","saved","save","saviour","deliverance","rescue"],"money":["money","silver","riches","wealth","rich","treasure","mammon"],"silver":["money","silver","riches","wealth","rich","treasure","mammon"],"riches":["money","silver","riches","wealth","rich","treasure","mammon"],"wealth":["money","silver","riches","wealth","rich","treasure","mammon"],"rich":["money","silver","riches","wealth","rich","treasure","mammon"],"treasure":["money","silver","riches","wealth","rich","treasure","mammon"],"mammon":["money","silver","riches","wealth","rich","treasure","mammon"],"poor":["poor","needy","afflicted","oppressed"],"needy":["poor","needy","afflicted","oppressed"],"afflicted":["poor","needy","afflicted","oppressed"],"oppressed":["poor","needy","afflicted","oppressed"],"wise":["wise","wisdom","understanding","prudent","knowledge"],"wisdom":["wise","wisdom","understanding","prudent","knowledge"],"understanding":["wise","wisdom","understanding","prudent","knowledge"],"prudent":["wise","wisdom","understanding","prudent","knowledge"],"knowledge":["wise","wisdom","understanding","prudent","knowledge"],"fool":["fool","foolish","folly","fools"],"foolish":["fool","foolish","folly","fools"],"folly":["fool","foolish","folly","fools"],"fools":["fool","foolish","folly","fools"],"pray":["pray","prayer","prayed","prayeth","supplication","ask","asked","seek"],"prayer":["pray","prayer","prayed","prayeth","supplication","ask","asked","seek"],"prayed":["pray","prayer","prayed","prayeth","supplication","ask","asked","seek"],"prayeth":["pray","prayer","prayed","prayeth","supplication","ask","asked","seek"],"supplication":["pray","prayer","prayed","prayeth","supplication","ask","asked","seek"],"ask":["pray","prayer","prayed","prayeth","supplication","ask","asked","seek"],"asked":["pray","prayer","prayed","prayeth","supplication","ask","asked","seek"],"seek":["pray","prayer","prayed","prayeth","supplication","ask","asked","seek"],"faith":["faith","believe","believed","believeth","trust","trusted","faithful"],"believe":["faith","believe","believed","believeth","trust","trusted","faithful"],"believed":["faith","believe","believed","believeth","trust","trusted","faithful"],"believeth":["faith","believe","believed","believeth","trust","trusted","faithful"],"trust":["faith","believe","believed","believeth","trust","trusted","faithful"],"trusted":["faith","believe","believed","believeth","trust","trusted","faithful"],"faithful":["faith","believe","believed","believeth","trust","trusted","faithful"],"hope":["hope","hoped","wait","waited","expectation"],"hoped":["hope","hoped","wait","waited","expectation"],"wait":["hope","hoped","wait","waited","expectation"],"waited":["hope","hoped","wait","waited","expectation"],"expectation":["hope","hoped","wait","waited","expectation"],"death":["death","die","died","dead","perish","perished"],"die":["death","die","died","dead","perish","perished"],"died":["death","die","died","dead","perish","perished"],"dead":["death","die","died","dead","perish","perished"],"perish":["death","die","died","dead","perish","perished"],"perished":["death","die","died","dead","perish","perished"],"live":["life","live","lived","liveth","alive"],"lived":["life","live","lived","liveth","alive"],"liveth":["life","live","lived","liveth","alive"],"alive":["life","live","lived","liveth","alive"],"heaven":["heaven","heavens","sky"],"heavens":["heaven","heavens","sky"],"sky":["heaven","heavens","sky"],"hell":["hell","sheol","grave","hades","pit"],"sheol":["hell","sheol","grave","hades","pit"],"grave":["hell","sheol","grave","hades","pit"],"hades":["hell","sheol","grave","hades","pit"],"pit":["hell","sheol","grave","hades","pit"],"devil":["devil","satan","adversary","evil"],"satan":["devil","satan","adversary","evil"],"adversary":["devil","satan","adversary","evil"],"evil":["devil","satan","adversary","evil"],"angel":["angel","angels","messenger","messengers"],"angels":["angel","angels","messenger","messengers"],"messenger":["angel","angels","messenger","messengers"],"messengers":["angel","angels","messenger","messengers"],"king":["king","kings","ruler","rulers"],"kings":["king","kings","ruler","rulers"],"ruler":["king","kings","ruler","rulers"],"rulers":["king","kings","ruler","rulers"],"kingdom":["kingdom","reign","dominion"],"reign":["kingdom","reign","dominion"],"dominion":["kingdom","reign","dominion"],"children":["children","child","son","sons","daughter","daughters","seed","offspring"],"child":["children","child","son","sons","daughter","daughters","seed","offspring"],"son":["children","child","son","sons","daughter","daughters","seed","offspring"],"sons":["children","child","son","sons","daughter","daughters","seed","offspring"],"daughter":["children","child","son","sons","daughter","daughters","seed","offspring"],"daughters":["children","child","son","sons","daughter","daughters","seed","offspring"],"seed":["children","child","son","sons","daughter","daughters","seed","offspring"],"offspring":["children","child","son","sons","daughter","daughters","seed","offspring"],"wife":["wife","woman","women","wives"],"woman":["wife","woman","women","wives"],"women":["wife","woman","women","wives"],"wives":["wife","woman","women","wives"],"husband":["husband","man"],"marriage":["marriage","marry","married","wed","bride","bridegroom"],"marry":["marriage","marry","married","wed","bride","bridegroom"],"married":["marriage","marry","married","wed","bride","bridegroom"],"wed":["marriage","marry","married","wed","bride","bridegroom"],"bride":["marriage","marry","married","wed","bride","bridegroom"],"bridegroom":["marriage","marry","married","wed","bride","bridegroom"],"work":["work","works","labour","labor","toil","deeds"],"works":["work","works","labour","labor","toil","deeds"],"labour":["work","works","labour","labor","toil","deeds"],"labor":["work","works","labour","labor","toil","deeds"],"toil":["work","works","labour","labor","toil","deeds"],"deeds":["work","works","labour","labor","toil","deeds"],"give":["give","gave","given","giveth","offer","offering"],"gave":["give","gave","given","giveth","offer","offering"],"given":["give","gave","given","giveth","offer","offering"],"giveth":["give","gave","given","giveth","offer","offering"],"offer":["give","gave","given","giveth","offer","offering"],"offering":["give","gave","given","giveth","offer","offering","sacrifice","sacrifices","offerings","burnt"],"grace":["grace","favour","favor","mercy","kindness","lovingkindness"],"favour":["grace","favour","favor","mercy","kindness","lovingkindness"],"favor":["grace","favour","favor","mercy","kindness","lovingkindness"],"mercy":["grace","favour","favor","mercy","kindness","lovingkindness"],"kindness":["grace","favour","favor","mercy","kindness","lovingkindness"],"lovingkindness":["grace","favour","favor","mercy","kindness","lovingkindness"],"truth":["truth","true","faithfulness","verily"],"true":["truth","true","faithfulness","verily"],"faithfulness":["truth","true","faithfulness","verily"],"verily":["truth","true","faithfulness","verily"],"lie":["lie","lies","lying","false","deceit","liar"],"lies":["lie","lies","lying","false","deceit","liar"],"lying":["lie","lies","lying","false","deceit","liar"],"false":["lie","lies","lying","false","deceit","liar"],"deceit":["lie","lies","lying","false","deceit","liar"],"liar":["lie","lies","lying","false","deceit","liar"],"holy":["holy","sanctify","sanctified","saint","saints","consecrate"],"sanctify":["holy","sanctify","sanctified","saint","saints","consecrate"],"sanctified":["holy","sanctify","sanctified","saint","saints","consecrate"],"saint":["holy","sanctify","sanctified","saint","saints","consecrate"],"saints":["holy","sanctify","sanctified","saint","saints","consecrate"],"consecrate":["holy","sanctify","sanctified","saint","saints","consecrate"],"righteous":["righteous","righteousness","just","justice","upright"],"righteousness":["righteous","righteousness","just","justice","upright"],"just":["righteous","righteousness","just","justice","upright"],"justice":["righteous","righteousness","just","justice","upright"],"upright":["righteous","righteousness","just","justice","upright"],"judge":["judge","judgment","judgement","judged","condemn"],"judgment":["judge","judgment","judgement","judged","condemn"],"judgement":["judge","judgment","judgement","judged","condemn"],"judged":["judge","judgment","judgement","judged","condemn"],"condemn":["judge","judgment","judgement","judged","condemn"],"heart":["heart","hearts","mind","soul"],"hearts":["heart","hearts","mind","soul"],"mind":["heart","hearts","mind","soul"],"soul":["heart","hearts","mind","soul"],"eat":["eat","ate","eaten","bread","food","meat"],"ate":["eat","ate","eaten","bread","food","meat"],"eaten":["eat","ate","eaten","bread","food","meat"],"bread":["eat","ate","eaten","bread","food","meat"],"food":["eat","ate","eaten","bread","food","meat"],"meat":["eat","ate","eaten","bread","food","meat"],"drink":["drink","wine","water","waters","thirst"],"wine":["drink","wine","water","waters","thirst"],"water":["drink","wine","water","waters","thirst"],"waters":["drink","wine","water","waters","thirst"],"thirst":["drink","wine","water","waters","thirst"],"light":["light","lamp","shine","shineth"],"lamp":["light","lamp","shine","shineth"],"shine":["light","lamp","shine","shineth"],"shineth":["light","lamp","shine","shineth"],"dark":["dark","darkness","night"],"darkness":["dark","darkness","night"],"night":["dark","darkness","night"],"shepherd":["shepherd","shepherds","pastor","pastors","flock","sheep"],"shepherds":["shepherd","shepherds","pastor","pastors","flock","sheep"],"pastor":["shepherd","shepherds","pastor","pastors","flock","sheep"],"pastors":["shepherd","shepherds","pastor","pastors","flock","sheep"],"flock":["shepherd","shepherds","pastor","pastors","flock","sheep"],"sheep":["shepherd","shepherds","pastor","pastors","flock","sheep"],"temple":["temple","house","sanctuary","tabernacle"],"house":["temple","house","sanctuary","tabernacle"],"sanctuary":["temple","house","sanctuary","tabernacle"],"tabernacle":["temple","house","sanctuary","tabernacle"],"sacrifice":["sacrifice","sacrifices","offering","offerings","burnt"],"sacrifices":["sacrifice","sacrifices","offering","offerings","burnt"],"offerings":["sacrifice","sacrifices","offering","offerings","burnt"],"burnt":["sacrifice","sacrifices","offering","offerings","burnt"],"spirit":["spirit","ghost","breath","wind"],"ghost":["spirit","ghost","breath","wind"],"breath":["spirit","ghost","breath","wind"],"wind":["spirit","ghost","breath","wind"],"comfort":["comfort","comforted","comforter","console","encourage"],"comforted":["comfort","comforted","comforter","console","encourage"],"comforter":["comfort","comforted","comforter","console","encourage"],"console":["comfort","comforted","comforter","console","encourage"],"encourage":["comfort","comforted","comforter","console","encourage"],"patience":["patience","patient","endure","endured","endurance","longsuffering","perseverance"],"patient":["patience","patient","endure","endured","endurance","longsuffering","perseverance"],"endure":["patience","patient","endure","endured","endurance","longsuffering","perseverance"],"endured":["patience","patient","endure","endured","endurance","longsuffering","perseverance"],"endurance":["patience","patient","endure","endured","endurance","longsuffering","perseverance"],"longsuffering":["patience","patient","endure","endured","endurance","longsuffering","perseverance"],"perseverance":["patience","patient","endure","endured","endurance","longsuffering","perseverance"],"humble":["humble","humility","meek","lowly"],"humility":["humble","humility","meek","lowly"],"meek":["humble","humility","meek","lowly"],"lowly":["humble","humility","meek","lowly"],"proud":["proud","pride","arrogant","haughty"],"pride":["proud","pride","arrogant","haughty"],"arrogant":["proud","pride","arrogant","haughty"],"haughty":["proud","pride","arrogant","haughty"],"tongue":["tongue","speech","mouth","lips"],"speech":["tongue","speech","mouth","lips"],"mouth":["tongue","speech","mouth","lips"],"lips":["tongue","speech","mouth","lips"],"anxiety":["anxiety","anxious","careful","worry"],"sick":["sick","sickness","disease","heal","healed","healing"],"sickness":["sick","sickness","disease","heal","healed","healing"],"disease":["sick","sickness","disease","heal","healed","healing"],"heal":["sick","sickness","disease","heal","healed","healing"],"healed":["sick","sickness","disease","heal","healed","healing"],"healing":["sick","sickness","disease","heal","healed","healing"]};
 const STOP=new Set("a an the of to and or in on by his her their thy your how can shall may what who is be for with from".split(" "));
 const BOOKS={gen:"Gen",genesis:"Gen",ex:"Exod",exod:"Exod",exodus:"Exod",lev:"Lev",leviticus:"Lev",num:"Num",numbers:"Num",deut:"Deut",deuteronomy:"Deut",josh:"Josh",joshua:"Josh",judg:"Judg",judges:"Judg",ruth:"Ruth","1sam":"1Sam","1samuel":"1Sam","2sam":"2Sam","2samuel":"2Sam","1kgs":"1Kgs","1kings":"1Kgs","2kgs":"2Kgs","2kings":"2Kgs","1chr":"1Chr","1chronicles":"1Chr","2chr":"2Chr","2chronicles":"2Chr",ezra:"Ezra",neh:"Neh",nehemiah:"Neh",esth:"Esth",esther:"Esth",job:"Job",ps:"Ps",psa:"Ps",psalm:"Ps",psalms:"Ps",prov:"Prov",proverbs:"Prov",eccl:"Eccl",ecclesiastes:"Eccl",song:"Song",songofsolomon:"Song",songofsongs:"Song",isa:"Isa",isaiah:"Isa",jer:"Jer",jeremiah:"Jer",lam:"Lam",lamentations:"Lam",ezek:"Ezek",ezekiel:"Ezek",dan:"Dan",daniel:"Dan",hos:"Hos",hosea:"Hos",joel:"Joel",amos:"Amos",obad:"Obad",obadiah:"Obad",jonah:"Jonah",mic:"Mic",micah:"Mic",nah:"Nah",nahum:"Nah",hab:"Hab",habakkuk:"Hab",zeph:"Zeph",zephaniah:"Zeph",hag:"Hag",haggai:"Hag",zech:"Zech",zechariah:"Zech",mal:"Mal",malachi:"Mal",matt:"Matt",mt:"Matt",matthew:"Matt",mark:"Mark",mk:"Mark",luke:"Luke",lk:"Luke",john:"John",jn:"John",acts:"Acts",rom:"Rom",romans:"Rom","1cor":"1Cor","1corinthians":"1Cor","2cor":"2Cor","2corinthians":"2Cor",gal:"Gal",galatians:"Gal",eph:"Eph",ephesians:"Eph",phil:"Phil",philippians:"Phil",col:"Col",colossians:"Col","1thess":"1Thess","1thessalonians":"1Thess","2thess":"2Thess","2thessalonians":"2Thess","1tim":"1Tim","1timothy":"1Tim","2tim":"2Tim","2timothy":"2Tim",titus:"Titus",phlm:"Phlm",philemon:"Phlm",heb:"Heb",hebrews:"Heb",jas:"Jas",james:"Jas","1pet":"1Pet","1peter":"1Pet","2pet":"2Pet","2peter":"2Pet","1john":"1John","2john":"2John","3john":"3John",jude:"Jude",rev:"Rev",revelation:"Rev"};
@@ -231,7 +248,9 @@ function phStep(n,ms){let s=PHB[n];if(!s)s=PHB[n]={k:0,parts:[],starts:[],ids:[]
     if(ms&&(s.k&127)===0&&performance.now()-t0>ms)return false;}
   delete PHB[n];PH[n]={big:"\n"+s.parts.join("\n")+"\n",starts:Int32Array.from(s.starts),ids:Int32Array.from(s.ids)};return true;}
 function phIdle(n){if(PH[n]||PHI.has(n)||!LOADED.has(n))return;PHI.add(n);const tick=()=>{if(PH[n]){PHI.delete(n);return;}if(phStep(n,8))PHI.delete(n);else setTimeout(tick,30);};setTimeout(tick,150);}
-function phTr(){const n=localStorage.getItem("bl_phtr");return n&&DATA.order.includes(n)?n:"KJV";}
+function phTr(){const n=localStorage.getItem("bl_phtr");return n&&(n==="HLIT"||DATA.order.includes(n))?n:"HLIT";}
+// every translation offered to the reader: Hyperliteral (built from the interlinear) first
+const ALLTR=()=>["HLIT",...DATA.order];
 async function ensurePh(n){if(!LOADED.has(n)){try{await waitFor(n);}catch(e){return false;}}if(!PH[n])phStep(n,0);return true;}
 function phraseHits(n,words,f){const P=PH[n],pass=passer(f),ids=[];let all=0,ot=0,nt=0;if(!P||!words.length)return {ids,all,ot,nt};
   const nd=" "+words.join(" ")+" ",S=P.starts,big=P.big;let pos=0;
@@ -339,7 +358,7 @@ const $=id=>document.getElementById(id);
 const trLoaded=()=>DATA.order.filter(n=>LOADED.has(n));
 // one translation at a time (chosen with a long-press, default King James)
 function shown(){return [phTr()];}
-function firstTr(r){return shown().find(n=>DATA.tr[n][r])||DATA.order.find(n=>DATA.tr[n][r]);}
+function firstTr(r){return shown().find(n=>DATA.tr[n]&&DATA.tr[n][r])||(DATA.tr.KJV&&DATA.tr.KJV[r]?"KJV":null)||DATA.order.find(n=>DATA.tr[n][r]);}
 function textOf(r){const n=firstTr(r);return n?DATA.tr[n][r]:"";}
 // ---- small helpers
 let CUR=[],LAST=null,VIEW=null;
@@ -347,7 +366,7 @@ function setView(v,keepSheet){VIEW=v;document.body.classList.toggle("v-home",v.t
 function jget(k,d){try{const v=JSON.parse(localStorage.getItem(k)||"null");return v==null?d:v;}catch(e){return d;}}
 function jset(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 // remove saved data from features that no longer exist
-(()=>{const KEEP=new Set(["bl_filter","bl_theme","bl_fs","bl_recent","bl_phtr","bl_tips"]);
+(()=>{const KEEP=new Set(["bl_filter","bl_theme","bl_fs","bl_recent","bl_phtr","bl_tips","bl_hl1"]);
   try{if(localStorage.getItem("bl_dark")==="1"&&!localStorage.getItem("bl_theme"))localStorage.setItem("bl_theme","dark");
     const ks=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith("bl_")&&!KEEP.has(k))ks.push(k);}ks.forEach(k=>localStorage.removeItem(k));}catch(e){}})();
 // ---- first-visit hints (bl_tips: 0 = show long-press hint, 1 = show corner hint, 2 = done)
@@ -368,8 +387,8 @@ function trSheet(){const cur=phTr(),v=VIEW||{};const r=v.ref;let html="";
   if(v.t==="verse"&&r) html+=`<div class="st">${esc(refName(r))}</div>`;
   else if(v.t==="chapter") html+=`<div class="st">${esc(chapName(v.ref))}</div>`;
   else html+=`<div class="st">Translation</div>`;
-  html+=DATA.order.map(n=>it(`data-tr="${n}"`,(NAMES[n]||n)+(n===cur?" ✓":""),false)).join("");
-  if(v.t==="verse"&&r){html+=`<div class="gap"></div>`+it(`data-act="cmp"`,v.cmp?"Show one translation":"Compare all translations")+it(`data-act="copy"`,"Copy")+it(`data-act="img"`,"Share as image")+it(`data-act="chap"`,"Open chapter")+it(`data-act="il"`,"Hebrew / Greek and related verses");}
+  html+=ALLTR().map(n=>it(`data-tr="${n}"`,(NAMES[n]||n)+(n===cur?" ✓":""),false)).join("");
+  if(v.t==="verse"&&r){html+=`<div class="gap"></div>`+it(`data-act="cmp"`,v.cmp?"Show one translation":"Compare all translations")+it(`data-act="copy"`,"Copy")+it(`data-act="img"`,"Share as image")+it(`data-act="chap"`,"Open chapter")+it(`data-act="il"`,isHl(r)?"Related verses":"Hebrew / Greek and related verses");}
   if(v.t==="chapter"){html+=`<div class="gap"></div>`+(v.tn2?it(`data-act="nocmp"`,"Stop comparing"):it(`data-act="cmp2"`,"Side by side with…"));}
   html+=`<div class="gap"></div>`+it(`data-act="settings"`,"Settings");
   openSheet(html,"tr");tipUsed(1);
@@ -384,7 +403,7 @@ function trSheet(){const cur=phTr(),v=VIEW||{};const r=v.ref;let html="";
     else if(k==="settings")settingsSheet();
     else if(k==="nocmp")showChapter(v.ref,v.tn,"");
     else if(k==="cmp2")pick2();});}
-function pick2(){const v=VIEW;openSheet(`<div class="st">Side by side with</div>`+DATA.order.filter(n=>n!==phTr()).map(n=>it(`data-t2="${n}"`,NAMES[n]||n)).join(""),"tr2");
+function pick2(){const v=VIEW;openSheet(`<div class="st">Side by side with</div>`+ALLTR().filter(n=>n!==phTr()).map(n=>it(`data-t2="${n}"`,NAMES[n]||n)).join(""),"tr2");
   $("sheetbox").querySelectorAll("[data-t2]").forEach(a=>a.onclick=()=>{closeSheet();showChapter(v.ref,undefined,a.dataset.t2);});}
 async function setTr(n){try{localStorage.setItem("bl_phtr",n);}catch(e){}closeSheet();
   if(!LOADED.has(n)){toast("Loading "+(NAMES[n]||n)+"…");try{await waitFor(n);}catch(e){toast("That translation couldn't download");return;}}
@@ -426,13 +445,14 @@ function chapName(r){const m=chapterOf(r).match(/^(.*) (\d+)$/);return (FULL[m[1
 function showChapter(ref,tn,tn2){
   setView({t:"chapter",ref});
   const ch=chapterOf(ref);const refs=ORDERREFS.filter(r=>chapterOf(r)===ch);
-  const avail=DATA.order.filter(n=>refs.some(r=>DATA.tr[n][r]));
-  tn=tn&&avail.includes(tn)?tn:(avail.includes(phTr())?phTr():avail[0]);
+  const avail=ALLTR().filter(n=>DATA.tr[n]&&refs.some(r=>DATA.tr[n][r]));
+  tn=tn&&avail.includes(tn)?tn:(avail.includes(phTr())?phTr():avail.includes("KJV")?"KJV":avail[0]);
   if(tn2&&(!avail.includes(tn2)||tn2===tn))tn2="";
   VIEW.tn=tn;VIEW.tn2=tn2||"";
   let html=`<div class="chap"><h2>${esc(chapName(ref))}</h2>`;
   for(const r of refs){const t=DATA.tr[tn][r]||"";const t2=tn2?(DATA.tr[tn2][r]||""):"";if(!t&&!t2)continue;
-    html+=`<p data-go="${r}" class="${r===ref?"cur":""}"><sup>${r.split(":")[1]}</sup>${esc(t)}${tn2?`<span class="c2">${esc(t2||"—")}</span>`:""}</p>`;}
+    const vn=`<sup>${r.split(":")[1]}</sup>`;
+    html+=`<p data-go="${r}" class="${r===ref?"cur":""}${tn==="HLIT"?" hlp":""}">${tn==="HLIT"?esc(t)+vn:vn+esc(t)}${tn2?`<span class="c2">${esc(t2||"—")}</span>`:""}</p>`;}
   html+=`<div class="sub" style="margin-top:28px">${esc(NAMES[tn]||tn)}${tn2?" · "+esc(NAMES[tn2]||tn2):""}</div></div>`;
   $("out").innerHTML=html;
   const c=$("out").querySelector(".cur");if(c&&c.dataset.go!==refs[0])c.scrollIntoView({block:"center"});else window.scrollTo(0,0);
@@ -458,7 +478,7 @@ function drawCard(r,n){const c=document.createElement("canvas");c.width=1080;c.h
   x.font=`26px ${SANS}`;x.fillText(NAMES[n]||n,540,952);
   return c;}
 function canShareFiles(){try{return !!(navigator.canShare&&navigator.canShare({files:[new File(["x"],"x.png",{type:"image/png"})]}));}catch(e){return false;}}
-function openShare(r){const all=DATA.order.filter(n=>DATA.tr[n][r]);if(!all.length)return;
+function openShare(r){const all=ALLTR().filter(n=>DATA.tr[n]&&DATA.tr[n][r]);if(!all.length)return;
   let n=all.includes(phTr())?phTr():all[0];
   openSheet(`<div class="st">${esc(refName(r))}</div><img id="shimg" alt="Verse picture"><a class="it" id="shgo">${canShareFiles()?"Share…":"Save picture"}</a><a class="it" id="shtr">Translation: ${esc(NAMES[n]||n)}</a>`,"share");
   const draw=()=>{const c=drawCard(r,n);$("shimg").src=c.toDataURL("image/png");SHARE=null;c.toBlob(b=>{if(b)SHARE=new File([b],`${r.replace(/[ :]+/g,"-")}.png`,{type:"image/png"});},"image/png");};
@@ -470,13 +490,23 @@ function openShare(r){const all=DATA.order.filter(n=>DATA.tr[n][r]);if(!all.leng
 // ---- the verse (one translation, centred; tap to reveal the Hebrew/Greek and related verses)
 let HID=0;const CTXS=new Map();let PHS=null,ILON=false;
 function verseHtml(r,n,phr){let t=DATA.tr[n]&&DATA.tr[n][r];if(!t)return "";t=plainText(t);return phr?markPhrase(t,phr):esc(t);}
-function ilHtml(r){const il=DATA.il[r]||[];let html="";
-  if(il.length){html+=`<div class="il">`;il.forEach(x=>{const i=CUR.length;CUR.push(x);html+=`<span class="w" data-i="${i}"><span class="o">${esc(x[0])}</span><span class="g">${esc(x[1])}</span></span>`;});html+=`</div>`;}
-  else if(!LOADED.has("il")&&!FAILED.has("il")) html+=`<div class="note">Hebrew and Greek are still loading…</div>`;
+// Hyperliteral on the main verse: a centred flow of word stacks (gloss above, Hebrew/Greek below); Hebrew flows right to left
+function isHl(r){return phTr()==="HLIT"&&!!(DATA.il[r]&&DATA.il[r].length&&DATA.tr.HLIT&&DATA.tr.HLIT[r]);}
+function isOT(r){return OTSET.has(bookOf(r));}
+function hlMarks(il,words){const tk=[];il.forEach((x,k)=>{for(const t of phNorm(x[1]||"").split(" "))if(t)tk.push([k,t]);});const m=new Set(),n=words.length;
+  for(let i=0;i+n<=tk.length;i++){let ok=true;for(let j=0;j<n;j++)if(tk[i+j][1]!==words[j]){ok=false;break;}if(ok)for(let j=0;j<n;j++)m.add(tk[i+j][0]);}return m;}
+function hlHtml(r,phr){const il=DATA.il[r],ot=isOT(r),mk=phr&&phr.length?hlMarks(il,phr):null;
+  let h=`<div class="vt hl${il.length>36?" xl":il.length>24?" lg":""}" dir="${ot?"rtl":"ltr"}">`;
+  il.forEach((x,k)=>{const i=CUR.length;CUR.push(x);const g=(x[1]||"").trim();
+    h+=`<span class="w" data-i="${i}"><span class="g${mk&&mk.has(k)?" m":""}" dir="ltr">${g?esc(g):"&nbsp;"}</span><span class="o" lang="${ot?"he":"el"}">${esc(x[0])}</span></span>`;});
+  return h+`</div>`;}
+function ilHtml(r,xrOnly){const il=xrOnly?[]:(DATA.il[r]||[]);let html="";
+  if(il.length){html+=`<div class="il" dir="${isOT(r)?"rtl":"ltr"}">`;il.forEach(x=>{const i=CUR.length;CUR.push(x);html+=`<span class="w" data-i="${i}"><span class="o">${esc(x[0])}</span><span class="g">${esc(x[1])}</span></span>`;});html+=`</div>`;}
+  else if(!xrOnly&&!LOADED.has("il")&&!FAILED.has("il")) html+=`<div class="note">Hebrew and Greek are still loading…</div>`;
   const xr=(DATA.xr||{})[r]||[];
   if(xr.length) html+=`<div class="xr">${xr.map(x=>`<a href="#" data-go="${x.split("-")[0].replace(/^(.*? \d+:\d+).*$/,"$1")}">${esc(x)}</a>`).join(" ")}</div>`;
   return html;}
-function toggleIl(on){const box=$("ilbox");if(!box)return;ILON=on===undefined?!ILON:on;if(ILON&&!box.innerHTML){CUR=[];box.innerHTML=ilHtml(VIEW.ref);}box.style.display=ILON?"block":"none";}
+function toggleIl(on){const box=$("ilbox");if(!box)return;ILON=on===undefined?!ILON:on;if(ILON&&!box.innerHTML)box.innerHTML=ilHtml(VIEW.ref,isHl(VIEW.ref));box.style.display=ILON?"block":"none";}
 function show(ref,ctx,noPush,keepScroll){
   setView({t:"verse",ref,cmp:!!(ctx&&ctx.cmp)},keepScroll);
   ctx=ctx||{qw:[],list:[[ref,null]]}; LAST={...ctx,ref};
@@ -487,10 +517,12 @@ function show(ref,ctx,noPush,keepScroll){
   if(ctx.q&&!ctx.isRef&&ctx.fl&&ctx.fl.t!=="all") html+=`<div class="sub">Searching only ${esc(filterName(ctx.fl))}</div>`;
   html+=`<div class="verse">`;
   if(ctx.cmp){html+=`<div class="vref" data-chap="1">${esc(refName(ref))}</div>`;
-    for(const n of DATA.order){const t=verseHtml(ref,n,phr);if(!t)continue;html+=`<div class="cmpv"><div class="vt">${t}</div><div class="vtr">${esc(NAMES[n]||n)}</div></div>`;}
+    for(const n of ALLTR()){const t=verseHtml(ref,n,phr);if(!t)continue;html+=`<div class="cmpv"><div class="vt">${t}</div><div class="vtr">${esc(NAMES[n]||n)}</div></div>`;}
+  }else if(isHl(ref)){html+=hlHtml(ref,phr)+`<div class="vref" data-chap="1">${esc(refName(ref))}</div>`;
   }else{const want=phTr();const n=DATA.tr[want]&&DATA.tr[want][ref]?want:firstTr(ref);
+    if(want==="HLIT"&&!LOADED.has("HLIT"))VIEW.hlwait=1;
     html+=`<div class="vt">${verseHtml(ref,n,phr)}</div><div class="vref" data-chap="1">${esc(refName(ref))}</div>`;
-    if(n!==want||!LOADED.has(want))html+=`<div class="vtr">${esc(NAMES[n]||n)}${!LOADED.has(want)?" · "+esc(NAMES[want]||want)+" is still loading":""}</div>`;}
+    if(n!==want||!LOADED.has(want))html+=`<div class="vtr">${esc(NAMES[n]||n)}${!LOADED.has(want)?" · "+esc(NAMES[want]||want)+" is still loading":want==="HLIT"?" · no interlinear for this verse":""}</div>`;}
   html+=`<div id="ilbox" style="display:none"></div></div>`;
   if(ctx.phr) html+=phBlock(ctx.phr,false,ctx.phN);
   const others=(ctx.list||[]).filter(x=>x[0]!==ref);
@@ -636,7 +668,7 @@ document.addEventListener("keydown",e=>{if(e.target.id==="q"||!VIEW||VIEW.t!=="v
     two=false;if(e.touches.length!==1)return;const p=e.touches[0];sx=p.clientX;sy=p.clientY;st=Date.now();clear();
     if($("sheet").style.display==="flex"||!tgt.closest)return;
     if(tgt.closest("#corner"))lp=setTimeout(()=>fire(settingsSheet),500);
-    else if(VIEW&&VIEW.t!=="home"&&tgt.closest(LPZ)&&!tgt.closest(".w,.xr a"))lp=setTimeout(()=>fire(trSheet),500);
+    else if(VIEW&&VIEW.t!=="home"&&tgt.closest(LPZ)&&!tgt.closest(".il .w,.xr a"))lp=setTimeout(()=>fire(trSheet),500);
   },{passive:true});
   document.addEventListener("touchmove",e=>{if(!lp)return;const p=e.touches[0];if(p&&Math.hypot(p.clientX-sx,p.clientY-sy)>10)clear();},{passive:true});
   document.addEventListener("touchcancel",()=>{clear();st=0;},{passive:true});
@@ -668,10 +700,11 @@ function refreshMaybe(){if(!VIEW)return;if($("sheet").style.display==="flex")ret
 let FAILNOTE=false;
 HOOK=(k,d)=>{
   if(k==="idx"){idxMsg(d);return;}
+  if(k==="ilpart"){if(VIEW&&VIEW.t==="verse"&&VIEW.hlwait&&isHl(VIEW.ref))refreshMaybe();progress();return;}
   if(k==="fail"){note("");if(!FAILNOTE){FAILNOTE=true;toast("Part of the Bible couldn't download. Open the page again when you're online.");}return;}
   if(k==="done"){note("");window.__blAll=true;idleBuild();try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});}catch(e){}refreshMaybe();return;}
   if(IWFAIL){if(DATA.order.includes(k)){INDEX=null;delete BST.w;FCACHE.clear();XCACHE.clear();}if(k==="il"){OINDEX=null;RINDEX=null;delete BST.o;delete BST.r;}}
-  if(k===phTr()){phIdle(k);refreshMaybe();}
+  if(k===phTr()){phIdle(k);if(k!=="HLIT"||(VIEW&&VIEW.hlwait))refreshMaybe();}
   progress();if(k==="il"&&ILON)refreshMaybe();
 };
 applyTheme();
@@ -684,8 +717,8 @@ if(FILES)progress();
 while(IWQ.length)idxMsg(IWQ.shift());
 phIdle(phTr());
 if(!FILES){window.__blAll=true;idleBuild();}
-window.BL={showStudy,ph:()=>Object.keys(PH),phraseHits:(n,q)=>{const w=phraseQuery(q).words;if(!PH[n])phStep(n,0);return phraseHits(n,w,{t:'all'}).ids.length;},getLast:()=>LAST,view:()=>VIEW,idx:()=>({worker:!IWFAIL,done:IWDONE,ntr:INDEXNTR,o:!!OINDEX,r:!!RINDEX}),sheet:()=>SHEETKIND};
+window.BL={showStudy,ph:()=>Object.keys(PH),phraseHits:(n,q)=>{const w=phraseQuery(q).words;if(!PH[n])phStep(n,0);return phraseHits(n,w,{t:'all'}).ids.length;},getLast:()=>LAST,view:()=>VIEW,idx:()=>({worker:!IWFAIL,done:IWDONE,ntr:INDEXNTR,o:!!OINDEX,r:!!RINDEX}),sheet:()=>SHEETKIND,hl:()=>({ms:Math.round(HLMS*10)/10,loaded:LOADED.has("HLIT"),n:Object.keys(DATA.tr.HLIT||{}).length})};
 window.__blReady=true;
 }
 </script>
-<script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js");</script></body></html>
+<script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js").catch(function(){});</script></body></html>

@@ -1,5 +1,5 @@
-const C="bible-v11",D="bible-data";
-self.addEventListener("install",e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(["./","icon.png","manifest.json","worker.4b5072c018.js"])));self.skipWaiting();});
+const C="bible-v12",D="bible-data";
+self.addEventListener("install",e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(["./","icon.png","manifest.json","worker.1ef424f8dd.js"])));self.skipWaiting();});
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C&&k!==D).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
 function timeout(ms){return new Promise((_,rej)=>setTimeout(()=>rej(new Error("timeout")),ms));}
 self.addEventListener("fetch",e=>{const req=e.request;if(req.method!=="GET")return;const url=new URL(req.url);if(url.origin!==location.origin)return;

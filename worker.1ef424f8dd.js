@@ -1,6 +1,7 @@
 // index worker: builds the word index, Hebrew/Greek spelling index and root index off the main thread
 const DC="bible-data";let POS=null,NTR=0,done=0,ilDone=false,finished=false,lastSnap=-1;const A=new Map(),SNAPS=new Set([1,2,5,8,11,14,17]);
-async function unpack(u){let txt;if(u[0]===0x1f&&u[1]===0x8b)txt=await new Response(new Blob([u]).stream().pipeThrough(new DecompressionStream("gzip"))).text();else txt=new TextDecoder().decode(u);return JSON.parse(txt);}
+function gunzip(u){const ds=new DecompressionStream("gzip"),w=ds.writable.getWriter();w.write(u).catch(()=>{});w.close().catch(()=>{});return new Response(ds.readable).text();}
+async function unpack(u){let txt;if(u[0]===0x1f&&u[1]===0x8b)txt=await gunzip(u);else txt=new TextDecoder().decode(u);return JSON.parse(txt);}
 async function getJSON(url){let r=null;try{if(self.caches){const c=await caches.open(DC);r=await c.match(url);}}catch(e){r=null;}
   if(!r){r=await fetch(url);if(!r.ok)throw new Error("HTTP "+r.status);}return unpack(new Uint8Array(await r.arrayBuffer()));}
 function merge(a,b){const o=new Int32Array(a.length+b.length);let i=0,j=0,k=0,last=-1;

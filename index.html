@@ -5,104 +5,101 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#f6f4ef" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAABx0lEQVR42u3dwQ2CQBRFUWcyJbFlSUgogCLtwNicO1foRmLeMOc0IH6v30AIlnmbbnCkGgHiQByIA3EgDsSBOBAH4kAcIA7EgTgQB+JAHIgDcSAOxAHiQByIA3EgDsSBOBAHV9OijuZxf/pI1n0JOZIS8ggGWQQmUpWRKWEm1RT0ERqHMpLnU5WhD6ey9BOHtZE/K5sDcSAOxIE4EAfiQByIA3EwrmYEX26rGfwav82BOBAH4kAciANxIA7EgTgQB4gDcSAOxIE4EAfiQByIA3HAW8d3n//hYYxnvUSnd7HbHIgDcSAOxIE4EAfi4Co6vgh21pUlj2CwORAH4kAciANxIA7EgTgQB4gDcSAOxIE4EAfiQByIA3GAOBAH4kAciANxIA7EgTgQB4gDcSAOxIE4EAfiQByIA3EgDhAH4kAciANxIA7EgTgQB+IAcSAOftCMYPC/gLQ5EAfiQByIA3EgDsSBOBAHJMWx7ovph8/K5iAyDssjfEp12HeujA5+VvQRO5lqCsr4pMzblDMR991EfVWy4sDZCuJAHIgDcYA4EAfiQByIA3EgDsSBOBAHiANxIA7EgTgQB+JAHIgDcSAOEAfi4AQvNvI5edfSrNQAAAAASUVORK5CYII=">
 <link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAABx0lEQVR42u3dwQ2CQBRFUWcyJbFlSUgogCLtwNicO1foRmLeMOc0IH6v30AIlnmbbnCkGgHiQByIA3EgDsSBOBAH4kAcIA7EgTgQB+JAHIgDcSAOxAHiQByIA3EgDsSBOBAHV9OijuZxf/pI1n0JOZIS8ggGWQQmUpWRKWEm1RT0ERqHMpLnU5WhD6ey9BOHtZE/K5sDcSAOxIE4EAfiQByIA3EwrmYEX26rGfwav82BOBAH4kAciANxIA7EgTgQB4gDcSAOxIE4EAfiQByIA3HAW8d3n//hYYxnvUSnd7HbHIgDcSAOxIE4EAfi4Co6vgh21pUlj2CwORAH4kAciANxIA7EgTgQB4gDcSAOxIE4EAfiQByIA3GAOBAH4kAciANxIA7EgTgQB4gDcSAOxIE4EAfiQByIA3EgDhAH4kAciANxIA7EgTgQB+IAcSAOftCMYPC/gLQ5EAfiQByIA3EgDsSBOBAHJMWx7ovph8/K5iAyDssjfEp12HeujA5+VvQRO5lqCsr4pMzblDMR991EfVWy4sDZCuJAHIgDcYA4EAfiQByIA3EgDsSBOBAHiANxIA7EgTgQB+JAHIgDcSAOEAfi4AQvNvI5edfSrNQAAAAASUVORK5CYII=">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>Bible lookup</title>
 <style>
-:root{--fs:18px}
-body{font:var(--fs)/1.45 -apple-system,sans-serif;margin:0;background:#f6f4ef;color:#1c1a17;-webkit-text-size-adjust:100%}
-header{padding:14px 16px 4px} h1{font-size:1.2em;margin:0;cursor:pointer;display:inline-block;padding:8px 0}
-input{width:100%;box-sizing:border-box;font-size:1em;padding:12px;border:1px solid #ccc;border-radius:10px}
-.row{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
-button{font-size:.95em;padding:10px 14px;border:0;border-radius:10px;background:#3d4a34;color:#fff;min-height:44px;cursor:pointer}
-button.alt{background:#ddd8cc;color:#1c1a17}
-button:disabled{opacity:.45}
-.card{background:#fff;margin:12px;padding:14px;border-radius:12px}
-.ref{font-weight:700} .tr{color:#555;font-size:.78em;margin-top:10px}
-.il{margin-top:6px} .w{display:inline-block;margin:0 10px 8px 0;cursor:pointer;padding:2px 4px;border-radius:6px}
-.w:active,.w.on{background:#efe9da}
-.g{display:block;color:#2f6b3a;font-size:.72em}
-mark{background:#fbe7a1;padding:0 1px;border-radius:3px}
-#recent{padding:0 16px;color:#555;font-size:.85em;white-space:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}#recent::-webkit-scrollbar{display:none}
-#recent a{color:#3d4a34;margin-right:6px;text-decoration:underline;display:inline-block;padding:11px 6px 11px 0}
-#pop{position:fixed;left:12px;right:12px;background:#fff;border-radius:14px;padding:14px;box-shadow:0 6px 24px rgba(0,0,0,.25);display:none}
-#pop .heb{font-size:1.5em} #pop .lbl{color:#666;font-size:.75em;margin-top:8px}
-#pop .gray{color:#555} #pop .gl{color:#2f6b3a} body.dark #pop .gl{color:#7fc48c} #pop .morph{color:#2b5ea7}
-nav{color:#666;font-size:.85em}
-.bar{display:flex;gap:8px;margin:12px}.bar button{flex:1}
-.more a{display:block;padding:10px 0;color:#3d4a34;border-top:1px solid #eee;text-decoration:none}
-.more small{color:#666}
-#toast{position:fixed;top:calc(12px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);background:#3d4a34;color:#fff;padding:8px 14px;border-radius:10px;display:none;z-index:20;max-width:85vw;text-align:center}
-body.dark{background:#121212;color:#e8e4da}
-body.dark .card,body.dark #pop,body.dark .sheetbox{background:#1f1f1f;color:#e8e4da}
-body.dark .tr,body.dark nav,body.dark #recent,body.dark .more small{color:#a8a39a}
-body.dark .g{color:#7fc48c} body.dark #pop .morph{color:#8fb4ee} body.dark #pop .gray{color:#c9c4ba} body.dark #pop .lbl{color:#a8a39a}
-body.dark button.alt{background:#333;color:#e8e4da} body.dark input{background:#222;color:#eee;border-color:#444}
-body.dark mark{background:#6b5a1e;color:#fff} body.dark .w.on{background:#333} body.dark .more a{color:#cfe3c4;border-color:#333}
-body.dark #recent a{color:#cfe3c4}
-.chap p{margin:0 0 10px;padding:2px 4px;border-radius:6px;cursor:pointer} .chap sup{color:#888;margin-right:4px} .chap .cur{background:#fbe7a1}
-body.dark .chap .cur{background:#4a4020}
-select{font-size:.9em;padding:8px 32px 8px 10px;border-radius:8px;min-height:44px;max-width:100%;-webkit-appearance:none;appearance:none;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23555' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 12px center;border:1px solid #bbb;color:#1c1a17}
-body.dark select{background-color:#222;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23bbb' stroke-width='2'/%3E%3C/svg%3E");color:#eee;border-color:#555}
-.xr a{display:inline-block;margin:0 12px 0 0;padding:10px 0;color:#3d4a34}
-body.dark .xr a{color:#cfe3c4}
-.cmp{display:block;margin-top:4px;padding-left:10px;border-left:3px solid #ddd8cc;color:#444}
-body.dark .cmp{color:#c9c4ba;border-color:#444}
-.cmp .tr{margin:0 4px 0 0;display:inline}
-.grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.grid button{font-size:.8em;padding:8px 10px}.grid .num{min-width:48px}
-body{padding-bottom:calc(128px + env(safe-area-inset-bottom));padding-top:env(safe-area-inset-top)}
-#dock{position:fixed;left:0;right:0;bottom:0;background:rgba(246,244,239,.97);border-top:1px solid #ddd8cc;padding:8px 10px calc(8px + env(safe-area-inset-bottom));z-index:5;-webkit-backdrop-filter:blur(8px)}
-#nav4{display:flex;gap:6px;margin:0 0 8px}#nav4 button{flex:1 1 0;min-width:0;font-size:.8em;padding:8px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.qrow{display:flex;gap:8px}.qrow input{flex:1;padding:10px;min-height:44px}.qrow button{padding:10px 14px}
-#dock input{font-size:16px}
-body.dark #dock{background:rgba(18,18,18,.97);border-color:#333}
-#pop{bottom:calc(120px + env(safe-area-inset-bottom));max-height:calc(100vh - 140px - env(safe-area-inset-bottom) - env(safe-area-inset-top));max-height:calc(100dvh - 140px - env(safe-area-inset-bottom) - env(safe-area-inset-top));overflow:auto;z-index:6;box-sizing:border-box}
-#pop .x{position:sticky;top:0;float:right;margin:-6px -6px 0 8px;width:44px;padding:0;font-size:1.1em}
-#pop .row button{flex:1 1 auto}
-body.loading #dock{padding-top:4px} body.loading #pop{bottom:calc(138px + env(safe-area-inset-bottom))} body.loading{padding-bottom:calc(146px + env(safe-area-inset-bottom))}
-.acts{display:flex;gap:6px;margin:10px 0 2px}.acts button{flex:1;font-size:.82em;padding:8px 6px}
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.chips button{font-size:.85em;padding:8px 12px}
-.fch button{flex:1 1 40%}
-.chips button.on{background:#3d4a34;color:#fff} body.dark .chips button.on{background:#7fc48c;color:#111}
-.fchip{margin:12px 12px 0;padding:6px 6px 6px 12px;border-radius:12px;background:#e7efe0;color:#2c3a22;font-size:.85em;display:flex;align-items:center;justify-content:space-between;gap:8px}
-body.dark .fchip{background:#24331f;color:#d6ead0}
-.fchip button{font-size:.85em;padding:6px 12px}
-.phh{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px;font-size:.9em}.phh select{flex:1 1 150px}
-.more a .pt{color:#1c1a17;font-size:.92em} body.dark .more a .pt{color:#e8e4da}
-.ex{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.ex button{font-size:.9em}
-.bars{margin-top:6px}.barrow{display:flex;align-items:center;gap:8px;font-size:.85em;margin:5px 0}
-.barrow .bl{width:7.5em;flex:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.barrow .bt{flex:1;background:#eee9dd;border-radius:4px;height:14px;overflow:hidden}
-.barrow .bt div{height:100%;background:#7a8f63}.barrow .bn{width:3em;text-align:right;flex:none;color:#666}
-body.dark .barrow .bt{background:#2c2c2c} body.dark .barrow .bt div{background:#7fc48c} body.dark .barrow .bn{color:#a8a39a}
-.glist a{display:flex;justify-content:space-between;padding:11px 0;border-top:1px solid #eee;color:#3d4a34;text-decoration:none}
-body.dark .glist a{color:#cfe3c4;border-color:#333}
-.stat{display:flex;gap:10px;margin-top:10px}.stat div{flex:1;background:#f1ede3;border-radius:10px;padding:8px;text-align:center;font-size:.8em}.stat b{display:block;font-size:1.5em}
-body.dark .stat div{background:#2a2a2a}
-#loadnote{font-size:.7em;color:#5a6550;text-align:center;margin:0 0 4px;display:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-body.dark #loadnote{color:#a8b89c}
-.ctl select{flex:1 1 150px}
-#sheet{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;z-index:10;align-items:flex-end;justify-content:center}
-.sheetbox{background:#fff;width:100%;max-width:520px;border-radius:16px 16px 0 0;padding:14px 14px calc(14px + env(safe-area-inset-bottom));max-height:88vh;overflow:auto;box-sizing:border-box}
-.sheetbox img{width:100%;border-radius:10px;display:block;margin:8px 0;box-shadow:0 2px 10px rgba(0,0,0,.15)}
-.shead{display:flex;align-items:center;justify-content:space-between;gap:8px}.shead .ref{font-size:1.05em}
-.sec{margin-top:14px}.sec .tr{margin:0 0 2px}
-.seg{display:flex;gap:6px;margin-top:4px}.seg button{flex:1}
-.seg button.on{background:#3d4a34;color:#fff} body.dark .seg button.on{background:#7fc48c;color:#111}
-.trlist label{display:flex;align-items:center;gap:10px;min-height:44px;border-top:1px solid #eee;font-size:.9em}
-body.dark .trlist label{border-color:#333}
-.trlist input{width:22px;height:22px;flex:none;margin:0}
-.wide{width:100%;text-align:left;display:flex;justify-content:space-between}
+:root{--fs:18px;--fg:#111;--bg:#fff;--hair:.5px;--f:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue",Helvetica,Arial,"Noto Sans","Noto Sans Hebrew","SBL Hebrew","Times New Roman",sans-serif}
+body.dark{--fg:#f2f2f2;--bg:#000}
+*,*::before,*::after{font-weight:400!important;font-style:normal;box-sizing:border-box}
+html{background:var(--bg)}
+body{font:var(--fs)/1.5 var(--f);margin:0;background:var(--bg);color:var(--fg);-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent;min-height:100vh;min-height:100dvh}
+a{color:var(--fg);text-decoration:none}
+button,input,select,textarea{font:inherit;color:var(--fg);background:none;border:0;margin:0;padding:0;border-radius:0;-webkit-appearance:none;appearance:none}
+mark{background:none;color:var(--fg);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.2em}
+/* search: centred on home, a quiet line at the top with results */
+#top{position:fixed;left:0;right:0;top:0;z-index:5;background:var(--bg);padding:calc(14px + env(safe-area-inset-top)) 64px 10px;transition:top .35s ease,padding .35s ease}
+body.v-home #top{top:calc(36vh - 40px);padding-top:0;background:transparent}
+#q{display:block;width:100%;max-width:520px;margin:0 auto;text-align:center;font-size:calc(var(--fs)*1.1);line-height:1.3;padding:6px 0 7px;border-bottom:var(--hair) solid var(--fg);outline:none;border-radius:0;caret-color:var(--fg);transition:font-size .35s ease}
+body.v-home #q{font-size:calc(var(--fs)*1.6)}
+#q::-webkit-search-cancel-button{display:none}
+#hint{text-align:center;font-size:calc(var(--fs)*.7);margin:14px -48px 0;display:none;white-space:nowrap}
+#sugg{max-width:520px;margin:18px auto 0;text-align:center;display:none}
+#sugg a{display:block;padding:11px 0;font-size:calc(var(--fs)*.85);min-height:44px}
+body.v-home #sugg.on{display:block}
+#corner{position:fixed;top:0;right:0;width:64px;height:calc(64px + env(safe-area-inset-top));z-index:7;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+#out{padding:calc(92px + env(safe-area-inset-top)) 28px calc(80px + env(safe-area-inset-bottom));max-width:640px;margin:0 auto;min-height:100vh;min-height:100dvh}
+body.v-home #out{display:none}
+.msg{text-align:center;margin-top:18vh;font-size:calc(var(--fs)*.95)}
+/* the verse */
+.verse{text-align:center;padding:9vh 0 0}
+.vt{font-size:calc(var(--fs)*1.5);line-height:1.42;letter-spacing:-.005em;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;cursor:pointer}
+.vref{display:inline-block;margin-top:22px;font-size:calc(var(--fs)*.82);letter-spacing:.04em;padding:10px 6px;min-height:44px;cursor:pointer}
+.vtr{font-size:calc(var(--fs)*.72);letter-spacing:.04em;margin-top:-6px}
+.cmpv{margin-top:34px}.cmpv .vt{font-size:calc(var(--fs)*1.15)}.cmpv .vtr{margin-top:8px}
+.note{text-align:center;font-size:calc(var(--fs)*.72);margin-top:18px}
+.il{margin:40px 0 0;text-align:center;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.w{display:inline-block;vertical-align:top;margin:0 9px 18px;cursor:pointer;min-width:44px;min-height:44px;padding:2px 2px}
+.w .o{display:block;font-size:calc(var(--fs)*1.25);line-height:1.3}
+.w .g{display:block;font-size:calc(var(--fs)*.66);margin-top:2px}
+.w.on .o{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.25em}
+.xr{text-align:center;margin-top:18px;font-size:calc(var(--fs)*.8)}
+.xr a{display:inline-block;padding:11px 8px;min-height:44px}
+.sec{text-align:center;font-size:calc(var(--fs)*.8);letter-spacing:.04em;margin:64px 0 6px}
+.sub{text-align:center;font-size:calc(var(--fs)*.72);margin:0 0 18px}
+/* quiet lists (phrase list, other matches, original-word lists) */
+.li{display:block;text-align:center;padding:16px 0 15px;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;cursor:pointer}
+.li .t{display:block;font-size:calc(var(--fs)*.98);line-height:1.5}
+.li .r{display:block;font-size:calc(var(--fs)*.7);letter-spacing:.04em;margin-top:6px}
+.sentinel{height:1px}
+/* chapter */
+.chap{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.chap h2{font-size:calc(var(--fs)*.82);letter-spacing:.06em;text-align:center;margin:5vh 0 30px}
+.chap p{margin:0 0 4px;padding:8px 0;font-size:calc(var(--fs)*1.08);line-height:1.62;cursor:pointer}
+.chap sup{font-size:.55em;margin-right:5px;vertical-align:.55em}
+.chap p.cur sup{text-decoration:underline;text-underline-offset:.2em}
+.chap .c2{display:block;margin-top:4px;font-size:.88em}
+/* word study */
+.study{text-align:center}
+.study .big{font-size:calc(var(--fs)*1.7);margin:5vh 0 6px}
+.study .stat{font-size:calc(var(--fs)*.85);margin:14px 0}
+.barrow{display:flex;align-items:center;gap:12px;font-size:calc(var(--fs)*.8);margin:9px 0}
+.barrow .bl{width:7.5em;text-align:right;flex:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.barrow .bt{flex:1;height:1px;position:relative}.barrow .bt i{position:absolute;left:0;top:-1px;height:3px;background:var(--fg)}
+.barrow .bn{width:2.5em;text-align:left;flex:none}
+.link{display:block;text-align:center;padding:12px 0;min-height:44px;cursor:pointer;font-size:calc(var(--fs)*.9)}
+/* sheets */
+#sheet{position:fixed;inset:0;display:none;z-index:10;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.18)}
+body.dark #sheet{background:rgba(0,0,0,.55)}
+.sheetbox{background:var(--bg);color:var(--fg);width:100%;max-width:560px;border-top:var(--hair) solid var(--fg);padding:10px 24px calc(18px + env(safe-area-inset-bottom));max-height:86vh;max-height:86dvh;overflow:auto;-webkit-overflow-scrolling:touch;text-align:center;animation:up .22s ease}
+@keyframes up{from{transform:translateY(24px)}to{transform:none}}
+.sheetbox .st{font-size:calc(var(--fs)*.72);letter-spacing:.06em;margin:12px 0 4px}
+.sheetbox .it{display:block;width:100%;padding:12px 0;min-height:46px;font-size:calc(var(--fs)*.95);cursor:pointer;text-align:center}
+.sheetbox .it+.it{border-top:var(--hair) solid var(--fg)}
+.sheetbox .on{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.25em}
+.sheetbox .gap{height:18px}
+.seg{display:flex;justify-content:center;gap:4px;flex-wrap:wrap}
+.seg .it{width:auto;flex:1 1 0;padding:12px 6px;white-space:nowrap}
+.seg .it+.it{border-top:0}
+.grid{display:flex;flex-wrap:wrap;justify-content:center}
+.grid .it{width:25%;border:0!important}
+.grid.bk .it{width:50%;font-size:calc(var(--fs)*.85)}
+.sheetbox img{width:100%;display:block;margin:10px 0;border:var(--hair) solid var(--fg)}
+.wd .o{font-size:calc(var(--fs)*2);line-height:1.3;margin-top:10px}
+.wd .row{font-size:calc(var(--fs)*.85);margin:10px 0}
+.wd .lbl{font-size:calc(var(--fs)*.68);letter-spacing:.06em;margin-top:16px}
+#toast{position:fixed;left:50%;bottom:calc(30px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--bg);color:var(--fg);border:var(--hair) solid var(--fg);padding:9px 16px;display:none;z-index:20;max-width:85vw;text-align:center;font-size:calc(var(--fs)*.8)}
+#loadnote{position:fixed;left:0;right:0;bottom:calc(10px + env(safe-area-inset-bottom));text-align:center;font-size:calc(var(--fs)*.62);letter-spacing:.03em;display:none;pointer-events:none;z-index:4}
 </style></head><body>
-<header><h1 id="home">Bible lookup</h1></header>
-<div id="dock"><div id="loadnote"></div><div id="nav4"><button class="alt" id="homeb">Home</button><button class="alt" id="books">Books</button><button class="alt" id="filt">Filter</button><button class="alt" id="moreb">⋯ More</button></div><div class="qrow"><input id="q" value="" enterkeyhint="search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Search" autofocus><button id="go2">Search</button></div></div>
-<script>(function(){var q=document.getElementById("q");function f(){if(!location.hash)try{q.focus({preventScroll:true});}catch(e){q.focus();}}f();addEventListener("load",f);addEventListener("pageshow",f);document.getElementById("homeb").addEventListener("click",function(){q.value="";setTimeout(function(){q.focus();},0);});})();</script>
-<div id="recent"></div>
+<div id="top"><input id="q" type="search" value="" enterkeyhint="search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Search the Bible" autofocus><div id="hint"></div><div id="sugg"></div></div>
+<div id="corner" aria-hidden="true"></div>
 <div id="out"></div>
-<div id="pop"></div><div id="toast"></div>
+<div id="loadnote"></div><div id="toast"></div>
 <div id="sheet"><div class="sheetbox" id="sheetbox"></div></div>
+<script>(function(){var q=document.getElementById("q");function f(){if(!location.hash)try{q.focus({preventScroll:true});}catch(e){q.focus();}}f();addEventListener("load",f);addEventListener("pageshow",f);})();</script>
 <script>
 const FILES={"meta": "data/meta.cd88091618.json.gz", "KJV": "data/KJV.e7b9ede062.json.gz", "AKJV": "data/AKJV.dc8019063e.json.gz", "ASV": "data/ASV.8cba7a78aa.json.gz", "Webster": "data/Webster.b901e53df3.json.gz", "RWebster": "data/RWebster.78e17250c4.json.gz", "Darby": "data/Darby.f4309af123.json.gz", "YLT": "data/YLT.fb0ab84c54.json.gz", "Geneva": "data/Geneva.1caafc259c.json.gz", "Wycliffe": "data/Wycliffe.66c871c789.json.gz", "BBE": "data/BBE.d70dee73be.json.gz", "DRC": "data/DRC.e7dd1c66e8.json.gz", "JPS": "data/JPS.23ad041036.json.gz", "CPDV": "data/CPDV.893aec34d8.json.gz", "Rotherham": "data/Rotherham.ab93419c89.json.gz", "Tyndale": "data/Tyndale.b89e3bce76.json.gz", "Anderson": "data/Anderson.eb66b95257.json.gz", "Haweis": "data/Haweis.ab4b74e830.json.gz", "Noyes": "data/Noyes.7241b8877b.json.gz", "OEB": "data/OEB.4ea7fdedd2.json.gz", "WEB": "data/WEB.ca7fe1c32c.json.gz", "xr": "data/xr.a51e06755d.json.gz", "lex": "data/lex.6caa2f7edb.json.gz", "il0": "data/il0.be46a44f65.json.gz", "il1": "data/il1.da2ca2f39e.json.gz", "il2": "data/il2.a03088da59.json.gz", "il3": "data/il3.d126638d3e.json.gz", "il4": "data/il4.f15b9b518b.json.gz", "il5": "data/il5.0b885925c8.json.gz"};
 let DATA={order:[],tr:{},il:{},xr:{},lex:{}},META=null,HOOK=null;
@@ -134,7 +131,7 @@ function gotData(k,v){const ilp=/^il\d+$/.test(k);
   if(HOOK)HOOK(k);}
 function waitFor(k){if(LOADED.has(k))return Promise.resolve();if(FAILED.has(k))return Promise.reject(new Error(k));return new Promise((res,rej)=>WAITS.push([k,res,rej]));}
 async function loadRest(){
-  let pref=[];try{pref=JSON.parse(localStorage.getItem("bl_tr")||"[]")||[];}catch(e){}
+  let pref=[];try{pref=[localStorage.getItem("bl_phtr")];}catch(e){}
   const ilp=[];for(let j=0;j<META.ilparts;j++)ilp.push("il"+j);
   const todo=[...new Set(["WEB","xr","lex",...ilp,...META.order.filter(n=>pref.includes(n)),...META.order])].filter(k=>!LOADED.has(k));
   let i=0;
@@ -153,7 +150,8 @@ async function loadRest(){
   out.innerHTML="<div class='card'>Opening the Bible…</div>";
   try{
     if(FILES){
-      const first=["KJV"];
+      let ch="KJV";try{const c=localStorage.getItem("bl_phtr");if(c&&FILES[c])ch=c;}catch(e){}
+      const first=[ch];
       const got=await Promise.all([getFile(FILES.meta),...first.map(n=>getFile(FILES[n]))]);
       META=got[0];DATA.order=META.order;for(const n of META.order)DATA.tr[n]={};
       startWorker();toWorker({cmd:"init",refs:META.refs,ntr:META.order.length});
@@ -253,7 +251,7 @@ function getFilter(){try{const f=JSON.parse(localStorage.getItem("bl_filter")||"
 function setFilter(f){try{localStorage.setItem("bl_filter",JSON.stringify(f));}catch(e){}filterLabel();}
 function filterName(f){return f.t==="ot"?"Old Testament":f.t==="nt"?"New Testament":f.t==="book"?(FULL[f.b]||f.b):"Whole Bible";}
 function filterShort(f){return f.t==="ot"?"OT":f.t==="nt"?"NT":f.t==="book"?(FULL[f.b]||f.b):"All";}
-function filterLabel(){const f=getFilter(),b=document.getElementById("filt");b.textContent=f.t==="all"?"Filter":filterShort(f);b.classList.toggle("alt",f.t==="all");b.setAttribute("aria-label","Search filter: "+filterName(f));}
+function filterLabel(){}
 function passer(f){if(f.t==="ot")return i=>OTSET.has(REFBOOK[i]);if(f.t==="nt")return i=>!OTSET.has(REFBOOK[i]);if(f.t==="book")return i=>REFBOOK[i]===f.b;return null;}
 function norm(s){return s.normalize("NFD").replace(/[\u0300-\u036f\u0591-\u05C7]/g,"").replace(/[־׃׀·,.;:·’'\[\]()]/g,"").replace(/ς/g,"σ").toLowerCase().trim();}
 const ORIG=/[\u0590-\u05FF\u0370-\u03FF\u1F00-\u1FFF]/;
@@ -339,228 +337,203 @@ function highlight(text,qw){
 }
 const $=id=>document.getElementById(id);
 const trLoaded=()=>DATA.order.filter(n=>LOADED.has(n));
-function shown(){try{const s=JSON.parse(localStorage.getItem("bl_tr")||"null");if(Array.isArray(s)&&s.length)return DATA.order.filter(n=>s.includes(n));}catch(e){}return DATA.order;}
+// one translation at a time (chosen with a long-press, default King James)
+function shown(){return [phTr()];}
 function firstTr(r){return shown().find(n=>DATA.tr[n][r])||DATA.order.find(n=>DATA.tr[n][r]);}
 function textOf(r){const n=firstTr(r);return n?DATA.tr[n][r]:"";}
 // ---- small helpers
 let CUR=[],LAST=null,VIEW=null;
-function setView(v,keepSheet){VIEW=v;document.body.classList.toggle("v-home",v.t==="home");if(!keepSheet)closeSheet();}
+function setView(v,keepSheet){VIEW=v;document.body.classList.toggle("v-home",v.t==="home");if(!keepSheet)closeSheet();showHint();}
 function jget(k,d){try{const v=JSON.parse(localStorage.getItem(k)||"null");return v==null?d:v;}catch(e){return d;}}
 function jset(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
-// remove saved data from features that no longer exist (notes, saved verses, highlights, plan, old theme flag…)
-(()=>{const KEEP=new Set(["bl_tr","bl_filter","bl_theme","bl_fs","bl_recent","bl_chtr","bl_chtr2","bl_phtr"]);
+// remove saved data from features that no longer exist
+(()=>{const KEEP=new Set(["bl_filter","bl_theme","bl_fs","bl_recent","bl_phtr","bl_tips"]);
   try{if(localStorage.getItem("bl_dark")==="1"&&!localStorage.getItem("bl_theme"))localStorage.setItem("bl_theme","dark");
     const ks=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith("bl_")&&!KEEP.has(k))ks.push(k);}ks.forEach(k=>localStorage.removeItem(k));}catch(e){}})();
-// ---- bottom sheet (More, Filter, Translations, Share)
-let SHARE=null;
-function closeSheet(){const s=$("sheet");if(s)s.style.display="none";SHARE=null;}
-function openSheet(html){hidePop();$("sheetbox").innerHTML=html;$("sheet").style.display="flex";$("sheetbox").scrollTop=0;
-  $("sheetbox").querySelectorAll("[data-close]").forEach(b=>b.onclick=closeSheet);}
-$("sheet").onclick=e=>{if(e.target.id==="sheet")closeSheet();};
-const shead=t=>`<div class="shead"><div class="ref">${t}</div><button class="alt" data-close="1">Done</button></div>`;
-// ---- More: translations, text size, theme
-function showMore(){const m=themeMode(),fs=curFs();
-  openSheet(shead("Settings")+
-  `<div class="sec"><div class="tr">Translations</div><button class="alt wide" id="mtr"><span>Choose translations</span><span>${shown().length} of ${DATA.order.length} ›</span></button></div>`+
-  `<div class="sec"><div class="tr">Text size · <span id="fsv">${fs}</span></div><div class="seg"><button class="alt" id="minus" aria-label="Smaller text">A−</button><button class="alt" id="plus" aria-label="Bigger text">A+</button></div></div>`+
-  `<div class="sec"><div class="tr">Theme</div><div class="seg">${[["auto","Auto"],["dark","Dark"],["light","Light"]].map(([k,l])=>`<button class="alt${m===k?" on":""}" data-th="${k}">${l}</button>`).join("")}</div></div>`);
-  $("mtr").onclick=showPicker;
-  const fsd=d=>{setFs(curFs()+d);$("fsv").textContent=curFs();};$("minus").onclick=()=>fsd(-2);$("plus").onclick=()=>fsd(2);
-  $("sheetbox").querySelectorAll("[data-th]").forEach(b=>b.onclick=()=>{try{localStorage.setItem("bl_theme",b.dataset.th);}catch(e){}applyTheme();
-    $("sheetbox").querySelectorAll("[data-th]").forEach(x=>x.classList.toggle("on",x===b));});}
-$("moreb").onclick=showMore;
-// ---- translation picker
-function showPicker(){const s=new Set(shown());
-  openSheet(`<div class="shead"><button class="alt" id="trback">◀ Back</button><button class="alt" data-close="1">Done</button></div>`+
-  `<div class="ref" style="margin-top:8px">Translations to show</div><div class="row"><button class="alt" id="allTr" style="flex:1">All</button><button class="alt" id="fewTr" style="flex:1;font-size:.8em">KJV · ASV · YLT · WEB</button></div>`+
-  `<div class="trlist" style="margin-top:8px">${DATA.order.map(n=>`<label><input type="checkbox" value="${n}" ${s.has(n)?"checked":""}> ${NAMES[n]||n}</label>`).join("")}</div>`);
+// ---- first-visit hints (bl_tips: 0 = show long-press hint, 1 = show corner hint, 2 = done)
+function tips(){return +(localStorage.getItem("bl_tips")||0);}
+function tipUsed(n){if(tips()<n){try{localStorage.setItem("bl_tips",n);}catch(e){}}showHint();}
+function showHint(){const h=$("hint");if(!h)return;const t=tips();
+  const txt=t===0?"Press and hold a verse to change translation":t===1&&VIEW&&VIEW.t!=="home"?"Press and hold the top-right corner for settings":"";
+  h.textContent=txt;h.style.display=txt?"block":"none";}
+// ---- sheet (translations, settings, books, share, word meaning)
+let SHARE=null,SHEETKIND="";
+function closeSheet(){const s=$("sheet");if(s)s.style.display="none";SHARE=null;SHEETKIND="";}
+function openSheet(html,kind){$("sheetbox").innerHTML=html;$("sheet").style.display="flex";$("sheetbox").scrollTop=0;SHEETKIND=kind||"";
+  try{document.activeElement&&document.activeElement.blur();}catch(e){}}
+$("sheet").addEventListener("click",e=>{if(e.target.id==="sheet")closeSheet();});
+const it=(attrs,label,on)=>`<a class="it${on?" on":""}" ${attrs}>${label}</a>`;
+// ---- translation sheet (long-press on a verse, a chapter or a list)
+function trSheet(){const cur=phTr(),v=VIEW||{};const r=v.ref;let html="";
+  if(v.t==="verse"&&r) html+=`<div class="st">${esc(refName(r))}</div>`;
+  else if(v.t==="chapter") html+=`<div class="st">${esc(chapName(v.ref))}</div>`;
+  else html+=`<div class="st">Translation</div>`;
+  html+=DATA.order.map(n=>it(`data-tr="${n}"`,(NAMES[n]||n)+(n===cur?" ✓":""),false)).join("");
+  if(v.t==="verse"&&r){html+=`<div class="gap"></div>`+it(`data-act="cmp"`,v.cmp?"Show one translation":"Compare all translations")+it(`data-act="copy"`,"Copy")+it(`data-act="img"`,"Share as image")+it(`data-act="chap"`,"Open chapter")+it(`data-act="il"`,"Hebrew / Greek and related verses");}
+  if(v.t==="chapter"){html+=`<div class="gap"></div>`+(v.tn2?it(`data-act="nocmp"`,"Stop comparing"):it(`data-act="cmp2"`,"Side by side with…"));}
+  html+=`<div class="gap"></div>`+it(`data-act="settings"`,"Settings");
+  openSheet(html,"tr");tipUsed(1);
   const box=$("sheetbox");
-  const save=()=>{const v=[...box.querySelectorAll(".trlist input:checked")].map(x=>x.value);jset("bl_tr",v.length?v:DATA.order);trChanged();};
-  box.querySelectorAll(".trlist input").forEach(x=>x.onchange=save);
-  $("allTr").onclick=()=>{box.querySelectorAll(".trlist input").forEach(x=>x.checked=true);save();};
-  $("fewTr").onclick=()=>{box.querySelectorAll(".trlist input").forEach(x=>x.checked=["KJV","ASV","YLT","WEB"].includes(x.value));save();};
-  $("trback").onclick=showMore;}
-function trChanged(){if(VIEW&&VIEW.t==="verse"){const y=window.scrollY;show(LAST.ref,LAST,true,true);window.scrollTo(0,y);}}
-// ---- search filter
-function showFilter(){const f=getFilter();
-  openSheet(shead("Search in")+`<div class="tr" style="margin-top:4px">For word and Hebrew/Greek searches. References like "John 3:16" always open.</div>`+
-  `<div class="chips fch">${[["all","Whole Bible"],["ot","Old Testament"],["nt","New Testament"]].map(([k,l])=>`<button class="alt ${f.t===k?"on":""}" data-ft="${k}">${l}</button>`).join("")}</div>`+
-  `<div class="row"><select id="fbook" style="flex:1"><option value="">One book…</option>${BOOKLIST.map(b=>`<option value="${b}" ${f.t==="book"&&f.b===b?"selected":""}>${FULL[b]}</option>`).join("")}</select></div>`);
-  $("sheetbox").querySelectorAll("[data-ft]").forEach(el=>el.onclick=()=>{setFilter({t:el.dataset.ft});closeSheet();refilter();});
-  $("fbook").onchange=e=>{setFilter(e.target.value?{t:"book",b:e.target.value}:{t:"all"});closeSheet();refilter();};}
+  box.querySelectorAll("[data-tr]").forEach(a=>a.onclick=()=>setTr(a.dataset.tr));
+  box.querySelectorAll("[data-act]").forEach(a=>a.onclick=()=>{const k=a.dataset.act;closeSheet();
+    if(k==="cmp")show(r,{...LAST,cmp:!v.cmp},true,true);
+    else if(k==="copy")copyVerse(r);
+    else if(k==="img")openShare(r);
+    else if(k==="chap")showChapter(r);
+    else if(k==="il")toggleIl(true);
+    else if(k==="settings")settingsSheet();
+    else if(k==="nocmp")showChapter(v.ref,v.tn,"");
+    else if(k==="cmp2")pick2();});}
+function pick2(){const v=VIEW;openSheet(`<div class="st">Side by side with</div>`+DATA.order.filter(n=>n!==phTr()).map(n=>it(`data-t2="${n}"`,NAMES[n]||n)).join(""),"tr2");
+  $("sheetbox").querySelectorAll("[data-t2]").forEach(a=>a.onclick=()=>{closeSheet();showChapter(v.ref,undefined,a.dataset.t2);});}
+async function setTr(n){try{localStorage.setItem("bl_phtr",n);}catch(e){}closeSheet();
+  if(!LOADED.has(n)){toast("Loading "+(NAMES[n]||n)+"…");try{await waitFor(n);}catch(e){toast("That translation couldn't download");return;}}
+  const v=VIEW||{};
+  if(v.t==="verse"){const y=window.scrollY;if(LAST&&(LAST.phr||LAST.openPhr))await ensurePh(n);show(v.ref,LAST,true,true);window.scrollTo(0,y);}
+  else if(v.t==="chapter")showChapter(v.ref,undefined,v.tn2===n?"":v.tn2);
+  else if(v.t==="phrase"){await ensurePh(n);showPhrase(v.q,PHS?PHS.words:phraseQuery(v.q).words,0,true);}
+  toast(NAMES[n]||n);}
+// ---- settings sheet (long-press or two-finger tap on the top-right corner, or type "settings")
+function settingsSheet(){const m=themeMode(),f=getFilter();
+  let html=`<div class="st">Text size</div><div class="seg">${it(`data-fs="-2"`,"Smaller")}${it(`data-fs="2"`,"Larger")}</div>`;
+  html+=`<div class="st">Theme</div><div class="seg">${[["auto","Auto"],["light","Light"],["dark","Dark"]].map(([k,l])=>it(`data-th="${k}"`,l,m===k)).join("")}</div>`;
+  html+=`<div class="st">Search in</div><div class="seg">${[["all","Whole Bible"],["ot","Old"],["nt","New"]].map(([k,l])=>it(`data-ft="${k}"`,l,f.t===k)).join("")}</div>`+
+    it(`data-act="fbook"`,f.t==="book"?`One book: ${esc(FULL[f.b]||f.b)}`:"One book…",f.t==="book");
+  html+=`<div class="gap"></div>`+it(`data-act="books"`,"Books")+it(`data-act="tr"`,`Translation: ${esc(NAMES[phTr()]||phTr())}`);
+  openSheet(html,"set");tipUsed(2);
+  const box=$("sheetbox");
+  box.querySelectorAll("[data-fs]").forEach(a=>a.onclick=()=>{setFs(curFs()+ +a.dataset.fs);toast("Text size "+curFs());});
+  box.querySelectorAll("[data-th]").forEach(a=>a.onclick=()=>{try{localStorage.setItem("bl_theme",a.dataset.th);}catch(e){}applyTheme();box.querySelectorAll("[data-th]").forEach(x=>x.classList.toggle("on",x===a));});
+  box.querySelectorAll("[data-ft]").forEach(a=>a.onclick=()=>{setFilter({t:a.dataset.ft});closeSheet();refilter();toast("Searching "+filterName(getFilter()));});
+  box.querySelector("[data-act=fbook]").onclick=()=>bookSheet(b=>{setFilter({t:"book",b});closeSheet();refilter();toast("Searching "+FULL[b]);},"Search in one book");
+  box.querySelector("[data-act=books]").onclick=()=>bookSheet(b=>chapterSheet(b),"Books");
+  box.querySelector("[data-act=tr]").onclick=trSheet;}
 function refilter(){if(VIEW&&VIEW.t==="phrase"){render(VIEW.q,true);return;}if(LAST&&LAST.q&&!LAST.isRef&&VIEW&&VIEW.t==="verse")render(LAST.q,true);}
-$("filt").onclick=showFilter;
+// ---- books
+function bookSheet(pick,title){let html=`<div class="st">${esc(title)}</div><div class="st">Old Testament</div><div class="grid bk">`;
+  BOOKLIST.forEach((b,i)=>{if(i===39)html+=`</div><div class="st">New Testament</div><div class="grid bk">`;html+=it(`data-b="${b}"`,esc(FULL[b]));});
+  openSheet(html+`</div>`,"books");$("sheetbox").querySelectorAll("[data-b]").forEach(a=>a.onclick=()=>pick(a.dataset.b));}
+function chapterSheet(b){openSheet(`<div class="st">${esc(FULL[b])}</div><div class="grid">${BOOKCH[b].map(c=>it(`data-c="${c}"`,c.split(" ").pop())).join("")}</div>`,"chapters");
+  $("sheetbox").querySelectorAll("[data-c]").forEach(a=>a.onclick=()=>{closeSheet();showChapter(a.dataset.c+":1");});}
 // ---- theme
 const MQ=window.matchMedia?matchMedia("(prefers-color-scheme: dark)"):null;
 function themeMode(){return localStorage.getItem("bl_theme")||"auto";}
 function applyTheme(){const m=themeMode();const on=m==="dark"||(m==="auto"&&MQ&&MQ.matches);document.body.classList.toggle("dark",on);}
 if(MQ&&MQ.addEventListener)MQ.addEventListener("change",applyTheme);
-// ---- books
-function showBooks(book){setView({t:"books"});hidePop();const out=$("out");let html=`<div class="card"><div class="ref">${book?FULL[book]:"Books"}</div><div class="grid">`;
-  if(!book) html+=BOOKLIST.map((b,i)=>(i===39?`</div><div class="tr">New Testament</div><div class="grid">`:"")+`<button class="alt" data-b="${b}">${FULL[b]}</button>`).join("");
-  else html+=BOOKCH[book].map(c=>`<button class="alt num" data-c="${c}">${c.split(" ").pop()}</button>`).join("");
-  html+=`</div>${book?`<div class="row"><button class="alt" data-allb="1">◀ All books</button></div>`:""}</div>`;
-  if(!book) html=html.replace(`<div class="grid">`,`<div class="tr">Old Testament</div><div class="grid">`);
-  out.innerHTML=html;
-  out.querySelectorAll("[data-b]").forEach(el=>el.onclick=()=>showBooks(el.dataset.b));
-  out.querySelectorAll("[data-c]").forEach(el=>el.onclick=()=>showChapter(el.dataset.c+":1",localStorage.getItem("bl_chtr")));
-  const ab=out.querySelector("[data-allb]");if(ab)ab.onclick=()=>showBooks();window.scrollTo(0,0);}
-$("books").onclick=()=>showBooks();
-// ---- chapter view
+// ---- chapter view (tap the reference or swipe up on a verse; swipe left/right for chapters)
 function chapterOf(r){return r.replace(/:\d+$/,"");}
+function chapName(r){const m=chapterOf(r).match(/^(.*) (\d+)$/);return (FULL[m[1]]||m[1])+" "+m[2];}
 function showChapter(ref,tn,tn2){
-  setView({t:"chapter",ref,tn,tn2});
-  if(tn2===undefined) tn2=localStorage.getItem("bl_chtr2")||"";
+  setView({t:"chapter",ref});
   const ch=chapterOf(ref);const refs=ORDERREFS.filter(r=>chapterOf(r)===ch);
   const avail=DATA.order.filter(n=>refs.some(r=>DATA.tr[n][r]));
-  tn=tn&&avail.includes(tn)?tn:(shown().find(n=>avail.includes(n))||avail[0]);
-  if(tn2&&(!avail.includes(tn2)||tn2===tn)) tn2="";
-  VIEW.tn=tn;VIEW.tn2=tn2;
-  try{localStorage.setItem("bl_chtr",tn);localStorage.setItem("bl_chtr2",tn2);}catch(e){}
-  hidePop();const out=$("out");
-  const m=ch.match(/^(.*) (\d+)$/);const prevC=`${m[1]} ${+m[2]-1}:1`,nextC=`${m[1]} ${+m[2]+1}:1`;
-  let html=`<div class="bar"><button class="alt" data-back="1">◀ Verse</button><button class="alt" ${hasRef(prevC)?`data-ch="${prevC}"`:"disabled"}>◀ Chapter</button><button class="alt" ${hasRef(nextC)?`data-ch="${nextC}"`:"disabled"}>Chapter ▶</button></div>`;
-  html+=`<div class="card chap"><div class="ref">${(FULL[m[1]]||m[1])+" "+m[2]}</div><div class="ctl row"><select id="chsel" aria-label="Translation">${avail.map(n=>`<option value="${n}" ${n===tn?"selected":""}>${NAMES[n]||n}</option>`).join("")}</select><select id="chsel2" aria-label="Compare with"><option value="">Compare with…</option>${avail.filter(n=>n!==tn).map(n=>`<option value="${n}" ${n===tn2?"selected":""}>${NAMES[n]||n}</option>`).join("")}</select></div><div class="ctext" style="margin-top:10px">`;
+  tn=tn&&avail.includes(tn)?tn:(avail.includes(phTr())?phTr():avail[0]);
+  if(tn2&&(!avail.includes(tn2)||tn2===tn))tn2="";
+  VIEW.tn=tn;VIEW.tn2=tn2||"";
+  let html=`<div class="chap"><h2>${esc(chapName(ref))}</h2>`;
   for(const r of refs){const t=DATA.tr[tn][r]||"";const t2=tn2?(DATA.tr[tn2][r]||""):"";if(!t&&!t2)continue;
-    html+=`<p data-go="${r}" class="${r===ref?"cur":""}"><sup>${r.split(":")[1]}</sup>${esc(t)}${tn2?`<span class="cmp"><span class="tr">${NAMES[tn2]||tn2}</span> ${esc(t2||"(not in this translation)")}</span>`:""}</p>`;}
-  html+=`</div><nav>Tap a verse to open it. Swipe for the next or previous chapter.</nav></div>`;
-  out.innerHTML=html;
-  $("chsel").onchange=e=>showChapter(ref,e.target.value,tn2);
-  $("chsel2").onchange=e=>showChapter(ref,tn,e.target.value);
-  out.querySelector("[data-back]").onclick=()=>show(ref,LAST&&LAST.ref===ref?LAST:undefined);
-  out.querySelectorAll("[data-ch]").forEach(el=>el.onclick=()=>showChapter(el.dataset.ch,tn,tn2));
-  out.querySelectorAll("p[data-go]").forEach(el=>el.onclick=()=>show(el.dataset.go));
-  const c=out.querySelector(".cur");if(c&&c.dataset.go!==refs[0])c.scrollIntoView({block:"center"});else window.scrollTo(0,0);
+    html+=`<p data-go="${r}" class="${r===ref?"cur":""}"><sup>${r.split(":")[1]}</sup>${esc(t)}${tn2?`<span class="c2">${esc(t2||"—")}</span>`:""}</p>`;}
+  html+=`<div class="sub" style="margin-top:28px">${esc(NAMES[tn]||tn)}${tn2?" · "+esc(NAMES[tn2]||tn2):""}</div></div>`;
+  $("out").innerHTML=html;
+  const c=$("out").querySelector(".cur");if(c&&c.dataset.go!==refs[0])c.scrollIntoView({block:"center"});else window.scrollTo(0,0);
 }
 // strip the Hebrew-letter / ALL-CAPS headings some translations put at the start of a verse
 function plainText(t){return t.replace(/^[\u05D0-\u05EA]\s+[A-Z]+\.\s*|^\[?[A-Z]{3,}\.\]?\s*/,"");}
 let TT=0;function toast(t){const e=$("toast");e.textContent=t;e.style.display="block";clearTimeout(TT);TT=setTimeout(()=>e.style.display="none",1600);}
-function copyVerse(r){const n=firstTr(r)||"KJV";const t=`${r} (${NAMES[n]||n}) ${DATA.tr[n][r]||""}`;
-  (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast("Copied "+r)).catch(()=>{prompt("Copy this:",t);});}
+function copyVerse(r){const n=firstTr(r)||"KJV";const t=`${refName(r)} (${NAMES[n]||n}) ${DATA.tr[n][r]||""}`;
+  (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast("Copied")).catch(()=>{prompt("Copy this:",t);});}
 // ---- share as image
 function refName(r){const b=bookOf(r);return (FULL[b]||b)+" "+r.slice(b.length+1);}
 function wrapLines(x,text,W){const out=[];let line="";for(const w of text.split(" ")){const t=line?line+" "+w:w;if(x.measureText(t).width>W&&line){out.push(line);line=w;}else line=t;}if(line)out.push(line);return out;}
 function drawCard(r,n){const c=document.createElement("canvas");c.width=1080;c.height=1080;const x=c.getContext("2d");
-  const SERIF='ui-serif, "New York", Georgia, "Times New Roman", "Liberation Serif", serif',SANS='-apple-system, "Helvetica Neue", Arial, sans-serif';
-  x.fillStyle="#ece6d8";x.fillRect(0,0,1080,1080);
-  x.save();x.shadowColor="rgba(60,50,30,.18)";x.shadowBlur=36;x.shadowOffsetY=10;x.fillStyle="#fffdf8";
-  x.beginPath();if(x.roundRect)x.roundRect(64,64,952,952,40);else x.rect(64,64,952,952);x.fill();x.restore();
-  x.fillStyle="#3d4a34";x.fillRect(500,150,80,6);
+  const SANS='-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif';
+  x.fillStyle="#ffffff";x.fillRect(0,0,1080,1080);
   const text="“"+plainText(DATA.tr[n][r]||"").replace(/\s+/g," ").trim()+"”";
-  const W=800,top=200,bottom=800;let fs=70,lines=[],lh=0;
-  for(;fs>=22;fs-=2){x.font=`${fs}px ${SERIF}`;lh=Math.round(fs*1.4);lines=wrapLines(x,text,W);if(lines.length*lh<=bottom-top)break;}
+  const W=820,top=170,bottom=820;let fs=66,lines=[],lh=0;
+  for(;fs>=22;fs-=2){x.font=`${fs}px ${SANS}`;lh=Math.round(fs*1.4);lines=wrapLines(x,text,W);if(lines.length*lh<=bottom-top)break;}
   let y=top+(bottom-top-lines.length*lh)/2+fs*1.02;
-  x.fillStyle="#1f1c17";x.textAlign="center";x.textBaseline="alphabetic";
+  x.fillStyle="#111111";x.textAlign="center";x.textBaseline="alphabetic";
   for(const l of lines){x.fillText(l,540,y);y+=lh;}
-  x.fillStyle="#3d4a34";x.font=`bold 48px ${SERIF}`;x.fillText(refName(r),540,880);
-  x.fillStyle="#8a8375";x.font=`30px ${SANS}`;x.fillText(NAMES[n]||n,540,932);
+  x.font=`34px ${SANS}`;x.fillText(refName(r),540,906);
+  x.font=`26px ${SANS}`;x.fillText(NAMES[n]||n,540,952);
   return c;}
 function canShareFiles(){try{return !!(navigator.canShare&&navigator.canShare({files:[new File(["x"],"x.png",{type:"image/png"})]}));}catch(e){return false;}}
-function openShare(r){let all=shown().filter(n=>DATA.tr[n][r]);if(!all.length)all=DATA.order.filter(n=>DATA.tr[n][r]);if(!all.length)return;
-  let n=VIEW&&VIEW.t==="chapter"&&all.includes(VIEW.tn)?VIEW.tn:all[0];hidePop();
-  openSheet(`<div class="shead"><div class="ref">Share ${esc(refName(r))}</div><button class="alt" data-close="1">Close</button></div><img id="shimg" alt="Verse picture"><select id="shsel" style="width:100%">${all.map(x=>`<option value="${x}" ${x===n?"selected":""}>${NAMES[x]||x}</option>`).join("")}</select><div class="row"><button id="shgo" style="flex:1">${canShareFiles()?"Share…":"Save picture"}</button></div>`);
+function openShare(r){const all=DATA.order.filter(n=>DATA.tr[n][r]);if(!all.length)return;
+  let n=all.includes(phTr())?phTr():all[0];
+  openSheet(`<div class="st">${esc(refName(r))}</div><img id="shimg" alt="Verse picture"><a class="it" id="shgo">${canShareFiles()?"Share…":"Save picture"}</a><a class="it" id="shtr">Translation: ${esc(NAMES[n]||n)}</a>`,"share");
   const draw=()=>{const c=drawCard(r,n);$("shimg").src=c.toDataURL("image/png");SHARE=null;c.toBlob(b=>{if(b)SHARE=new File([b],`${r.replace(/[ :]+/g,"-")}.png`,{type:"image/png"});},"image/png");};
-  $("shsel").onchange=e=>{n=e.target.value;draw();};
+  $("shtr").onclick=()=>{const k=all.indexOf(n);n=all[(k+1)%all.length];$("shtr").textContent="Translation: "+(NAMES[n]||n);draw();};
   $("shgo").onclick=()=>{const f=SHARE;if(!f){toast("One moment…");return;}
     if(canShareFiles()&&navigator.canShare({files:[f]})){navigator.share({files:[f]}).catch(()=>{});return;}
     const a=document.createElement("a");a.href=URL.createObjectURL(f);a.download=f.name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1500);toast("Picture saved");};
   draw();}
-// ---- verse card
-function card(r,best,qw,phr){
-  let html=`<div class="card vcard"><div class="ref">${r}${best?" · best match":""}</div>`+
-  `<div class="acts"><button class="alt" data-chap="${r}">Chapter</button><button class="alt" data-copy="${r}">Copy</button><button class="alt" data-img="${r}">Share image</button></div>`;
-  for(const n of shown()){const t=DATA.tr[n][r]; if(!t) continue; html+=`<div class="tr">${NAMES[n]||n}</div><div>${phr?markPhrase(t,phr):highlight(t,qw)}</div>`;}
-  const miss=shown().filter(n=>!LOADED.has(n)&&!FAILED.has(n)).length;
-  if(miss) html+=`<div class="tr">${miss} more translation${miss>1?"s":""} still loading…</div>`;
-  const il=DATA.il[r]||[];
-  if(il.length){html+=`<div class="tr">Hebrew / Greek (tap a word)</div><div class="il">`;
-    il.forEach(x=>{const i=CUR.length;CUR.push(x);html+=`<span class="w" data-i="${i}">${esc(x[0])}<span class="g">${esc(x[1])}</span></span>`;});html+=`</div>`;}
-  else if(!LOADED.has("il")&&!FAILED.has("il")) html+=`<div class="tr">Hebrew / Greek still loading…</div>`;
+// ---- the verse (one translation, centred; tap to reveal the Hebrew/Greek and related verses)
+let HID=0;const CTXS=new Map();let PHS=null,ILON=false;
+function verseHtml(r,n,phr){let t=DATA.tr[n]&&DATA.tr[n][r];if(!t)return "";t=plainText(t);return phr?markPhrase(t,phr):esc(t);}
+function ilHtml(r){const il=DATA.il[r]||[];let html="";
+  if(il.length){html+=`<div class="il">`;il.forEach(x=>{const i=CUR.length;CUR.push(x);html+=`<span class="w" data-i="${i}"><span class="o">${esc(x[0])}</span><span class="g">${esc(x[1])}</span></span>`;});html+=`</div>`;}
+  else if(!LOADED.has("il")&&!FAILED.has("il")) html+=`<div class="note">Hebrew and Greek are still loading…</div>`;
   const xr=(DATA.xr||{})[r]||[];
-  if(xr.length) html+=`<div class="tr">Related verses</div><div class="xr">${xr.map(x=>`<a href="#" data-go="${x.split("-")[0].replace(/^(.*? \d+:\d+).*$/,"$1")}">${x}</a>`).join("")}</div>`;
-  return html+`</div>`;
-}
+  if(xr.length) html+=`<div class="xr">${xr.map(x=>`<a href="#" data-go="${x.split("-")[0].replace(/^(.*? \d+:\d+).*$/,"$1")}">${esc(x)}</a>`).join(" ")}</div>`;
+  return html;}
+function toggleIl(on){const box=$("ilbox");if(!box)return;ILON=on===undefined?!ILON:on;if(ILON&&!box.innerHTML){CUR=[];box.innerHTML=ilHtml(VIEW.ref);}box.style.display=ILON?"block":"none";}
 function show(ref,ctx,noPush,keepScroll){
-  setView({t:"verse",ref},keepScroll);
+  setView({t:"verse",ref,cmp:!!(ctx&&ctx.cmp)},keepScroll);
   ctx=ctx||{qw:[],list:[[ref,null]]}; LAST={...ctx,ref};
   if(!noPush){const id=++HID;CTXS.set(id,LAST);try{history.pushState({ref,id},"","#"+encodeURIComponent(ref));}catch(e){}}
-  if(!keepScroll)hidePop(); CUR=[];
-  const out=$("out");
-  const prev=step(ref,-1), next=step(ref,1);
+  if(!keepScroll)ILON=false;
+  CUR=[];const phr=ctx.openPhr||ctx.phr;
   let html="";
-  if(ctx.q&&!ctx.isRef&&ctx.fl&&ctx.fl.t!=="all") html+=`<div class="fchip"><span>Searching only <b>${esc(filterName(ctx.fl))}</b></span><button class="alt" data-clrf="1">✕ Clear</button></div>`;
-  if(ctx.back) html+=`<div class="bar"><button class="alt" data-bk="1">◀ Back to the list</button></div>`;
-  html+=`<div class="bar"><button class="alt" ${prev?`data-go="${prev}"`:"disabled"}>◀ Previous</button><button class="alt" ${next?`data-go="${next}"`:"disabled"}>Next ▶</button></div>`;
-  const isBest=ctx.qw.length>0&&ctx.list&&ctx.list[0]&&ctx.list[0][0]===ref;
-  html+=card(ref,isBest,ctx.qw,ctx.openPhr);
+  if(ctx.q&&!ctx.isRef&&ctx.fl&&ctx.fl.t!=="all") html+=`<div class="sub">Searching only ${esc(filterName(ctx.fl))}</div>`;
+  html+=`<div class="verse">`;
+  if(ctx.cmp){html+=`<div class="vref" data-chap="1">${esc(refName(ref))}</div>`;
+    for(const n of DATA.order){const t=verseHtml(ref,n,phr);if(!t)continue;html+=`<div class="cmpv"><div class="vt">${t}</div><div class="vtr">${esc(NAMES[n]||n)}</div></div>`;}
+  }else{const want=phTr();const n=DATA.tr[want]&&DATA.tr[want][ref]?want:firstTr(ref);
+    html+=`<div class="vt">${verseHtml(ref,n,phr)}</div><div class="vref" data-chap="1">${esc(refName(ref))}</div>`;
+    if(n!==want||!LOADED.has(want))html+=`<div class="vtr">${esc(NAMES[n]||n)}${!LOADED.has(want)?" · "+esc(NAMES[want]||want)+" is still loading":""}</div>`;}
+  html+=`<div id="ilbox" style="display:none"></div></div>`;
   if(ctx.phr) html+=phBlock(ctx.phr,false,ctx.phN);
-  const cut=t=>t.length>90?t.slice(0,90)+"…":t;
-  const mini=(r,lab)=>{if(!r)return "";return `<a href="#" data-go="${r}"><small>${lab}</small> <b>${r}</b> <small>${esc(cut(textOf(r)||""))}</small></a>`;};
-  if(prev||next) html+=`<div class="card more"><div class="ref">Around this verse</div>${mini(prev,"Before")}${mini(next,"After")}</div>`;
   const others=(ctx.list||[]).filter(x=>x[0]!==ref);
   if(ctx.orig){
-    html+=`<div class="card more"><div class="ref">${esc(ctx.orig)} appears in ${ctx.total} verse${ctx.total===1?"":"s"}${ctx.allTotal&&ctx.allTotal!==ctx.total?` <small>(${ctx.allTotal} in the whole Bible)</small>`:""}</div>`;
-    if(ctx.root) html+=`<div class="row" style="margin:6px 0 8px"><button data-study="${ctx.root}">Word study</button></div>`;
-    for(const [r] of others.slice(0,200)){const t=textOf(r)||"";html+=`<a href="#" data-go="${r}"><b>${r}</b><br><small>${esc(t.length>110?t.slice(0,110)+"…":t)}</small></a>`;}
-    if(ctx.total>201) html+=`<div class="tr">Showing the first 200.</div>`;
-    html+=`</div>`;
-  } else if(others.length&&ctx.qw.length){
-    html+=`<div class="card more"><div class="ref">Other matches</div>`;
-    for(const [r,s] of others.slice(0,7)){const t=textOf(r)||"";
-      html+=`<a href="#" data-go="${r}"><b>${r}</b> <small>${s} of ${ctx.qw.length} words</small><br><small>${esc(t.length>110?t.slice(0,110)+"…":t)}</small></a>`;}
-    html+=`</div>`;
-  }
-  const part=ctx.qw.length&&ctx.nTr&&ctx.nTr<DATA.order.length?`Searched ${ctx.nTr} of ${DATA.order.length} translations while the rest were loading; search again for full results. `:"";
-  html+=`<div class="card"><nav>${part}Showing ${shown().length} of ${DATA.order.length} translations (change in ⋯ More). Swipe left or right for the next or previous verse.</nav></div>`;
-  out.innerHTML=html;
-  out.querySelectorAll("[data-go]").forEach(el=>el.onclick=e=>{e.preventDefault();show(el.dataset.go,LAST);});
-  out.querySelectorAll("[data-copy]").forEach(el=>el.onclick=()=>copyVerse(el.dataset.copy));
-  out.querySelectorAll("[data-chap]").forEach(el=>el.onclick=()=>showChapter(el.dataset.chap,localStorage.getItem("bl_chtr")));
-  out.querySelectorAll("[data-img]").forEach(el=>el.onclick=()=>openShare(el.dataset.img));
-  out.querySelectorAll("[data-study]").forEach(el=>el.onclick=()=>showStudy(el.dataset.study));
-  const cf=out.querySelector("[data-clrf]");if(cf)cf.onclick=()=>{setFilter({t:"all"});render(ctx.q);};
-  const bk=out.querySelector("[data-bk]");if(bk)bk.onclick=()=>ctx.back();
+    html+=`<div class="sec">${esc(ctx.orig)}</div><div class="sub">${ctx.total} verse${ctx.total===1?"":"s"}${ctx.allTotal&&ctx.allTotal!==ctx.total?` · ${ctx.allTotal} in the whole Bible`:""}</div>`;
+    if(ctx.root) html+=`<a class="link" data-study="${ctx.root}">Word study</a>`;
+    for(const [r] of others.slice(0,200))html+=liHtml(r,esc(plainText(textOf(r)||"")));
+    if(ctx.total>201) html+=`<div class="sub">The first 200 are shown.</div>`;
+  } else if(others.length&&ctx.qw.length&&!ctx.phr){
+    html+=`<div class="sec">Other matches</div>`;for(const [r] of others.slice(0,7))html+=liHtml(r,esc(plainText(textOf(r)||"")));
+  } else if(others.length&&ctx.qw.length&&ctx.phr){
+    html+=`<div class="sec">Other matches</div>`;for(const [r] of others.slice(0,7))html+=liHtml(r,esc(plainText(textOf(r)||"")));}
+  if(ctx.qw.length&&ctx.nTr&&ctx.nTr<DATA.order.length) html+=`<div class="note">Searched ${ctx.nTr} of ${DATA.order.length} translations while the rest were loading. Search again for full results.</div>`;
+  $("out").innerHTML=html;
+  if(ILON)toggleIl(true);
   if(ctx.phr)wirePh();
-  out.querySelectorAll(".w").forEach(el=>el.onclick=()=>showPop(+el.dataset.i,el));
   if(!keepScroll)window.scrollTo(0,0);
 }
-// ---- exact-phrase list (50 rows at a time)
-let HID=0;const CTXS=new Map();let PHS=null;
+function liHtml(r,textHtml,attr){return `<a class="li" ${attr||`data-go="${r}"`}><span class="t">${textHtml}</span><span class="r">${esc(refName(r))}</span></a>`;}
+// ---- exact-phrase list (quiet centred lines; more load as you scroll)
 function phBlock(words,quoted,keepN){const n=phTr(),fl=getFilter(),h=phraseHits(n,words,fl);
   PHS={words,quoted,tr:n,h,shown:Math.min(h.ids.length,Math.max(50,keepN||0))};
-  const label=`“${esc(words.join(" "))}”`,N=h.ids.length;
-  const sel=`<select id="phsel" aria-label="Translation for this list">${DATA.order.map(x=>`<option value="${x}" ${x===n?"selected":""}>${NAMES[x]||x}</option>`).join("")}</select>`;
-  let html=`<div class="card more" id="phl"><div class="ref">${quoted?label:`Every verse with ${label}`}</div><div class="phh"><span>${N?`${N} verse${N===1?"":"s"} in`:"No verses with this exact wording in"}</span>${sel}</div>`;
-  if(N&&h.ot&&h.nt) html+=`<div class="tr" style="margin-top:2px">Old Testament ${h.ot} · New Testament ${h.nt}</div>`;
-  if(fl.t!=="all"&&h.all!==N) html+=`<div class="tr" style="margin-top:2px">${h.all} in the whole Bible</div>`;
-  html+=`<div id="phrows">${phRows(0,PHS.shown)}</div>${phMoreBtn()}</div>`;
+  const N=h.ids.length,label=`“${esc(words.join(" "))}”`;
+  let html=`<div id="phl">`;
+  if(!quoted&&!N)return `<div id="phl"><div class="sub" style="margin-top:56px">No verse has these exact words in ${esc(NAMES[n]||n)}.</div><div id="phrows"></div><div class="sentinel" id="phsent"></div></div>`;
+  html+=quoted?`<div style="height:6vh"></div>`:`<div class="sec">Every verse with ${label}</div>`;
+  html+=`<div class="sub">${N?`${N} verse${N===1?"":"s"}`:"No verse has these exact words"} in ${esc(NAMES[n]||n)}${N&&h.ot&&h.nt?`<br>Old Testament ${h.ot} · New Testament ${h.nt}`:""}${fl.t!=="all"?`<br>Searching only ${esc(filterName(fl))}${h.all!==N?` · ${h.all} in the whole Bible`:""}`:""}</div>`;
+  html+=`<div id="phrows">${phRows(0,PHS.shown)}</div><div class="sentinel" id="phsent"></div></div>`;
   return html;}
-function phRows(a,b){const T=DATA.tr[PHS.tr];let s="";for(let k=a;k<b;k++){const r=ORDERREFS[PHS.h.ids[k]];s+=`<a href="#" data-pgo="${r}"><b>${r}</b><br><span class="pt">${markPhrase(T[r]||"",PHS.words)}</span></a>`;}return s;}
-function phMoreBtn(){const left=PHS.h.ids.length-PHS.shown;return left>0?`<button class="alt" id="phmore" style="width:100%;margin-top:8px">Show more (${left} left)</button>`:"";}
-function phMoreTo(n){if(!PHS)return;const a=PHS.shown;PHS.shown=Math.min(PHS.h.ids.length,n);$("phrows").insertAdjacentHTML("beforeend",phRows(a,PHS.shown));
-  const b=$("phmore");if(b)b.remove();$("phrows").insertAdjacentHTML("afterend",phMoreBtn());wirePh();}
-function wirePh(){const box=$("phl");if(!box)return;
-  box.onclick=e=>{const a=e.target.closest("[data-pgo]");if(!a)return;e.preventDefault();openFromList(a.dataset.pgo);};
-  const mb=$("phmore");if(mb)mb.onclick=()=>phMoreTo(PHS.shown+50);
-  $("phsel").onchange=async e=>{const n=e.target.value;try{localStorage.setItem("bl_phtr",n);}catch(e){}const w=PHS.words,q=PHS.quoted;
-    $("phrows").innerHTML="<div class='tr'>Searching…</div>";await ensurePh(n);
-    const el=$("phl");if(!el)return;el.outerHTML=phBlock(w,q);wirePh();};}
-function openFromList(r){const st={words:PHS.words,quoted:PHS.quoted,shown:PHS.shown,y:window.scrollY,view:VIEW,last:LAST};
-  const back=()=>{if(st.quoted)showPhrase(st.view.q,st.words,st.shown,true);else show(st.last.ref,{...st.last,phN:st.shown},true);window.scrollTo(0,st.y);};
-  show(r,{qw:[],list:[[r,null]],openPhr:st.words,back});}
-function showPhrase(q,words,keepN,noPush){setView({t:"phrase",q});hidePop();LAST=null;
+function phRows(a,b){const T=DATA.tr[PHS.tr];let s="";for(let k=a;k<b;k++){const r=ORDERREFS[PHS.h.ids[k]];s+=liHtml(r,markPhrase(plainText(T[r]||""),PHS.words),`data-pgo="${r}"`);}return s;}
+function phMoreTo(n){if(!PHS||!$("phrows"))return;const a=PHS.shown;PHS.shown=Math.min(PHS.h.ids.length,n);if(PHS.shown>a)$("phrows").insertAdjacentHTML("beforeend",phRows(a,PHS.shown));}
+let PHIO=null;
+function wirePh(){const s=$("phsent");if(!s)return;if(PHIO)PHIO.disconnect();
+  if(window.IntersectionObserver){PHIO=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)&&PHS&&PHS.shown<PHS.h.ids.length)phMoreTo(PHS.shown+50);},{rootMargin:"600px"});PHIO.observe(s);}}
+window.addEventListener("scroll",()=>{if(!PHS||!$("phsent")||PHS.shown>=PHS.h.ids.length)return;if($("phsent").getBoundingClientRect().top<innerHeight+600)phMoreTo(PHS.shown+50);},{passive:true});
+function openFromList(r){show(r,{qw:[],list:[[r,null]],openPhr:PHS?PHS.words:null});}
+function showPhrase(q,words,keepN,noPush){setView({t:"phrase",q});LAST=null;
   if(!noPush){try{history.pushState({pq:q},"","#"+encodeURIComponent(q));}catch(e){}}
-  const fl=getFilter();let html="";
-  if(fl.t!=="all") html+=`<div class="fchip"><span>Searching only <b>${esc(filterName(fl))}</b></span><button class="alt" data-clrf="1">✕ Clear</button></div>`;
-  html+=phBlock(words,true,keepN);
-  html+=`<div class="card"><nav>Every verse with these exact words, in Bible order. Search without quotes to also get the best match.</nav></div>`;
-  $("out").innerHTML=html;wirePh();
-  const cf=$("out").querySelector("[data-clrf]");if(cf)cf.onclick=()=>{setFilter({t:"all"});showPhrase(q,words,0,true);};
-  window.scrollTo(0,0);}
+  $("out").innerHTML=phBlock(words,true,keepN);wirePh();window.scrollTo(0,0);}
 // ---- word study
-async function needIl(){if(LOADED.has("il"))return true;const out=$("out");out.innerHTML="<div class='card'>Loading Hebrew and Greek… one moment.</div>";
-  try{await waitFor("il");return true;}catch(e){out.innerHTML="<div class='card'>The Hebrew and Greek part couldn't download. Connect to the internet and try again.</div>";return false;}}
-async function showStudy(code){hidePop();if(!await needIl())return;
+async function needIl(){if(LOADED.has("il"))return true;const out=$("out");out.innerHTML="<div class='msg'>Loading Hebrew and Greek…</div>";
+  try{await waitFor("il");return true;}catch(e){out.innerHTML="<div class='msg'>The Hebrew and Greek part couldn't download. Connect to the internet and try again.</div>";return false;}}
+async function showStudy(code){closeSheet();if(!await needIl())return;
   const back=VIEW&&VIEW.t==="verse"?{ref:VIEW.ref,ctx:LAST}:null;
   await waitIdx(()=>RINDEX,30000);setView({t:"study",code});if(!RINDEX)buildRIndex();
   const vs=RINDEX.get(code)||[];let occ=0;const books=new Map(),gl=new Map(),sp=new Map();
@@ -570,35 +543,26 @@ async function showStudy(code){hidePop();if(!await needIl())return;
   const lx=(DATA.lex||{})[code]||"";const topB=[...books].sort((a,b)=>b[1]-a[1]||BOOKLIST.indexOf(a[0])-BOOKLIST.indexOf(b[0]));const max=topB.length?topB[0][1]:1;
   const spell=[...sp].sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);const G=[...gl].sort((a,b)=>b[1].n-a[1].n);
   const ot=topB.filter(b=>OTSET.has(b[0])).reduce((s,b)=>s+b[1],0);
-  let html=`<div class="bar">${back?`<button class="alt" data-sback="1">◀ Back</button>`:""}<button class="alt" data-sall="1">Every verse</button></div>`;
-  html+=`<div class="card"><div class="tr" style="margin-top:0">Word study · ${code}</div><div style="font-size:1.6em;margin-top:4px">${esc(spell.join(" · ")||code)}</div>${lx?`<div style="margin-top:4px">${esc(lx)}</div>`:""}
-  <div class="stat"><div><b>${occ}</b>times</div><div><b>${vs.length}</b>verses</div><div><b>${books.size}</b>books</div></div>
-  <div class="tr">${ot&&ot<occ?`${ot} in the Old Testament, ${occ-ot} in the New`:ot?"Old Testament only":"New Testament only"}</div></div>`;
-  html+=`<div class="card"><div class="ref">Where it's used most</div><div class="bars">${topB.slice(0,12).map(([b,n])=>`<div class="barrow"><span class="bl">${esc(FULL[b]||b)}</span><span class="bt"><div style="width:${Math.max(3,n/max*100).toFixed(1)}%"></div></span><span class="bn">${n}</span></div>`).join("")}</div>${topB.length>12?`<div class="tr">…and ${topB.length-12} more book${topB.length-12>1?"s":""}</div>`:""}</div>`;
-  html+=`<div class="card"><div class="ref">How it's translated (${G.length} English word${G.length===1?"":"s"})</div><div class="tr" style="margin-top:2px">The green words used for it in the interlinear. Tap one to see those verses.</div><div class="glist">${G.map(([g,e],k)=>`<a href="#" data-gk="${k}"><span>${esc(e.d)}</span><small>${e.n}× · ${e.v.length} verse${e.v.length>1?"s":""}</small></a>`).join("")}</div></div>`;
+  let html=`<div class="study"><div class="sub" style="margin-top:4vh">Word study · ${code}</div><div class="big">${esc(spell.join(" · ")||code)}</div>${lx?`<div>${esc(lx)}</div>`:""}
+  <div class="stat">${occ} times · ${vs.length} verses · ${books.size} books</div><div class="sub">${ot&&ot<occ?`${ot} in the Old Testament, ${occ-ot} in the New`:ot?"Old Testament only":"New Testament only"}</div>
+  <a class="link" data-sall="1">Every verse with this root</a>${back?`<a class="link" data-sback="1">Back to ${esc(refName(back.ref))}</a>`:""}`;
+  html+=`<div class="sec">Where it's used most</div>${topB.slice(0,12).map(([b,n])=>`<div class="barrow"><span class="bl">${esc(FULL[b]||b)}</span><span class="bt"><i style="width:${Math.max(3,n/max*100).toFixed(1)}%"></i></span><span class="bn">${n}</span></div>`).join("")}${topB.length>12?`<div class="sub" style="margin-top:10px">and ${topB.length-12} more book${topB.length-12>1?"s":""}</div>`:""}`;
+  html+=`<div class="sec">How it's translated</div><div class="sub">${G.length} English word${G.length===1?"":"s"} in the interlinear</div>${G.map(([g,e],k)=>`<a class="li" data-gk="${k}"><span class="t">${esc(e.d)}</span><span class="r">${e.n} times · ${e.v.length} verse${e.v.length>1?"s":""}</span></a>`).join("")}</div>`;
   const out=$("out");out.innerHTML=html;
   out.querySelectorAll("[data-gk]").forEach(el=>el.onclick=e=>{e.preventDefault();const en=G[+el.dataset.gk][1],g=en.d;const list=en.v.map(i=>[ORDERREFS[i],null]);
-    show(list[0][0],{list,qw:[],orig:`“${g}” (${code})`,root:code,total:list.length});});
+    show(list[0][0],{list,qw:[],orig:`“${g}” · ${code}`,root:code,total:list.length});});
   const sb=out.querySelector("[data-sback]");if(sb)sb.onclick=()=>show(back.ref,back.ctx,true);
   out.querySelector("[data-sall]").onclick=()=>{const q="root "+code;$("q").value=q;render(q);};
   window.scrollTo(0,0);}
-// ---- home
-const EXAMPLES=["Psalm 23","John 3:16","love your enemies","ἀγάπη","שָׁלוֹם"];
-function showHome(push){setView({t:"home"});hidePop();LAST=null;
-  if(push){try{history.pushState({home:1},"",location.pathname+location.search);}catch(e){}}
-  let html=`<div class="card"><div>Type a phrase, a verse like Psalm 23, or a Hebrew or Greek word in the box below. Try one:</div><div class="ex">${EXAMPLES.map((x,i)=>`<button class="alt" data-ex="${i}">${esc(x)}</button>`).join("")}</div>
-  <div class="tr">On a verse, tap a Hebrew or Greek word to see what it means.</div></div>`;
-  const out=$("out");out.innerHTML=html;
-  out.querySelectorAll("[data-ex]").forEach(b=>b.onclick=()=>{const q=EXAMPLES[+b.dataset.ex];$("q").value=q;render(q);});
-  window.scrollTo(0,0);}
-$("home").onclick=()=>showHome(true);$("homeb").onclick=()=>showHome(true);
 // ---- search
 async function render(q,noPush){
   const out=$("out");q=(q||"").trim();if(!q)return;
-  out.innerHTML="<div class='card'>Searching…</div>";
+  const cmd=q.toLowerCase();if(cmd==="settings"){settingsSheet();return;}if(cmd==="books"){bookSheet(b=>chapterSheet(b),"Books");return;}if(cmd==="translations"||cmd==="translation"){trSheet();return;}
+  $("q").blur();
+  setView({t:"busy"});out.innerHTML="<div class='msg'>Searching…</div>";
   const pq=phraseQuery(q);
   if(pq.quoted&&!ORIG.test(pq.inner)&&!/^(?:root\s*)?[HG]\d{1,5}$/i.test(pq.inner)){
-    if(!pq.words.length){out.innerHTML="<div class='card'>Type some words between the quotes.</div>";return;}
+    if(!pq.words.length){out.innerHTML="<div class='msg'>Type some words between the quotes.</div>";return;}
     await new Promise(r=>setTimeout(r,20));await ensurePh(phTr());saveRecent(q);showPhrase(q,pq.words,0,noPush);return;}
   if(pq.quoted)q=pq.inner;
   if(needsIl(q)&&!await needIl())return;
@@ -609,46 +573,97 @@ async function render(q,noPush){
   if(usePh){await ensurePh(phTr());res.phr=pq.words;
     if(!res.list.length){saveRecent(q);showPhrase(q,pq.words,0,noPush);return;}}
   if(!res.list.length){setView({t:"none"});
-    out.innerHTML=`<div class='card'>${res.bad?"That reference isn't in the Bible. Check the book, chapter and verse.":fl.t!=="all"?`No verse found in ${esc(filterName(fl))}.`:"No verse found."}</div>`+(fl.t!=="all"&&!res.bad?`<div class="row" style="margin:0 12px"><button data-clrf="1">Search the whole Bible</button></div>`:"");
+    out.innerHTML=`<div class='msg'>${res.bad?"That reference isn't in the Bible.":fl.t!=="all"?`No verse found in ${esc(filterName(fl))}.`:"No verse found."}</div>`+(fl.t!=="all"&&!res.bad?`<a class="link" data-clrf="1">Search the whole Bible</a>`:"");
     const cf=out.querySelector("[data-clrf]");if(cf)cf.onclick=()=>{setFilter({t:"all"});render(q);};return;}
   saveRecent(q); show(res.list[0][0],res,noPush);
 }
-function showPop(i,el){
-  document.querySelectorAll(".w.on").forEach(x=>x.classList.remove("on")); el.classList.add("on");
-  const [w,g,gray,m,sn]=CUR[i]; const p=$("pop"); const lx=sn?((DATA.lex||{})[sn]||""):"";
-  p.innerHTML=`<button class="alt x" id="closepop" aria-label="Close">✕</button><div class="heb">${esc(w)}</div><div class="gl">${esc(g||"—")}</div>`+
-    `<div class="lbl">Other meanings</div><div class="gray">${esc(gray||"none listed")}</div>`+
-    `<div class="lbl">Parsing</div><div class="morph">${esc(m||"—")}</div>`+
-    (sn?`<div class="lbl">Root word</div><div class="gray">${esc(lx||sn)} <small>(${sn})</small></div>`:"")+
-    `<div class="row">${sn?`<button id="study">Word study</button><button class="alt" id="findr">Verses with this root</button>`:""}<button class="alt" id="findw">Same spelling</button></div>`;
-  $("findw").onclick=()=>{$("q").value=w;render(w);};
-  if(sn){$("findr").onclick=()=>{const q="root "+sn;$("q").value=q;render(q);};$("study").onclick=()=>showStudy(sn);}
-  p.style.display="block";p.scrollTop=0;
-  $("closepop").onclick=hidePop;
-}
-function hidePop(){$("pop").style.display="none";document.querySelectorAll(".w.on").forEach(x=>x.classList.remove("on"));}
+// ---- home: the search field alone, centred
+function showHome(push){setView({t:"home"});LAST=null;$("out").innerHTML="";$("q").value="";
+  if(push){try{history.pushState({home:1},"",location.pathname+location.search);}catch(e){}}
+  showSugg();window.scrollTo(0,0);try{$("q").focus({preventScroll:true});}catch(e){}}
+// recent searches: quiet suggestions only while the field is focused and empty on the home screen
+function showSugg(){const el=$("sugg"),q=$("q");const r=getRecent().slice(0,4);
+  const on=VIEW&&VIEW.t==="home"&&!q.value&&document.activeElement===q&&r.length;
+  el.innerHTML=on?r.map((x,i)=>`<a data-i="${i}">${esc(x)}</a>`).join(""):"";el.classList.toggle("on",!!on);}
+$("sugg").addEventListener("pointerdown",e=>e.preventDefault());
+$("sugg").addEventListener("mousedown",e=>e.preventDefault());
+$("sugg").addEventListener("click",e=>{const a=e.target.closest("[data-i]");if(!a)return;const v=getRecent()[+a.dataset.i];$("q").value=v;render(v);});
 function getRecent(){return jget("bl_recent",[]);}
-function saveRecent(q){q=q.trim(); if(!q) return; let r=getRecent().filter(x=>x!==q); r.unshift(q); r=r.slice(0,8); jset("bl_recent",r); showRecent();}
-function showRecent(){const r=getRecent(); const el=$("recent"); if(!r.length){el.innerHTML="";return;} el.innerHTML="Recent: "+r.map((x,i)=>`<a href="#" data-i="${i}">${esc(x)}</a>`).join(""); el.querySelectorAll("a").forEach(a=>a.onclick=(e)=>{e.preventDefault(); const v=getRecent()[+a.dataset.i]; $("q").value=v; render(v);});}
-function setFs(px){px=Math.max(14,Math.min(30,px)); document.documentElement.style.setProperty("--fs",px+"px"); try{localStorage.setItem("bl_fs",px);}catch(e){}}
+function saveRecent(q){q=q.trim();if(!q)return;let r=getRecent().filter(x=>x!==q);r.unshift(q);r=r.slice(0,8);jset("bl_recent",r);}
+function setFs(px){px=Math.max(14,Math.min(30,px));document.documentElement.style.setProperty("--fs",px+"px");try{localStorage.setItem("bl_fs",px);}catch(e){}}
 setFs(+(localStorage.getItem("bl_fs")||18));
 function curFs(){return parseInt(getComputedStyle(document.documentElement).getPropertyValue("--fs"))||18;}
-$("go2").onclick=()=>{$("q").blur();render($("q").value);};
-$("q").addEventListener("keydown",e=>{if(e.key==="Enter"){e.target.blur();render(e.target.value);}});
+const Q=$("q");
+Q.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();render(Q.value);}else if(e.key==="Escape"){showHome(true);}});
+Q.addEventListener("input",()=>{if(!Q.value&&VIEW&&VIEW.t!=="home")showHome(true);else showSugg();});
+Q.addEventListener("focus",()=>{if(VIEW&&VIEW.t!=="home"&&Q.value)setTimeout(()=>{try{Q.select();}catch(e){}},0);showSugg();});
+Q.addEventListener("blur",()=>setTimeout(showSugg,150));
+// ---- word meaning (tap an original word)
+function showPop(i,el){document.querySelectorAll(".w.on").forEach(x=>x.classList.remove("on"));el.classList.add("on");
+  const [w,g,gray,m,sn]=CUR[i];const lx=sn?((DATA.lex||{})[sn]||""):"";
+  openSheet(`<div class="wd"><div class="o">${esc(w)}</div><div class="row">${esc(g||"—")}</div>`+
+    `<div class="lbl">Other meanings</div><div class="row">${esc(gray||"none listed")}</div>`+
+    `<div class="lbl">Parsing</div><div class="row">${esc(m||"—")}</div>`+
+    (sn?`<div class="lbl">Root word</div><div class="row">${esc(lx||sn)} · ${sn}</div>`:"")+`</div><div class="gap"></div>`+
+    (sn?it(`id="study"`,"Word study")+it(`id="findr"`,"Every verse with this root"):"")+it(`id="findw"`,"Same spelling"),"word");
+  $("findw").onclick=()=>{closeSheet();$("q").value=w;render(w);};
+  if(sn){$("findr").onclick=()=>{closeSheet();const q="root "+sn;$("q").value=q;render(q);};$("study").onclick=()=>showStudy(sn);}}
+function hidePop(){if(SHEETKIND==="word")closeSheet();document.querySelectorAll(".w.on").forEach(x=>x.classList.remove("on"));}
+// ---- taps
+let SUPPRESS=0;
+document.addEventListener("click",e=>{
+  if(Date.now()-SUPPRESS<450){e.preventDefault();e.stopPropagation();return;}
+  if(e.target.closest("#sheet,#top,#corner"))return;
+  const t=e.target;
+  const w=t.closest(".w");if(w){showPop(+w.dataset.i,w);return;}
+  const pg=t.closest("[data-pgo]");if(pg){e.preventDefault();openFromList(pg.dataset.pgo);return;}
+  const go=t.closest("[data-go]");if(go){e.preventDefault();if(VIEW.t==="chapter")show(go.dataset.go);else show(go.dataset.go,LAST&&LAST.list&&LAST.list.some(x=>x[0]===go.dataset.go)?LAST:undefined);return;}
+  if(t.closest("[data-chap]")){showChapter(VIEW.ref);return;}
+  const st=t.closest("[data-study]");if(st){showStudy(st.dataset.study);return;}
+  if(t.closest(".vt")){toggleIl();return;}
+  if(t.closest("a,.li,.link,.study,.il,.xr,.chap p"))return;
+  // empty background: home
+  if(VIEW&&VIEW.t!=="home"&&VIEW.t!=="busy"&&!window.getSelection().toString())showHome(true);
+},true);
 document.addEventListener("keydown",e=>{if(e.target.id==="q"||!VIEW||VIEW.t!=="verse")return;if(e.key==="ArrowLeft"){const p=step(VIEW.ref,-1);if(p)show(p,LAST);}if(e.key==="ArrowRight"){const n=step(VIEW.ref,1);if(n)show(n,LAST);}});
-(()=>{let sx=0,sy=0,st=0;const o=$("out");
-  o.addEventListener("touchstart",e=>{if(e.touches.length!==1)return;sx=e.touches[0].clientX;sy=e.touches[0].clientY;st=Date.now();},{passive:true});
-  o.addEventListener("touchend",e=>{if(!VIEW||!st)return;const t=e.changedTouches[0];const dx=t.clientX-sx,dy=t.clientY-sy;st=0;
-    if(Math.abs(dx)<70||Math.abs(dy)>Math.abs(dx)*.6)return;if(e.target.closest&&e.target.closest("select,#recent"))return;
-    const d=dx<0?1:-1;
-    if(VIEW.t==="verse"){const r=step(VIEW.ref,d);if(r){show(r,LAST);toast(r);}}
-    else if(VIEW.t==="chapter"){const m=chapterOf(VIEW.ref).match(/^(.*) (\d+)$/);const r=`${m[1]} ${+m[2]+d}:1`;if(hasRef(r)){showChapter(r,VIEW.tn,VIEW.tn2);window.scrollTo(0,0);}}
-  },{passive:true});})();
+// ---- gestures: long-press, swipes, left-edge back, corner
+(()=>{let sx=0,sy=0,st=0,lp=0,fired=false,two=false,tgt=null;
+  const LPZ=".vt,.verse,.chap,#phl,.li,.il";
+  const clear=()=>{clearTimeout(lp);lp=0;};
+  const fire=fn=>{fired=true;SUPPRESS=Date.now();try{window.getSelection().removeAllRanges();}catch(e){}if(navigator.vibrate)try{navigator.vibrate(8);}catch(e){}fn();};
+  document.addEventListener("touchstart",e=>{fired=false;tgt=e.target;
+    if(e.touches.length===2){clear();const a=e.touches[0],b=e.touches[1];two=a.clientX>innerWidth/2&&b.clientX>innerWidth/2&&a.clientY<innerHeight*.3&&b.clientY<innerHeight*.3;st=0;return;}
+    two=false;if(e.touches.length!==1)return;const p=e.touches[0];sx=p.clientX;sy=p.clientY;st=Date.now();clear();
+    if($("sheet").style.display==="flex"||!tgt.closest)return;
+    if(tgt.closest("#corner"))lp=setTimeout(()=>fire(settingsSheet),500);
+    else if(VIEW&&VIEW.t!=="home"&&tgt.closest(LPZ)&&!tgt.closest(".w,.xr a"))lp=setTimeout(()=>fire(trSheet),500);
+  },{passive:true});
+  document.addEventListener("touchmove",e=>{if(!lp)return;const p=e.touches[0];if(p&&Math.hypot(p.clientX-sx,p.clientY-sy)>10)clear();},{passive:true});
+  document.addEventListener("touchcancel",()=>{clear();st=0;},{passive:true});
+  document.addEventListener("touchend",e=>{clear();
+    if(two){two=false;if(e.touches.length===0){SUPPRESS=Date.now();settingsSheet();}return;}
+    if(fired){if(e.cancelable)e.preventDefault();fired=false;st=0;return;}
+    if(!VIEW||!st||$("sheet").style.display==="flex")return;const p=e.changedTouches[0];const dx=p.clientX-sx,dy=p.clientY-sy,dt=Date.now()-st;st=0;
+    if(!tgt||!tgt.closest||tgt.closest("#top,#corner"))return;
+    const ax=Math.abs(dx),ay=Math.abs(dy);
+    if(ax>=70&&ay<ax*.6&&dt<900){
+      if(sx<24&&dx>0&&history.state&&history.length>1){SUPPRESS=Date.now();history.back();return;}
+      const d=dx<0?1:-1;
+      if(VIEW.t==="verse"){const r=step(VIEW.ref,d);if(r){SUPPRESS=Date.now();show(r,LAST);}}
+      else if(VIEW.t==="chapter"){const m=chapterOf(VIEW.ref).match(/^(.*) (\d+)$/);const r=`${m[1]} ${+m[2]+d}:1`;if(hasRef(r)){SUPPRESS=Date.now();showChapter(r,VIEW.tn,VIEW.tn2);window.scrollTo(0,0);}}
+      return;}
+    // swipe up on the verse when there's nothing more to scroll: open the chapter
+    if(dy<=-90&&ax<ay*.6&&dt<900&&VIEW.t==="verse"&&tgt.closest(".verse")&&window.scrollY+innerHeight>=document.documentElement.scrollHeight-4){SUPPRESS=Date.now();showChapter(VIEW.ref);}
+  },{passive:false});
+  // mouse / desktop: right-click does what a long-press does
+  document.addEventListener("contextmenu",e=>{const t=e.target;if(!t.closest)return;
+    if(t.closest("#corner")){e.preventDefault();settingsSheet();return;}
+    if(VIEW&&VIEW.t!=="home"&&t.closest(LPZ)){e.preventDefault();trSheet();}});
+})();
 // ---- background loading
-function note(t){const e=$("loadnote");e.textContent=t;e.style.display=t?"block":"none";document.body.classList.toggle("loading",!!t);}
-function progress(){const n=trLoaded().length,N=DATA.order.length;note(n<N||!LOADED.has("il")?`Loading the rest of the Bible… ${n} of ${N} translations`:"");}
-function refreshMaybe(){if(!VIEW)return;if($("pop").style.display==="block"||$("sheet").style.display==="flex")return;
-  const ae=document.activeElement;if(ae&&/INPUT|SELECT/.test(ae.tagName))return;
+function note(t){const e=$("loadnote");e.textContent=t;e.style.display=t?"block":"none";}
+function progress(){const n=trLoaded().length,N=DATA.order.length;note(n<N||!LOADED.has("il")?`Loading ${n} of ${N} translations`:"");}
+function refreshMaybe(){if(!VIEW)return;if($("sheet").style.display==="flex")return;
   if(VIEW.t==="verse"){const y=window.scrollY;show(VIEW.ref,LAST,true,true);window.scrollTo(0,y);}}
 let FAILNOTE=false;
 HOOK=(k,d)=>{
@@ -656,20 +671,20 @@ HOOK=(k,d)=>{
   if(k==="fail"){note("");if(!FAILNOTE){FAILNOTE=true;toast("Part of the Bible couldn't download. Open the page again when you're online.");}return;}
   if(k==="done"){note("");window.__blAll=true;idleBuild();try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});}catch(e){}refreshMaybe();return;}
   if(IWFAIL){if(DATA.order.includes(k)){INDEX=null;delete BST.w;FCACHE.clear();XCACHE.clear();}if(k==="il"){OINDEX=null;RINDEX=null;delete BST.o;delete BST.r;}}
-  if(k===phTr())phIdle(k);
-  progress();if(k==="il")refreshMaybe();
+  if(k===phTr()){phIdle(k);refreshMaybe();}
+  progress();if(k==="il"&&ILON)refreshMaybe();
 };
-applyTheme();filterLabel();showRecent();
-window.addEventListener("popstate",e=>{const s=e.state||{};if(s.pq){$("q").value=s.pq;render(s.pq,true);return;}
+applyTheme();
+window.addEventListener("popstate",e=>{const s=e.state||{};closeSheet();if(s.pq){$("q").value=s.pq;render(s.pq,true);return;}
   if(s.id&&CTXS.has(s.id)&&hasRef(s.ref)){show(s.ref,CTXS.get(s.id),true);return;}
-  const r=s.ref||decodeURIComponent(location.hash.slice(1));if(r&&hasRef(r))show(r,LAST&&LAST.list&&LAST.list.some(x=>x[0]===r)?LAST:undefined,true);else if(!r)showHome();});
+  const r=s.ref||decodeURIComponent(location.hash.slice(1));if(r&&hasRef(r))show(r,undefined,true);else if(!r)showHome();});
 const startRef=decodeURIComponent(location.hash.slice(1));
-if(startRef&&hasRef(startRef)){$("q").value=startRef;show(startRef,undefined,true);} else if(/^["“]/.test(startRef)){$("q").value=startRef;render(startRef,true);} else showHome();
+if(startRef&&hasRef(startRef)){$("q").value=refName(startRef);show(startRef,undefined,true);} else if(/^["“]/.test(startRef)){$("q").value=startRef;render(startRef,true);} else showHome();
 if(FILES)progress();
 while(IWQ.length)idxMsg(IWQ.shift());
 phIdle(phTr());
 if(!FILES){window.__blAll=true;idleBuild();}
-window.BL={showStudy,ph:()=>Object.keys(PH),phraseHits:(n,q)=>{const w=phraseQuery(q).words;if(!PH[n])phStep(n,0);return phraseHits(n,w,{t:'all'}).ids.length;},getLast:()=>LAST,view:()=>VIEW,idx:()=>({worker:!IWFAIL,done:IWDONE,ntr:INDEXNTR,o:!!OINDEX,r:!!RINDEX})};
+window.BL={showStudy,ph:()=>Object.keys(PH),phraseHits:(n,q)=>{const w=phraseQuery(q).words;if(!PH[n])phStep(n,0);return phraseHits(n,w,{t:'all'}).ids.length;},getLast:()=>LAST,view:()=>VIEW,idx:()=>({worker:!IWFAIL,done:IWDONE,ntr:INDEXNTR,o:!!OINDEX,r:!!RINDEX}),sheet:()=>SHEETKIND};
 window.__blReady=true;
 }
 </script>

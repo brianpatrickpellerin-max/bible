@@ -99,7 +99,7 @@ body.v-home #out{display:none}
 .wd .lbl{font-size:calc(var(--fs)*.68);letter-spacing:.06em;margin-top:16px}
 #toast{position:fixed;left:50%;bottom:calc(30px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--bg);color:var(--fg);border:var(--hair) solid var(--fg);padding:9px 16px;display:none;z-index:20;max-width:85vw;text-align:center;font-size:calc(var(--fs)*.8)}
 #loadnote{position:fixed;left:0;right:0;bottom:calc(10px + env(safe-area-inset-bottom));text-align:center;font-size:calc(var(--fs)*.62);letter-spacing:.03em;display:none;pointer-events:none;z-index:4}
-.lxxverse .il{margin-top:0}.lxxwords .w{margin:0 5px 12px}.lxxwords.vt .w{margin:0 3px;padding:0;min-width:0}.lxxwords.vt .w .o{font-size:1em;line-height:1.5}#lxxbookfilter{display:block;width:100%;padding:10px;white-space:normal;background:var(--bg)}
+.lxxverse .il{margin-top:0}.lxxwords .w{margin:0 5px 12px;max-width:calc(100% - 14px)}.lxxwords .g{max-width:220px;white-space:normal;overflow-wrap:anywhere;margin-left:auto;margin-right:auto}.lxxwords .o{overflow-wrap:anywhere}.lxxwords.vt .w{margin:0 3px;padding:0;min-width:0}.lxxwords.vt .w .o{font-size:1em;line-height:1.5}#lxxbookfilter{display:block;width:100%;padding:10px;white-space:normal;background:var(--bg)}
 </style></head><body>
 <div id="top"><input id="q" type="search" value="" enterkeyhint="search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Search the Bible" autofocus><div id="hint"></div><div id="sugg"></div></div>
 <div id="corner" aria-hidden="true"></div>
@@ -686,12 +686,13 @@ Q.addEventListener("focus",()=>{if(VIEW&&VIEW.t!=="home"&&Q.value)setTimeout(()=
 Q.addEventListener("blur",()=>setTimeout(showSugg,150));
 // ---- word meaning (tap an original word)
 function showPop(i,el){document.querySelectorAll(".w.on").forEach(x=>x.classList.remove("on"));el.classList.add("on");
-  const [w,g,gray,m,sn]=CUR[i];const lx=sn?((DATA.lex||{})[sn]||""):"";
+  const [w,g,gray,m,sn]=CUR[i];const hi=(DATA.il[VIEW&&VIEW.ref]||[]).indexOf(CUR[i]);const lx=sn?((DATA.lex||{})[sn]||""):"";
   openSheet(`<div class="wd"><div class="o">${esc(w)}</div><div class="row">${esc(g||"—")}</div>`+
     `<div class="lbl">Other meanings</div><div class="row">${esc(gray||"none listed")}</div>`+
     `<div class="lbl">Parsing</div><div class="row">${esc(m||"—")}</div>`+
     (sn?`<div class="lbl">Root word</div><div class="row">${esc(lx||sn)} · ${sn}</div>`:"")+`</div><div class="gap"></div>`+
-    (sn?it(`id="study"`,"Word study")+it(`id="findr"`,"Every verse with this root"):"")+it(`id="findw"`,"Same spelling")+(/^G\d+$/.test(sn||"")?it(`id="lxxstudy"`,"Greek Old Testament occurrences"):""),"word");
+    (sn?it(`id="study"`,"Word study")+it(`id="findr"`,"Every verse with this root"):"")+it(`id="findw"`,"Same spelling")+(hi>=0&&/^H/.test(sn||"")?it(`id="lxxlinks"`,"Greek Old Testament word counterparts"):"")+(/^G\d+$/.test(sn||"")?it(`id="lxxstudy"`,"Greek Old Testament occurrences"):""),"word");
+  if($("lxxlinks"))$("lxxlinks").onclick=()=>LXX.hebrewLinks(VIEW.ref,hi);
   if($("lxxstudy"))$("lxxstudy").onclick=()=>LXX.study(sn);
   $("findw").onclick=()=>{closeSheet();$("q").value=w;render(w);};
   if(sn){$("findr").onclick=()=>{closeSheet();const q="root "+sn;$("q").value=q;render(q);};$("study").onclick=()=>showStudy(sn);}}
@@ -738,7 +739,7 @@ document.addEventListener("keydown",e=>{if(e.target.id==="q"||!VIEW||VIEW.t!=="v
       if(sx<24&&dx>0&&history.state&&history.length>1){SUPPRESS=Date.now();history.back();return;}
       const d=dx<0?1:-1;
       if(VIEW.t==="verse"){const r=step(VIEW.ref,d);if(r){SUPPRESS=Date.now();show(r,LAST);}}
-      else if(VIEW.t==="chapter"){const m=chapterOf(VIEW.ref).match(/^(.*) (\d+)$/);const r=`${m[1]} ${+m[2]+d}:1`;if(hasRef(r)){SUPPRESS=Date.now();showChapter(r,VIEW.tn,VIEW.tn2);window.scrollTo(0,0);}}
+      else if(VIEW.t==="chapter"){if(LXX&&LXX.active){SUPPRESS=Date.now();LXX.moveChapter(d);return;}const m=chapterOf(VIEW.ref).match(/^(.*) (\d+)$/);const r=`${m[1]} ${+m[2]+d}:1`;if(hasRef(r)){SUPPRESS=Date.now();showChapter(r,VIEW.tn,VIEW.tn2);window.scrollTo(0,0);}}
       return;}
     // swipe up on the verse when there's nothing more to scroll: open the chapter
     if(dy<=-90&&ax<ay*.6&&dt<900&&VIEW.t==="verse"&&tgt.closest(".verse")&&window.scrollY+innerHeight>=document.documentElement.scrollHeight-4){SUPPRESS=Date.now();showChapter(VIEW.ref);}

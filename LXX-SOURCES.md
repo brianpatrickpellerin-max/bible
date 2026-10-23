@@ -76,3 +76,73 @@ Output consists of deterministic compressed per-text files, a dictionary,
 a reverse passage map, a manifest and a coverage report. Updating sources
 requires rebuilding, reviewing changed coverage and checking verse
 correspondences. Attribution and changes must remain available downstream.
+
+## Word links and reviewed English glosses
+
+The same pinned Open Scriptorium revision supplies
+`db/seeds/mt_alignment/word_links.jsonl.gz` and `eval_300.json`, CC BY 4.0.
+The latter is described upstream as a human-reviewed draft with independent
+re-annotation and adjudication. It supplies glosses for a small evaluation
+sample, not a complete English interlinear. This website has not independently
+verified every gloss or link.
+
+Word coordinates are admitted only when the Hebrew word sequence agrees
+exactly, after removing pointing, with the website's Hebrew interlinear.
+The source coordinate sequence is checked using Open Scriptures Hebrew Bible
+(https://github.com/openscriptures/morphhb), including its full-verse WLC to
+KJV numbering conversions. WLC text is public domain; OSHB analysis is CC BY 4.0.
+The exact Hebrew revision is in `data/lxx-plus/coverage.json`. The app checks
+each linked Hebrew spelling again before displaying it.
+
+Statistical links require stability >= 0.9. Stability is reproducibility of
+alignment, not a probability of correctness. Convention-rule links retain
+their rule labels. In accepted evaluation passages only high-confidence
+reviewed links are used. Greek glosses require matching Greek token sequences;
+Hebrew glosses are never copied into Greek translation slots. Links may be
+many-to-many. Missing links do not prove that a word was omitted.
+
+## Supplemental dictionary and name forms
+
+- STEPBible **TIPNR — Translators Individualised Proper Names with all
+  References**, STEPBible.org / Tyndale House Cambridge, CC BY 4.0:
+  https://github.com/STEPBible/STEPBible-Data/tree/master/Proper%20Nouns
+  Only spelling equivalents are imported; biographical summaries are excluded.
+  Greek name spellings are matched directly to TIPNR Greek forms. Hebrew
+  alignment alone is not accepted as a Greek name definition because the
+  editions may use different names. These are name equivalents, not etymologies.
+- **LSJ9 short definitions**, Francisco Riordan (2026), CC BY 4.0:
+  https://github.com/ciscoriordan/lsj9
+  Based on the public-domain 1940 Liddell–Scott–Jones lexicon. Supplemental
+  matches require exact case-sensitive NFC headwords; obvious OCR stubs and
+  bare cross-reference definitions are excluded. The display abbreviation is
+  shortened; the complete imported definition remains in the word sheet.
+
+Neither source overrides an existing TBESG entry. All downloaded input hashes,
+added headword counts and remaining gaps appear in the enrichment coverage
+report. Some dictionary entries remain unmatched and are visibly blank.
+Data adaptations and this attribution must be retained under CC BY 4.0:
+https://creativecommons.org/licenses/by/4.0/
+
+## English companion edition
+
+**Brenton English Septuagint (1851)**, public domain. Electronic USFM edition
+provided by eBible.org: https://ebible.org/bible/details.php?id=eng-Brenton
+Archive: https://ebible.org/Scriptures/eng-Brenton_usfm.zip
+
+USFM headings, footnotes and formatting are removed; verse text and native
+edition references are retained. The combined Ezra–Nehemiah book is used for
+2 Esdras. The Brenton Daniel, Susanna and Bel texts are offered with Theodotion,
+not silently substituted for the Old Greek editions. Brenton is explicitly
+labelled as a companion: identical references do not certify identical verse
+divisions or exact correspondence with Rahlfs. It is not presented as a
+contextual, literal or word-by-word translation of the site's Greek tokens.
+
+The fuller English interlinear at bible.in.ua was evaluated but not imported.
+Its designated bulk download was unavailable; its prohibition on automated
+bulk scraping was respected.
+
+Rebuild the separately versioned enrichment pack:
+
+```
+python scripts/build_lxx_enrichment.py /path/to/lxx-morph /path/to/morphhb /path/to/TIPNR.txt /path/to/lsj9_short_defs.json /path/to/eng-Brenton_usfm.zip
+```

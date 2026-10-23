@@ -1,6 +1,7 @@
 importScripts('lxx-core.js');
 const CACHE='bible-lxx-v1';
-const PACK_MANIFEST='data/lxx/manifest.de6f6944de.json';
+const PLUS_MANIFEST='data/lxx-plus/manifest.703fcfcea1.json';
+  const PACK_MANIFEST='data/lxx/manifest.de6f6944de.json';
 let manifest,lex,ready,books=new Map(),latest=0;
 async function get(url){
   const c=await caches.open(CACHE);let r=await c.match(url);
@@ -9,7 +10,12 @@ async function get(url){
   const text=bytes[0]===31&&bytes[1]===139?await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).text():new TextDecoder().decode(bytes);
   return JSON.parse(text);
 }
-async function init(){manifest=await get(PACK_MANIFEST);lex=await get(manifest.lexicon);}
+async function init(){
+  manifest=await get(PACK_MANIFEST);lex=await get(manifest.lexicon);
+  const plus=await get(PLUS_MANIFEST);
+  if(plus.base_lexicon!==manifest.lexicon)throw Error('Greek dictionary versions do not match. Reload while online.');
+  LXXCore.supplement(lex,await get(plus.dictionary));
+}
 onmessage=async e=>{
   const m=e.data;if(m.type!=='search')return;latest=m.id;const id=m.id;
   try{

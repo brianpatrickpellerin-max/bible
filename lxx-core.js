@@ -29,6 +29,14 @@
     }
     return hit;
   }
-  const api={fold,words,normal,query,strong,matches};root.LXXCore=api;
+  function supplement(lex,extra){
+    for(const [i,l] of Object.entries(extra)){
+      if(!lex.lemmas[i]||lex.lemmas[i].entries.length)continue;
+      Object.assign(lex.lemmas[i],l);
+    }
+    return lex;
+  }
+  const hebrew=s=>String(s||'').replace(/[^א-ת]/g,'');
+  const api={fold,words,normal,query,strong,matches,supplement,hebrew};root.LXXCore=api;
   if(typeof module!=='undefined')module.exports=api;
 })(typeof self!=='undefined'?self:globalThis);

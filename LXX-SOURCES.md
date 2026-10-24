@@ -123,11 +123,18 @@ report. Some dictionary entries remain unmatched and are visibly blank.
 Data adaptations and this attribution must be retained under CC BY 4.0:
 https://creativecommons.org/licenses/by/4.0/
 
-The enrichment builder also lists fifteen explicit alternate TBESG headword
+The enrichment builder also lists forty explicit alternate TBESG headword
 equivalents, including contracted ὀστοῦν / ὀστέον and σιδηροῦς / σιδήρεος.
 These reuse the complete existing TBESG entries and their Strong's identifiers.
 The Greek source lemma is retained. This is not a general rule changing middle
 verbs to active verbs or selecting a contextual translation.
+
+An explicit list of complete short LSJ definitions also admits entries such
+as Κῦρος (Cyrus) and ἀκτίς (ray). Unusable short OCR fragments such as "also"
+remain excluded. The coverage report has an immutable versioned filename
+so an offline download retains the report matching its dictionary. The
+"Unresolved dictionary words" option lists missing matches by occurrence
+count and opens their Scripture occurrences; it makes no translation claims.
 
 ## English companion edition
 

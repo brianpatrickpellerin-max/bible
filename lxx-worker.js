@@ -1,6 +1,6 @@
 importScripts('lxx-core.js');
 const CACHE='bible-lxx-v1';
-const PLUS_MANIFEST='data/lxx-plus/manifest.de0b8d35ec.json';
+const PLUS_MANIFEST='data/lxx-plus/manifest.5f24124c1d.json';
   const PACK_MANIFEST='data/lxx/manifest.de6f6944de.json';
 let manifest,lex,ready,books=new Map(),latest=0;
 async function get(url){

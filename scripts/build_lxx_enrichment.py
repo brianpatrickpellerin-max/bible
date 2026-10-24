@@ -95,6 +95,18 @@ aliases={'ὀστοῦν':'ὀστέον','χειμάρρους':'χείμαρρ
  'διαπορεύομαι':'διαπορεύω','κρεμάννυμι':'κρεμάω','προπορεύομαι':'προπορεύω',
  'ἱλαστήριον':'ἱλαστήριος','περιζώννυμαι':'περιζώννυμι','ἀνδρίζομαι':'ἀνδρίζω',
  'ἕνεκεν':'ἕνεκα','ἡττάω':'ἡσσάομαι','σοφίζομαι':'σοφίζω'}
+aliases.update({'ἀντίγραφον':'ἀντίγραφος','ἀντιλήμπτωρ':'ἀντιλήπτωρ',
+ 'κατανύσσομαι':'κατανύσσω','διπλόος':'διπλοῦς','λινοῦς':'λίνεος',
+ 'ἀντίλημψις':'ἀντίληψις','χαρίζομαι':'χαρίζω','ἅπτομαι':'ἅπτω',
+ 'ἐπαναπαύομαι':'ἐπαναπαύω','ὑποκρίνομαι':'ὑποκρίνω','δίδραχμον':'δίδραχμος',
+ 'παραλία':'παράλιος','περίστυλον':'περίστυλος','πολιτεύομαι':'πολιτεύω',
+ 'δωρέομαι':'δωρέω','ὀρεινή':'ὀρεινός','νῶτος':'νῶτον','θεμέλιον':'θεμέλιος',
+ 'χνοῦς':'χνόος','ἐγχειρίδιον':'ἐγχειρίδιος','νεομηνία':'νουμηνία',
+ 'μεσονύκτιον':'μεσονύκτιος','χειρόγραφον':'χειρόγραφος','ὕσσωπον':'ὕσσωπος',
+ 'ζυγόν':'ζυγός'})
+# Individually inspected complete short LSJ definitions; length alone cannot
+# distinguish a real meaning (e.g. "ray") from an OCR stub (e.g. "also").
+short_complete=set('Κῦρος δυσμενής ἐπικράτεια ἀκτίς συνεθίζω παλαιστής πλάστιγξ κραδαίνω βοήθημα ἐγκαθίημι κατοπτεύω οἰκητήριος προσαπόλλυμι ἀπέχθεια νεανικός κοσμοποιία αὐθέντης δεῖμα ἀξία κάλυψις ὑπορράπτω'.split())
 byhead=collections.defaultdict(dict)
 if hashlib.sha256(TBESG.read_bytes()).hexdigest()!=manifest['lexicon_sha256']:
     raise ValueError('TBESG input must match the pinned base dictionary revision')
@@ -122,7 +134,7 @@ for i,l in enumerate(lex['lemmas']):
         # Exact case-sensitive headwords only. A bare cross-reference or OCR
         # stub is not promoted to an English meaning. Never use an unaccented
         # proper name to select an unrelated classical common-word sense.
-        if definition and len(definition)>8 and not re.match(r'^(Att\.|Dor\.|Ep\.|Aeol\.|Ion\.|cf\.|v\.|=|etc\b|heterocl\.|contr\.)',definition):
+        if definition and (len(definition)>8 or head in short_complete) and not re.match(r'^(Att\.|Dor\.|Ep\.|Aeol\.|Ion\.|cf\.|v\.|=|etc\b|heterocl\.|contr\.)',definition):
             entries=[{'id':'LSJ9:'+head,'head':head,'gloss':definition,'definition':definition,'strong':'','source':'LSJ9 / Francisco Riordan, CC BY 4.0'}];stats['lsj_lemmas_added']+=1
     if entries:
         gloss=' / '.join(e['gloss'] for e in entries)
@@ -167,8 +179,11 @@ for b,rows in tokens.items():
             if not lex['lemmas'][t[1]]['entries'] and str(t[1]) not in supplement:missing[lex['lemmas'][t[1]]['lemma']]+=1
 stats['remaining_unmatched_word_records']=sum(missing.values());stats['remaining_unmatched_lemmas']=len(missing)
 report={'counts':dict(stats),'hebrew_sequence_checks':dict(proofcounts),'remaining_lemmas':dict(missing.most_common()),'sources':{'morphology_revision':manifest['commit'],'hebrew_revision':subprocess.check_output(['git','-C',str(HEBREW),'rev-parse','HEAD'],text=True).strip(),'proper_names_sha256':hashlib.sha256(NAMES.read_bytes()).hexdigest(),'lsj_sha256':hashlib.sha256(LSJ.read_bytes()).hexdigest(),'brenton_archive_sha256':hashlib.sha256(BRENTON.read_bytes()).hexdigest()},'notes':['Word links require exact Hebrew token-sequence equality after OSHB verse-number conversion. Runtime also verifies linked Hebrew letters.','Statistical links retain stability >= 0.9; this is alignment reproducibility, not a probability of correctness. Convention-rule and source-reviewed links are labelled separately.','Name equivalents are not etymological meanings. LSJ supplement requires an exact case-sensitive headword.','Brenton is a companion edition in its own reference system, not a word-by-word translation of Rahlfs.','Source-reviewed English word glosses cover the accepted subset of the upstream 300-verse evaluation dataset. They are not extrapolated to unreviewed passages.']}
-(OUT/'coverage.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
-meta={'version':1,'base_lexicon':manifest['lexicon'],'dictionary':sp,'books':files,'bytes':total,'counts':dict(stats),'brenton_ids':sourcebooks}
+coverage_raw=json.dumps(report,ensure_ascii=False,indent=2)+'\n'
+(OUT/'coverage.json').write_text(coverage_raw)
+coverage_path='data/lxx-plus/coverage.'+hashlib.sha256(coverage_raw.encode()).hexdigest()[:10]+'.json'
+(ROOT/coverage_path).write_text(coverage_raw)
+meta={'version':1,'base_lexicon':manifest['lexicon'],'dictionary':sp,'coverage':coverage_path,'books':files,'bytes':total,'counts':dict(stats),'brenton_ids':sourcebooks}
 raw=json.dumps(meta,ensure_ascii=False,indent=2)+'\n';mp='data/lxx-plus/manifest.'+hashlib.sha256(raw.encode()).hexdigest()[:10]+'.json';(ROOT/mp).write_text(raw);(OUT/'manifest.json').write_text(raw)
 for f in ['lxx.js','lxx-worker.js']:
     p=ROOT/f;s=p.read_text();s=re.sub(r"const PLUS_MANIFEST='[^']*';",f"const PLUS_MANIFEST='{mp}';",s);p.write_text(s)

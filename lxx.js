@@ -2,10 +2,11 @@
 window.createLXX=function(api){
   'use strict';
   const C=LXXCore,$=id=>document.getElementById(id),esc=api.esc,CACHE='bible-lxx-v1';
-  const PLUS_MANIFEST='data/lxx-plus/manifest.de0b8d35ec.json';
+  const PLUS_MANIFEST='data/lxx-plus/manifest.5f24124c1d.json';
   const PACK_MANIFEST='data/lxx/manifest.de6f6944de.json';
   let active=false,mode='interlinear',manifest=null,plus=null,lex=null,reverse=null,pending=null,worker=null,seq=0,operation=0,current=null,lastResults=null,downloadBusy=false;
   const loaded=new Map(),waits=new Map();
+  let gapResults=null;
   let scope='ot',bookFilter='',accents=false;
   try{active=localStorage.getItem('bl_lxx')==='1'&&(!location.hash||location.hash.startsWith('#lxx/'));mode=localStorage.getItem('bl_lxx_mode')||mode;}catch(e){}
   function save(){try{localStorage.setItem('bl_lxx',active?'1':'0');localStorage.setItem('bl_lxx_mode',mode);}catch(e){}badge();}
@@ -92,7 +93,7 @@ window.createLXX=function(api){
   function menu(){
     api.openSheet('<div class="st">Greek Old Testament</div>'+[['interlinear','Greek with word glosses'],['greek','Greek text']].map(([k,l])=>`<a class="it${mode===k?' on':''}" data-lxx-mode="${k}">${l}</a>`).join('')+
       (current?'<a class="it" data-lxx-action="chapter">Open chapter</a><a class="it" data-lxx-action="compare">Compare Hebrew / English</a><a class="it" data-lxx-action="brenton">Brenton English Septuagint</a><a class="it" data-lxx-action="copy">Copy Greek verse</a><a class="it" data-lxx-action="image">Share as image</a>':'')+
-      '<div class="gap"></div><a class="it" data-lxx-action="books">Books</a><a class="it" data-lxx-action="settings">Search and display settings</a><a class="it" data-lxx-action="download">Download complete Greek pack</a><a class="it" data-lxx-action="sources">Sources and coverage</a><a class="it" data-lxx-action="leave">Hebrew / English translations</a>','tr');
+      '<div class="gap"></div><a class="it" data-lxx-action="books">Books</a><a class="it" data-lxx-action="settings">Search and display settings</a><a class="it" data-lxx-action="download">Download complete Greek pack</a><a class="it" data-lxx-action="gaps">Unresolved dictionary words</a><a class="it" data-lxx-action="sources">Sources and coverage</a><a class="it" data-lxx-action="leave">Hebrew / English translations</a>','tr');
   }
   async function settings(){await ready();api.openSheet('<div class="st">Text size</div><div class="seg"><a class="it" data-lxx-size="-2">Smaller</a><a class="it" data-lxx-size="2">Larger</a></div><div class="st">Search in</div>'+[['ot','Greek Old Testament'],['both','Greek Old and New Testaments'],['nt','Greek New Testament']].map(([k,l])=>`<a class="it${scope===k?' on':''}" data-lxx-scope="${k}">${l}</a>`).join('')+
     `<label class="it">One Greek OT book <select id="lxxbookfilter" aria-label="Greek book search filter"><option value="">All Greek OT texts</option>${manifest.books.map(b=>`<option value="${b.id}"${b.id===bookFilter?' selected':''}>${esc(b.name)}</option>`).join('')}</select></label>`+
@@ -151,6 +152,19 @@ window.createLXX=function(api){
     $('lxxresults').insertAdjacentHTML('beforeend',rows.map(x=>x.mt?`<a class="li" data-lxx-mt="${esc(x.mt)}"><span class="t">${esc(x.text)}</span><span class="r">${esc(api.refName(x.mt))} · Greek NT</span></a>`:`<a class="li" data-lxx-book="${x.book}" data-lxx-ref="${esc(x.ref)}"><span class="t">${esc(x.text)}</span><span class="r">${esc(name(x.book,x.ref))} · Greek OT</span></a>`).join(''));
     $('lxxmore').style.display=r.shown<r.rows.length?'block':'none';if(!r.rows.length)$('lxxresults').innerHTML='<div class="msg">No matching Greek verses.</div>';
   }
+  async function gaps(noPush){
+    const id=++operation;current=null;activate();api.closeSheet();busy('Opening dictionary coverage…');
+    await ready();const report=await get(plus.coverage);if(id!==operation)return;
+    state('phrase');if(!noPush)push({gaps:true},'#lxx/gaps');$('q').value='';
+    gapResults={rows:Object.entries(report.remaining_lemmas).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])),shown:0};
+    $('out').innerHTML=`<div class="study"><div class="big">Unresolved Greek words</div><div class="stat">${report.counts.remaining_unmatched_lemmas.toLocaleString()} lemmas · ${report.counts.remaining_unmatched_word_records.toLocaleString()} word records</div><div class="note">No dictionary entry has been matched for these source lemmas. Tap a word to examine its Scripture occurrences. Counts include alternate texts separately. A missing match does not mean the Greek word has no known meaning.</div></div><div id="lxxgaps"></div><a class="link" id="lxxgapsmore" data-lxx-action="gaps-more">More words</a>`;
+    moreGaps();scrollTo(0,0);
+  }
+  function moreGaps(){
+    if(!gapResults||!$('lxxgaps'))return;const r=gapResults,rows=r.rows.slice(r.shown,r.shown+100);r.shown+=rows.length;
+    $('lxxgaps').insertAdjacentHTML('beforeend',rows.map(([lemma,n])=>`<a class="li" data-lxx-lemma="${esc(lemma)}"><span class="t">${esc(lemma)}</span><span class="r">${n.toLocaleString()} word records</span></a>`).join(''));
+    $('lxxgapsmore').style.display=r.shown<r.rows.length?'block':'none';
+  }
   function expandParsing(s){const dict={fem:'feminine',masc:'masculine',neut:'neuter',nom:'nominative',gen:'genitive',dat:'dative',acc:'accusative',voc:'vocative',sg:'singular',pl:'plural',du:'dual',pres:'present',aor:'aorist',imperf:'imperfect',perf:'perfect',plup:'pluperfect',fut:'future',ind:'indicative',subj:'subjunctive',opt:'optative',imperat:'imperative',inf:'infinitive',part:'participle',act:'active',mid:'middle',pass:'passive'};return s.replace(/\b\w+\b/g,x=>dict[x]||x);}
   function quality(q){return typeof q==='number'?'Automated link · stability '+q.toFixed(4):q==='source-reviewed'?'Source-reviewed link':'Convention rule · '+q.replace(/^rule:/,'');}
   function validLink(link){const w=(api.data.il[link[1]]||[])[link[2]];return w&&C.hebrew(w[0])===link[4]?w:null;}
@@ -175,7 +189,7 @@ window.createLXX=function(api){
   async function sources(){await ready();api.openSheet(`<div class="st">Greek Old Testament · Rahlfs 1935</div><div class="row">${manifest.books.length} text files · ${manifest.counts.verses.toLocaleString()} verse records · ${manifest.counts.tokens.toLocaleString()} word records. Alternative texts have separate identities.</div><div class="row">Greek transcription and morphology: Seth Kushniryk / Open Scriptorium, derived from the Eliran Wong digital edition. Morphology includes automated and reviewed analysis; confidence is retained on every word.</div><a class="it" href="https://github.com/OpenScriptorium/lxx-morph" target="_blank" rel="noopener">Morphology source</a><div class="row">Dictionary: STEPBible TBESG, based on work at Tyndale House Cambridge. Glosses describe dictionary words; they are not verified contextual translations. Missing entries remain blank.</div><a class="it" href="https://github.com/STEPBible/STEPBible-Data" target="_blank" rel="noopener">Dictionary and mapping sources</a><div class="row">Verse mapping and word links: Open Scriptorium, incorporating STEPBible TVTMS. Word links retain their automated stability, convention-rule or source-reviewed status. Hebrew token positions were checked against Open Scriptures Hebrew Bible and this website.</div><div class="row">Additional dictionary headwords: STEPBible TIPNR name equivalents and LSJ9 / Francisco Riordan, CC BY 4.0. Name equivalents are not etymological meanings. Brenton English Septuagint (1851), public domain, is a companion edition.</div><div class="row">Enrichment: ${plus.counts.word_links.toLocaleString()} word links · ${plus.counts.source_reviewed_gloss_tokens.toLocaleString()} source-reviewed word glosses · ${plus.counts.remaining_unmatched_word_records.toLocaleString()} word records still lack a matched dictionary entry.</div><a class="it" href="data/lxx-plus/coverage.json" target="_blank">Enrichment coverage and source checks</a><a class="it" href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0 · data licence</a><a class="it" href="data/lxx/coverage.json" target="_blank">Coverage and unresolved dictionary entries</a><a class="it" href="LXX-SOURCES.md" target="_blank">Source revisions and conversion details</a>`,'lxxsources');}
   async function download(){
     if(downloadBusy){api.toast('The Greek download is already running');return;}downloadBusy=true;api.closeSheet();
-    try{await ready();const urls=[PACK_MANIFEST,PLUS_MANIFEST,'data/lxx/coverage.json','data/lxx-plus/coverage.json',manifest.lexicon,plus.dictionary,manifest.mapping,...manifest.books.map(b=>b.file),...Object.values(plus.books)];
+    try{await ready();const urls=[PACK_MANIFEST,PLUS_MANIFEST,'data/lxx/coverage.json',plus.coverage,manifest.lexicon,plus.dictionary,manifest.mapping,...manifest.books.map(b=>b.file),...Object.values(plus.books)];
       api.openSheet(`<div class="st">Download Greek Old Testament</div><div class="row">${((manifest.bytes+plus.bytes)/1048576).toFixed(1)} MB compressed · Greek texts, dictionaries, word links, reviewed glosses and Brenton English</div><div id="lxxdownload" class="row">Preparing…</div>`,'lxxdownload');
       const cache=await caches.open(CACHE);let i=0,done=0;
       const task=async()=>{while(i<urls.length){const u=urls[i++];await get(u);done++;const el=$('lxxdownload');if(el)el.textContent=`${done} of ${urls.length} files verified`;}};
@@ -201,7 +215,7 @@ window.createLXX=function(api){
   }
   function aliases(id){return {'joshua-vaticanus-b':['Joshua','Josh'],'judges':['Judges','Judg'],'esther-greek':['Esther','Esth'],'psalms-lxx':['Psalms','Psalm','Ps'],'job-lxx':['Job'],'jeremiah-lxx':['Jeremiah','Jer'],'daniel':['Daniel','Dan'],'song-of-solomon':['Song of Songs','Song'],'1-samuel':['1Sam'],'2-samuel':['2Sam'],'1-kings':['1Kgs'],'2-kings':['2Kgs'],'1-chronicles':['1Chr'],'2-chronicles':['2Chr']}[id]||[];}
   function restore(){const hash=location.hash.slice(1);if(!hash.startsWith('lxx/'))return false;
-    activate();const parts=hash.split('/');if(parts[1]==='search')run(()=>search(decodeURIComponent(parts.slice(2).join('/')),true,!!(history.state&&history.state.lxx&&history.state.lxx.study)));
+    activate();const parts=hash.split('/');if(parts[1]==='gaps')run(()=>gaps(true));else if(parts[1]==='search')run(()=>search(decodeURIComponent(parts.slice(2).join('/')),true,!!(history.state&&history.state.lxx&&history.state.lxx.study)));
     else if(parts[2])run(()=>parts[3]==='chapter'?chapter(key(parts[1],decodeURIComponent(parts[2])),true):show(key(parts[1],decodeURIComponent(parts[2])),true));return true;}
   // Capture extension controls before the original app's gesture/click handlers.
   document.addEventListener('click',e=>{
@@ -219,6 +233,7 @@ window.createLXX=function(api){
       if(a.dataset.lxxSize){api.setFs(api.curFs()+ +a.dataset.lxxSize);return;}
       if(a.dataset.lxxScope){scope=a.dataset.lxxScope;return settings();}
       const act=a.dataset.lxxAction;
+      if(act==='gaps')return gaps();if(act==='gaps-more')return moreGaps();
       if(act==='enter')return select();if(act==='menu')return menu();if(act==='books')return books();if(act==='settings')return settings();
       if(act==='chapter')return current&&chapter(key(current.book,current.ref));if(act==='compare'){api.closeSheet();return compare();}
       if(act==='brenton')return brenton();if(act==='chapter-prev')return moveChapter(-1);if(act==='chapter-next')return moveChapter(1);

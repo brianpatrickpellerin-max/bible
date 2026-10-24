@@ -123,6 +123,12 @@ report. Some dictionary entries remain unmatched and are visibly blank.
 Data adaptations and this attribution must be retained under CC BY 4.0:
 https://creativecommons.org/licenses/by/4.0/
 
+The enrichment builder also lists fifteen explicit alternate TBESG headword
+equivalents, including contracted ὀστοῦν / ὀστέον and σιδηροῦς / σιδήρεος.
+These reuse the complete existing TBESG entries and their Strong's identifiers.
+The Greek source lemma is retained. This is not a general rule changing middle
+verbs to active verbs or selecting a contextual translation.
+
 ## English companion edition
 
 **Brenton English Septuagint (1851)**, public domain. Electronic USFM edition
@@ -144,5 +150,5 @@ bulk scraping was respected.
 Rebuild the separately versioned enrichment pack:
 
 ```
-python scripts/build_lxx_enrichment.py /path/to/lxx-morph /path/to/morphhb /path/to/TIPNR.txt /path/to/lsj9_short_defs.json /path/to/eng-Brenton_usfm.zip
+python scripts/build_lxx_enrichment.py /path/to/lxx-morph /path/to/morphhb /path/to/TIPNR.txt /path/to/lsj9_short_defs.json /path/to/eng-Brenton_usfm.zip /path/to/TBESG.txt
 ```

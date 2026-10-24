@@ -2,7 +2,7 @@
 window.createLXX=function(api){
   'use strict';
   const C=LXXCore,$=id=>document.getElementById(id),esc=api.esc,CACHE='bible-lxx-v1';
-  const PLUS_MANIFEST='data/lxx-plus/manifest.703fcfcea1.json';
+  const PLUS_MANIFEST='data/lxx-plus/manifest.de0b8d35ec.json';
   const PACK_MANIFEST='data/lxx/manifest.de6f6944de.json';
   let active=false,mode='interlinear',manifest=null,plus=null,lex=null,reverse=null,pending=null,worker=null,seq=0,operation=0,current=null,lastResults=null,downloadBusy=false;
   const loaded=new Map(),waits=new Map();

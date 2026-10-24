@@ -33,4 +33,8 @@ for i,l in supp.items():
     assert not lex['lemmas'][int(i)]['entries']
     assert all(e['source'] and e['definition'] for e in l['entries'])
 assert total==m['counts']['word_links'];assert glosses==m['counts']['source_reviewed_gloss_tokens']
+by_lemma={l['lemma']:i for i,l in enumerate(lex['lemmas'])}
+assert supp[str(by_lemma['ὀστοῦν'])]['entries'][0]['strong']=='G3747'
+assert supp[str(by_lemma['κρεμάννυμι'])]['entries'][0]['strong']=='G2910'
+assert m['counts']['tbesg_alias_lemmas_added']==15
 print('PASS:',total,'validated word links;',glosses,'source glosses;',len(supp),'supplemental headwords;',brenton,'companion verses.',dict(qualities))

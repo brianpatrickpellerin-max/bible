@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """Add word alignment, source-reviewed glosses and supplementary dictionaries.
 
-python scripts/build_lxx_enrichment.py LXX_SOURCE OSHB_SOURCE TIPNR LSJ_DEFS BRENTON_ZIP
+python scripts/build_lxx_enrichment.py LXX_SOURCE OSHB_SOURCE TIPNR LSJ_DEFS BRENTON_ZIP TBESG
 No Hebrew gloss is used as a translation of Greek. Statistical links are
 kept distinct from source-reviewed links and from lexical definitions.
 """
 import collections, gzip, hashlib, html, json, pathlib, re, subprocess, sys, unicodedata, xml.etree.ElementTree as ET, zipfile
 ROOT=pathlib.Path(__file__).resolve().parents[1]
-SOURCE,HEBREW,NAMES,LSJ,BRENTON=map(pathlib.Path,sys.argv[1:])
+SOURCE,HEBREW,NAMES,LSJ,BRENTON=map(pathlib.Path,sys.argv[1:6])
+TBESG=pathlib.Path(sys.argv[6])
 OUT=ROOT/'data/lxx-plus';OUT.mkdir(exist_ok=True)
 def read(p):return json.loads(gzip.decompress((ROOT/p).read_bytes()))
 def pack(name,obj):
@@ -87,12 +88,32 @@ with gzip.open(SOURCE/'db/seeds/mt_alignment/word_links.jsonl.gz','rt') as strea
             stats['word_links']+=1
         if accepted:stats['aligned_passages']+=1
 supplement={};lsj=json.loads(LSJ.read_text());lsj={nfc(k):v for k,v in lsj.items()}
+# Explicit forms documented in TBESG entries, not a general middle-to-active
+# rule. Preserve the source lemma and every sense of the cited entry.
+aliases={'ὀστοῦν':'ὀστέον','χειμάρρους':'χείμαρρος','πετεινόν':'πετεινός',
+ 'διανοέομαι':'διανοέω','σιδηροῦς':'σιδήρεος','ἀργυροῦς':'ἀργύρεος',
+ 'διαπορεύομαι':'διαπορεύω','κρεμάννυμι':'κρεμάω','προπορεύομαι':'προπορεύω',
+ 'ἱλαστήριον':'ἱλαστήριος','περιζώννυμαι':'περιζώννυμι','ἀνδρίζομαι':'ἀνδρίζω',
+ 'ἕνεκεν':'ἕνεκα','ἡττάω':'ἡσσάομαι','σοφίζομαι':'σοφίζω'}
+byhead=collections.defaultdict(dict)
+if hashlib.sha256(TBESG.read_bytes()).hexdigest()!=manifest['lexicon_sha256']:
+    raise ValueError('TBESG input must match the pinned base dictionary revision')
+for line in TBESG.read_text(encoding='utf-8-sig').splitlines():
+    x=line.split('\t')
+    if len(x)<8 or not re.fullmatch(r'G\d+[A-Za-z]*',x[0]):continue
+    entry={'id':x[2].strip(),'head':x[3],'gloss':plain(x[6]),'definition':plain(x[7]),'strong':'G'+str(int(re.match(r'G(\d+)',x[0])[1]))}
+    byhead[nfc(entry['head'])][entry['id']]=entry
 for i,l in enumerate(lex['lemmas']):
     if l['entries']:continue
     head=l['lemma'];entries=[]
     ns=greeknames.get(gn(head),set())
     # Passage alignment cannot establish a dictionary name identity.
-    if ns:
+    if head in aliases:
+        target=aliases[head];found=list(byhead[nfc(target)].values())
+        if not found:raise ValueError('Missing explicit TBESG alias target: '+target)
+        entries=[dict(e,source='STEPBible TBESG; explicit headword equivalent '+target) for e in found]
+        stats['tbesg_alias_lemmas_added']+=1
+    elif ns:
         label=' / '.join(sorted(ns))
         entries=[{'id':'name:'+str(i),'head':head,'gloss':label,'definition':'Biblical name equivalent: '+label+'. This identifies spelling equivalents, not the etymological meaning of the name.','strong':'','source':'STEPBible TIPNR'}]
         stats['name_lemmas_added']+=1

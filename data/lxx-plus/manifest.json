@@ -1,7 +1,7 @@
 {
   "version": 1,
   "base_lexicon": "data/lxx/lexicon.56aa33f1da.json.gz",
-  "dictionary": "data/lxx-plus/dictionary.ff62297ae9.json.gz",
+  "dictionary": "data/lxx-plus/dictionary.48e2372eaf.json.gz",
   "books": {
     "genesis": "data/lxx-plus/genesis.bb0b5c6bb8.json.gz",
     "exodus": "data/lxx-plus/exodus.e32209299b.json.gz",
@@ -58,19 +58,20 @@
     "susanna-theodotion": "data/lxx-plus/susanna-theodotion.81559223fd.json.gz",
     "bel-and-the-dragon-theodotion": "data/lxx-plus/bel-and-the-dragon-theodotion.6bc5a4337f.json.gz"
   },
-  "bytes": 4010749,
+  "bytes": 4013966,
   "counts": {
     "source_reviewed_gloss_tokens": 5046,
     "word_links": 330395,
     "aligned_passages": 23576,
     "alignment_records_skipped_token_mismatch": 178,
     "invalid_links_rejected": 78,
+    "tbesg_alias_lemmas_added": 15,
     "lsj_lemmas_added": 1157,
     "name_lemmas_added": 1,
     "brenton_books": 51,
     "brenton_verse_records": 28600,
-    "remaining_unmatched_word_records": 18007,
-    "remaining_unmatched_lemmas": 4758
+    "remaining_unmatched_word_records": 17374,
+    "remaining_unmatched_lemmas": 4743
   },
   "brenton_ids": {
     "genesis": "GEN",

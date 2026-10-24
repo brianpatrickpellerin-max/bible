@@ -3,6 +3,8 @@ window.createLXX=function(api){
   'use strict';
   const C=LXXCore,$=id=>document.getElementById(id),esc=api.esc,CACHE='bible-lxx-v1';
   const PLUS_MANIFEST='data/lxx-plus/manifest.5f24124c1d.json';
+  const ENGLISH_MANIFEST='data/lxx-english/manifest.b85095c8b1.json';
+  let englishManifest=null;
   const PACK_MANIFEST='data/lxx/manifest.de6f6944de.json';
   let active=false,mode='interlinear',manifest=null,plus=null,lex=null,reverse=null,pending=null,worker=null,seq=0,operation=0,current=null,lastResults=null,downloadBusy=false;
   const loaded=new Map(),waits=new Map();
@@ -11,7 +13,7 @@ window.createLXX=function(api){
   try{active=localStorage.getItem('bl_lxx')==='1'&&(!location.hash||location.hash.startsWith('#lxx/'));mode=localStorage.getItem('bl_lxx_mode')||mode;}catch(e){}
   function save(){try{localStorage.setItem('bl_lxx',active?'1':'0');localStorage.setItem('bl_lxx_mode',mode);}catch(e){}badge();}
   function badge(){let el=$('lxxbadge');if(!el){el=document.createElement('div');el.id='lxxbadge';el.className='sub';el.style.cssText='text-align:center;margin:8px auto 0;font-size:calc(var(--fs)*.68)';$('top').appendChild(el);}
-    el.innerHTML=`<a href="#" data-lxx-action="${active?'menu':'enter'}">${active?'Greek Old Testament · '+(mode==='greek'?'Greek text':'Interlinear'):'Greek Old Testament'}</a>`;}
+    el.innerHTML=`<a href="#" data-lxx-action="${active?'menu':'enter'}">${active?'Greek Old Testament · '+(mode==='greek'?'Greek text':mode==='contextual'?'Source English':'Interlinear'):'Greek Old Testament'}</a>`;}
   async function get(url){
     let c=null,r=null;try{c=await caches.open(CACHE);r=await c.match(url);}catch(e){}
     if(!r){r=await fetch(url);if(!r.ok)throw Error('Could not download the Greek data. Connect and try again.');if(c)await c.put(url,r.clone());}
@@ -22,10 +24,12 @@ window.createLXX=function(api){
   function ready(){return pending||(pending=(async()=>{
     manifest=await get(PACK_MANIFEST);lex=await get(manifest.lexicon);plus=await get(PLUS_MANIFEST);
     if(plus.base_lexicon!==manifest.lexicon)throw Error('Greek dictionary versions do not match. Reload while online.');
-    C.supplement(lex,await get(plus.dictionary));return manifest;
+    C.supplement(lex,await get(plus.dictionary));englishManifest=await get(ENGLISH_MANIFEST).catch(()=>({books:{},unavailable:true}));return manifest;
   })().catch(e=>{pending=null;throw e;}));}
   function book(id){return manifest.books.find(b=>b.id===id);}
-  async function data(id){if(loaded.has(id))return loaded.get(id);const b=book(id);if(!b)throw Error('Unknown Greek book.');const d=await get(b.file);d.extra=plus.books[id]?await get(plus.books[id]):{links:{},reviewed:{},brenton:{}};d.byref=new Map(d.verses.map(v=>[v[0],v[1]]));loaded.set(id,d);return d;}
+  async function data(id){if(loaded.has(id))return loaded.get(id);const b=book(id);if(!b)throw Error('Unknown Greek book.');const d=await get(b.file);d.extra=plus.books[id]?await get(plus.books[id]):{links:{},reviewed:{},brenton:{}};d.byref=new Map(d.verses.map(v=>[v[0],v[1]]));
+    const en=englishManifest.books[id];if(en&&en.base_file===b.file){d.english=await get(en.file).catch(()=>null);if(d.english&&d.english.base_file!==b.file)throw Error('English source and Greek text versions differ.');}
+    loaded.set(id,d);return d;}
   const key=(b,r)=>b+' '+r;
   function split(k){const m=String(k||'').match(/^(.*) (\d+:\d+[a-z]*)$/);return m?{book:m[1],ref:m[2]}:current;}
   function name(b,r){return book(b).name+' '+r;}
@@ -42,11 +46,15 @@ window.createLXX=function(api){
   async function show(k,noPush){
     const id=++operation,p=split(k);if(!p)return;activate();api.closeSheet();busy();await ready();const d=await data(p.book);if(id!==operation)return;
     const tokens=d.byref.get(p.ref);if(!tokens)throw Error('That reference is not present in this Greek text. Use Books to choose its native chapter.');
-    const reviewed=d.extra.reviewed[p.ref];current={...p,tokens,reviewed};state('verse',key(p.book,p.ref));
+    const reviewed=d.extra.reviewed[p.ref],candidate=d.english&&d.english.verses[p.ref];
+    const english=candidate&&candidate.length===tokens.length&&candidate.every((x,i)=>C.surfaceKey(x[0])===C.surfaceKey(tokens[i][0]))?candidate:null;
+    current={...p,tokens,reviewed,english,englishSource:d.english};state('verse',key(p.book,p.ref));
     if(!noPush)push(p,'#lxx/'+p.book+'/'+encodeURIComponent(p.ref));
     $('q').value=name(p.book,p.ref);
-    let h=`<div class="verse lxxverse">${words(tokens,mode!=='greek',reviewed)}<div class="vref" data-lxx-action="chapter">${esc(name(p.book,p.ref))}</div><div class="vtr">Septuagint · Rahlfs 1935</div>`;
-    if(mode!=='greek')h+=`<div class="note">${reviewed?'Source-reviewed word glosses; dictionary fallback where absent':'Dictionary glosses'} · Greek word order</div>`;
+    const glosses=mode==='contextual'?(english?Object.fromEntries(english.map((x,i)=>[i,x[1]])):null):reviewed;
+    let h=`<div class="verse lxxverse">${words(tokens,mode!=='greek',glosses)}<div class="vref" data-lxx-action="chapter">${esc(name(p.book,p.ref))}</div><div class="vtr">Septuagint · Rahlfs 1935</div>`;
+    if(mode==='contextual')h+=english?`<div class="note">English interlinear · Oleksii Vynokurov · dictionary fallback for blank source glosses</div><a class="link" href="${esc(d.english.source_url)}#page=${english[0][2]}" target="_blank" rel="noopener">English source PDF · page ${english[0][2]}</a>`:'<div class="note">No matching source English is supplied for this verse. Dictionary glosses are shown.</div>';
+    else if(mode!=='greek')h+=`<div class="note">${reviewed?'Source-reviewed word glosses; dictionary fallback where absent':'Dictionary glosses'} · Greek word order</div>`;
     if(book(p.book).partial)h+='<div class="note">Variant passages supplied by the source; this is not a separate complete Joshua text.</div>';
     h+=`<a class="link" data-lxx-action="compare">Compare Hebrew / English</a><a class="link" data-lxx-action="brenton">Brenton English Septuagint</a><div id="lxxcomparison"></div><div id="lxxbrenton"></div></div>`;
     h+=`<div class="seg"><a class="it" data-lxx-action="prev">Previous</a><a class="it" data-lxx-action="menu">Options</a><a class="it" data-lxx-action="next">Next</a></div>`;
@@ -91,8 +99,8 @@ window.createLXX=function(api){
     box.innerHTML=`<div class="cmpv"><div class="vtr">Brenton English Septuagint (1851) · ${esc(name(p.book,p.ref))}</div><div class="vt">${esc(value||'No Brenton verse with this reference is supplied for this text.')}</div><div class="note">Companion edition with its own wording and verse divisions. The same reference does not guarantee an exact correspondence with Rahlfs. This is not a word-by-word gloss.</div></div>`;
   }
   function menu(){
-    api.openSheet('<div class="st">Greek Old Testament</div>'+[['interlinear','Greek with word glosses'],['greek','Greek text']].map(([k,l])=>`<a class="it${mode===k?' on':''}" data-lxx-mode="${k}">${l}</a>`).join('')+
-      (current?'<a class="it" data-lxx-action="chapter">Open chapter</a><a class="it" data-lxx-action="compare">Compare Hebrew / English</a><a class="it" data-lxx-action="brenton">Brenton English Septuagint</a><a class="it" data-lxx-action="copy">Copy Greek verse</a><a class="it" data-lxx-action="image">Share as image</a>':'')+
+    api.openSheet('<div class="st">Greek Old Testament</div>'+[['interlinear','Greek with word glosses'],['contextual','Greek with source English'],['greek','Greek text']].map(([k,l])=>`<a class="it${mode===k?' on':''}" data-lxx-mode="${k}">${l}</a>`).join('')+
+      '<a class="it" data-lxx-action="english-sources">Source English coverage</a>'+(current?'<a class="it" data-lxx-action="chapter">Open chapter</a><a class="it" data-lxx-action="compare">Compare Hebrew / English</a><a class="it" data-lxx-action="brenton">Brenton English Septuagint</a><a class="it" data-lxx-action="copy">Copy Greek verse</a><a class="it" data-lxx-action="image">Share as image</a>':'')+
       '<div class="gap"></div><a class="it" data-lxx-action="books">Books</a><a class="it" data-lxx-action="settings">Search and display settings</a><a class="it" data-lxx-action="download">Download complete Greek pack</a><a class="it" data-lxx-action="gaps">Unresolved dictionary words</a><a class="it" data-lxx-action="sources">Sources and coverage</a><a class="it" data-lxx-action="leave">Hebrew / English translations</a>','tr');
   }
   async function settings(){await ready();api.openSheet('<div class="st">Text size</div><div class="seg"><a class="it" data-lxx-size="-2">Smaller</a><a class="it" data-lxx-size="2">Larger</a></div><div class="st">Search in</div>'+[['ot','Greek Old Testament'],['both','Greek Old and New Testaments'],['nt','Greek New Testament']].map(([k,l])=>`<a class="it${scope===k?' on':''}" data-lxx-scope="${k}">${l}</a>`).join('')+
@@ -129,12 +137,13 @@ window.createLXX=function(api){
     let result={rows:[],occurrences:0};
     if(searchScope!=='nt'){
       for(const old of waits.values())old.resolve({cancelled:true});waits.clear();
-      const n=++seq;result=await new Promise((resolve,reject)=>{waits.set(n,{resolve,reject});getWorker().postMessage({type:'search',id:n,query,book:appliedBook,accents});});
+      const n=++seq;result=await new Promise((resolve,reject)=>{waits.set(n,{resolve,reject});getWorker().postMessage({type:'search',id:n,query,book:appliedBook,accents,english:mode==='contextual',englishManifest:ENGLISH_MANIFEST});});
     }
     const nt=await ntPromise;if(id!==operation||result.cancelled)return;
     state('phrase');lastResults={query,rows:result.rows.concat(nt),shown:0};
     const n=result.rows.length,ntn=nt.length;
     let header=`<div class="study"><div class="big">${esc(query)}</div><div class="stat">${n} Greek OT verses${searchScope!=='ot'?' · '+ntn+' Greek NT verses':''}</div>`;
+    if(mode==='contextual'&&q.words.length&&!q.greek)header+='<div class="note">Greek OT English search covers imported source English only. Passages without matching source English are excluded. Choose Greek with word glosses to search dictionary meanings.</div>';
     if(q.terms.length&&searchScope!=='nt')header+=`<div class="sub">${result.occurrences} matching Greek OT words · alternate texts counted separately</div>`;
     if(q.terms.length&&result.forms){
       const details=(label,entries)=>'<details class="note"><summary>'+label+'</summary>'+entries.map(([w,n])=>`<div class="row">${esc(w)} · ${n}</div>`).join('')+'</details>';
@@ -174,6 +183,7 @@ window.createLXX=function(api){
     const counterparts=links.map(x=>{const w=validLink(x);return w?`<div class="row"><span dir="rtl">${esc(w[0])}</span> · ${esc(w[1]||'—')}<div class="sub">${esc(quality(x[3]))}</div><a data-lxx-mt="${esc(x[1])}">${esc(api.refName(x[1]))}</a></div>`:'';}).join('');
     api.openSheet(`<div class="wd"><div class="o">${esc(t[0])}</div><div class="lbl">Dictionary word</div><div class="row">${esc(l.lemma)}</div>`+
       (p.reviewed&&p.reviewed[i]?`<div class="lbl">Source-reviewed word gloss</div><div class="row">${esc(p.reviewed[i])}</div>`:'')+
+      (p.english?`<div class="lbl">English interlinear · Oleksii Vynokurov</div><div class="row">${esc(p.english[i][1]||'The source leaves this word without an English gloss.')}</div><a class="link" href="${esc(p.englishSource.source_url)}#page=${p.english[i][2]}" target="_blank" rel="noopener">Source PDF · page ${p.english[i][2]}</a>`:'')+
       `<div class="lbl">Dictionary glosses</div><div class="row">${esc(l.gloss||'No dictionary entry matched. No meaning has been supplied.')}</div><div class="lbl">Parsing</div><div class="row">${esc(expandParsing(lex.morphs[t[2]])||'Not supplied')}</div><div class="sub">Source analysis · ${esc(lex.confidence[t[3]])} confidence · ${esc(lex.sources[t[4]].replace(/_/g,' '))}</div>`+
       l.entries.map(e=>`<div class="lbl">${esc(e.id)} · ${esc(e.head)}</div><div class="row">${esc(e.definition)}</div>`+(e.source?`<div class="sub">${esc(e.source)}</div>`:'')).join('')+
       `<div class="lbl">Hebrew counterparts</div>${counterparts||'<div class="row">No usable word link is supplied. This alone does not establish an omission.</div>'}<div class="note">Hebrew glosses describe the Hebrew words. Automated stability measures reproducibility, not correctness. A word link does not make two words interchangeable.</div></div>`+`<a class="it" data-lxx-lemma="${esc(l.lemma)}">Every occurrence of this dictionary word · Greek OT and NT</a><a class="it" data-lxx-spelling="${esc(t[0])}">Same spelling</a>`,'word');
@@ -187,13 +197,15 @@ window.createLXX=function(api){
     if(id!==operation)return;api.openSheet(`<div class="st">Greek counterparts · ${esc(api.refName(ref))}</div>`+rows.join('')+(rows.length?'':'<div class="row">No usable word link is supplied for this Hebrew word.</div>')+'<div class="note">Source word links, including automated alignments. A word link does not establish identical meaning.</div>','lxxlinks');
   }
   async function sources(){await ready();api.openSheet(`<div class="st">Greek Old Testament · Rahlfs 1935</div><div class="row">${manifest.books.length} text files · ${manifest.counts.verses.toLocaleString()} verse records · ${manifest.counts.tokens.toLocaleString()} word records. Alternative texts have separate identities.</div><div class="row">Greek transcription and morphology: Seth Kushniryk / Open Scriptorium, derived from the Eliran Wong digital edition. Morphology includes automated and reviewed analysis; confidence is retained on every word.</div><a class="it" href="https://github.com/OpenScriptorium/lxx-morph" target="_blank" rel="noopener">Morphology source</a><div class="row">Dictionary: STEPBible TBESG, based on work at Tyndale House Cambridge. Glosses describe dictionary words; they are not verified contextual translations. Missing entries remain blank.</div><a class="it" href="https://github.com/STEPBible/STEPBible-Data" target="_blank" rel="noopener">Dictionary and mapping sources</a><div class="row">Verse mapping and word links: Open Scriptorium, incorporating STEPBible TVTMS. Word links retain their automated stability, convention-rule or source-reviewed status. Hebrew token positions were checked against Open Scriptures Hebrew Bible and this website.</div><div class="row">Additional dictionary headwords: STEPBible TIPNR name equivalents and LSJ9 / Francisco Riordan, CC BY 4.0. Name equivalents are not etymological meanings. Brenton English Septuagint (1851), public domain, is a companion edition.</div><div class="row">Enrichment: ${plus.counts.word_links.toLocaleString()} word links · ${plus.counts.source_reviewed_gloss_tokens.toLocaleString()} source-reviewed word glosses · ${plus.counts.remaining_unmatched_word_records.toLocaleString()} word records still lack a matched dictionary entry.</div><a class="it" href="data/lxx-plus/coverage.json" target="_blank">Enrichment coverage and source checks</a><a class="it" href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0 · data licence</a><a class="it" href="data/lxx/coverage.json" target="_blank">Coverage and unresolved dictionary entries</a><a class="it" href="LXX-SOURCES.md" target="_blank">Source revisions and conversion details</a>`,'lxxsources');}
+  async function englishSources(){await ready();api.openSheet('<div class="st">English interlinear · Oleksii Vynokurov</div><div class="row">Source English is available for matching Greek passages in the books below. Other passages show dictionary glosses. This import checks Greek word sequences and PDF label positions; it does not independently verify every translation.</div>'+Object.entries(englishManifest.books).map(([id,b])=>`<div class="row">${esc(book(id).name)} · ${b.counts.accepted_verses.toLocaleString()} matching verses · ${b.counts.supplied_glosses.toLocaleString()} English glosses</div><a class="it" href="${esc(b.source_url)}" target="_blank" rel="noopener">${esc(book(id).name)} · source PDF</a><a class="it" href="${esc(b.coverage)}" target="_blank">Matching and excluded passages</a>`).join('')+'<div class="note">Square brackets are supplied by the translator. Blank source glosses fall back to the dictionary. Redistribution requires attribution and non-commercial use. The source reserves ML training and evaluation rights.</div><a class="it" href="https://www.bible.in.ua/underl/SUPP/use_en.htm" target="_blank" rel="noopener">Source terms</a>','englishsources');}
   async function download(){
     if(downloadBusy){api.toast('The Greek download is already running');return;}downloadBusy=true;api.closeSheet();
-    try{await ready();const urls=[PACK_MANIFEST,PLUS_MANIFEST,'data/lxx/coverage.json',plus.coverage,manifest.lexicon,plus.dictionary,manifest.mapping,...manifest.books.map(b=>b.file),...Object.values(plus.books)];
-      api.openSheet(`<div class="st">Download Greek Old Testament</div><div class="row">${((manifest.bytes+plus.bytes)/1048576).toFixed(1)} MB compressed · Greek texts, dictionaries, word links, reviewed glosses and Brenton English</div><div id="lxxdownload" class="row">Preparing…</div>`,'lxxdownload');
+    try{await ready();englishManifest=await get(ENGLISH_MANIFEST);const urls=[PACK_MANIFEST,PLUS_MANIFEST,ENGLISH_MANIFEST,'data/lxx/coverage.json',plus.coverage,manifest.lexicon,plus.dictionary,manifest.mapping,...manifest.books.map(b=>b.file),...Object.values(plus.books),...Object.values(englishManifest.books).flatMap(b=>[b.file,b.coverage])];
+      api.openSheet(`<div class="st">Download Greek Old Testament</div><div class="row">${((manifest.bytes+plus.bytes+Object.values(englishManifest.books).reduce((n,b)=>n+b.bytes,0))/1048576).toFixed(1)} MB compressed · Greek texts, dictionaries, word links, source English and Brenton English</div><div id="lxxdownload" class="row">Preparing…</div>`,'lxxdownload');
       const cache=await caches.open(CACHE);let i=0,done=0;
       const task=async()=>{while(i<urls.length){const u=urls[i++];await get(u);done++;const el=$('lxxdownload');if(el)el.textContent=`${done} of ${urls.length} files verified`;}};
       await Promise.all([task(),task()]);for(const u of urls)if(!await cache.match(u))throw Error('The download could not be saved completely. Free some storage and try again.');
+      for(const [id,d] of loaded){const b=englishManifest.books[id];if(b&&b.base_file===book(id).file)d.english=await get(b.file);}
       let offlineShell=false;try{const reg=await navigator.serviceWorker.ready;offlineShell=!!(reg.active&&navigator.serviceWorker.controller);}catch(e){}
       const el=$('lxxdownload');if(el)el.textContent=offlineShell?'Greek pack complete. Reopen from your Home Screen and test in airplane mode.':'Greek pack saved. Reload online once to activate offline website support.';
       if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
@@ -233,6 +245,7 @@ window.createLXX=function(api){
       if(a.dataset.lxxSize){api.setFs(api.curFs()+ +a.dataset.lxxSize);return;}
       if(a.dataset.lxxScope){scope=a.dataset.lxxScope;return settings();}
       const act=a.dataset.lxxAction;
+      if(act==='english-sources')return englishSources();
       if(act==='gaps')return gaps();if(act==='gaps-more')return moreGaps();
       if(act==='enter')return select();if(act==='menu')return menu();if(act==='books')return books();if(act==='settings')return settings();
       if(act==='chapter')return current&&chapter(key(current.book,current.ref));if(act==='compare'){api.closeSheet();return compare();}

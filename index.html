@@ -388,7 +388,7 @@ function setView(v,keepSheet){if(VIEW&&VIEW.t==="verse"&&LAST){LAST.y=window.scr
 function jget(k,d){try{const v=JSON.parse(localStorage.getItem(k)||"null");return v==null?d:v;}catch(e){return d;}}
 function jset(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 // remove saved data from features that no longer exist
-(()=>{const KEEP=new Set(["bl_filter","bl_theme","bl_fs","bl_recent","bl_phtr","bl_tips","bl_hl1"]);
+(()=>{const KEEP=new Set(["bl_filter","bl_theme","bl_fs","bl_recent","bl_phtr","bl_tips","bl_hl1","bl_lxx","bl_lxx_mode"]);
   try{if(localStorage.getItem("bl_dark")==="1"&&!localStorage.getItem("bl_theme"))localStorage.setItem("bl_theme","dark");
     const ks=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith("bl_")&&!KEEP.has(k))ks.push(k);}ks.forEach(k=>localStorage.removeItem(k));}catch(e){}})();
 // ---- first-visit hints (bl_tips: 0 = show long-press hint, 1 = show corner hint, 2 = done)

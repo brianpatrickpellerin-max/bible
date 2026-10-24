@@ -12,7 +12,7 @@
     return {terms,words:words(text.replace(/["“”]/g,''),accents),greek:/[\u0370-\u03ff\u1f00-\u1fff]/.test(text),phrase:quoted,accents:!!accents};
   }
   const strong=s=>String(s).replace(/^G0*(\d+)/i,(_,n)=>'G'+Number(n)).toUpperCase();
-  function matches(tokens,q,lex){
+  function matches(tokens,q,lex,renderings){
     // Structured filters must apply to the same token, not unrelated words in a verse.
     const hit=[];
     tokens.forEach((t,i)=>{
@@ -21,7 +21,7 @@
     });
     if(q.terms.length&&!hit.length)return null;
     if(q.words.length){
-      const per=tokens.map(t=>words(q.greek?t[0]:(lex.lemmas[t[1]]||{}).gloss,q.accents));
+      const per=tokens.map((t,i)=>words(q.greek?t[0]:renderings?renderings[i]:(lex.lemmas[t[1]]||{}).gloss,q.accents));
       const stream=per.flat();
       if(q.phrase){let found=false;for(let i=0;i<=stream.length-q.words.length;i++)if(q.words.every((w,j)=>stream[i+j]===w)){found=true;break;}if(!found)return null;}
       else if(!q.words.every(w=>stream.includes(w)))return null;
@@ -37,6 +37,7 @@
     return lex;
   }
   const hebrew=s=>String(s||'').replace(/[^א-ת]/g,'');
-  const api={fold,words,normal,query,strong,matches,supplement,hebrew};root.LXXCore=api;
+  const surfaceKey=s=>String(s||'').normalize('NFC').toLowerCase().replace(/ς/g,'σ').replace(/[^\p{L}\p{M}]/gu,'');
+  const api={fold,words,normal,query,strong,matches,supplement,hebrew,surfaceKey};root.LXXCore=api;
   if(typeof module!=='undefined')module.exports=api;
 })(typeof self!=='undefined'?self:globalThis);

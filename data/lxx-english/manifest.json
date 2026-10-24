@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "books": {
+    "genesis": {
+      "file": "data/lxx-english/genesis.6c5a4105bd.json.gz",
+      "base_file": "data/lxx/genesis.7825a94239.json.gz",
+      "coverage": "data/lxx-english/genesis-coverage.27fcb5a07e.json",
+      "source_url": "https://www.bible.in.ua/underl/pdf/ENG/OT/Gen.pdf",
+      "bytes": 180505,
+      "counts": {
+        "accepted_verses": 1482,
+        "matched_tokens": 31444,
+        "supplied_glosses": 30834,
+        "blank_source_glosses": 610
+      }
+    }
+  }
+}

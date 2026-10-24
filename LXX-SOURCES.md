@@ -150,12 +150,49 @@ labelled as a companion: identical references do not certify identical verse
 divisions or exact correspondence with Rahlfs. It is not presented as a
 contextual, literal or word-by-word translation of the site's Greek tokens.
 
-The fuller English interlinear at bible.in.ua was evaluated but not imported.
-Its designated bulk download was unavailable; its prohibition on automated
-bulk scraping was respected.
+The English Genesis PDF at bible.in.ua is now imported separately as described
+below. The site's designated bulk archives remain unavailable; no automated
+bulk scraping was performed.
 
 Rebuild the separately versioned enrichment pack:
 
 ```
 python scripts/build_lxx_enrichment.py /path/to/lxx-morph /path/to/morphhb /path/to/TIPNR.txt /path/to/lsj9_short_defs.json /path/to/eng-Brenton_usfm.zip /path/to/TBESG.txt
+```
+
+## Optional source English interlinear
+
+**Oleksii Vynokurov, Interlinear Bible**, copyright 2002–2026,
+https://www.bible.in.ua/. Genesis English PDF:
+https://www.bible.in.ua/underl/pdf/ENG/OT/Gen.pdf
+Terms: https://www.bible.in.ua/underl/SUPP/use_en.htm
+
+This is a separate attributed non-commercial source, not CC BY data.
+The publisher prohibits ML training, fine-tuning and evaluation and reserves
+those rights. Those restrictions remain with the imported material. See
+`data/lxx-english/LICENSE.md`. The original Greek corpus and dictionaries
+retain their own existing licences.
+
+The importer reads individual PDF drawing objects with PyMuPDF. Each English
+label must immediately follow its Greek word and be centered below it.
+Chapter titles, page numbers and cross-reference lists are excluded. Entire
+verses are accepted only when their complete Greek token sequence matches
+the pinned website edition after NFC normalization, case folding and
+punctuation removal; accents are retained. References, source Greek spelling,
+English labels, blank labels, PDF page numbers and input SHA-256 are retained.
+Ambiguous pairings and differing Greek verses are excluded and reported.
+
+The optional "Greek with source English" view preserves the author's English
+and square brackets. A blank source label falls back to the dictionary and
+the view explicitly states that fallback. Missing passages also show a notice.
+This checks extraction and Greek correspondence, not the accuracy of every
+translation choice. No whole-Bible contextual English coverage is claimed.
+The source PDF remains linked on each matching verse and word sheet.
+In this view, plain English searches use imported source English only and
+exclude passages without matching source text. Greek spelling, lemma and
+Strong's searches continue to use the full Greek corpus. Dictionary-meaning
+search remains available in the existing word-gloss view.
+
+```
+python scripts/build_lxx_pdf_english.py /path/to/Gen.pdf genesis https://www.bible.in.ua/underl/pdf/ENG/OT/Gen.pdf
 ```

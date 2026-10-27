@@ -1,4 +1,4 @@
-const C="bible-v23-lxx",D="bible-data";
+const C="bible-v24-lxx",D="bible-data";
 self.addEventListener("install",e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(["./","icon.png","manifest.json","worker.1ef424f8dd.js","lxx-core.js","lxx.js","lxx-worker.js","LXX-SOURCES.md"])));self.skipWaiting();});
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C&&k!==D&&k!=="bible-lxx-v1").map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
 function timeout(ms){return new Promise((_,rej)=>setTimeout(()=>rej(new Error("timeout")),ms));}

@@ -103,10 +103,7 @@ window.createLXX=function(api){
       '<a class="it" data-lxx-action="english-sources">Source English coverage</a>'+(current?'<a class="it" data-lxx-action="chapter">Open chapter</a><a class="it" data-lxx-action="compare">Compare Hebrew / English</a><a class="it" data-lxx-action="brenton">Brenton English Septuagint</a><a class="it" data-lxx-action="copy">Copy Greek verse</a><a class="it" data-lxx-action="image">Share as image</a>':'')+
       '<div class="gap"></div><a class="it" data-lxx-action="books">Books</a><a class="it" data-lxx-action="settings">Search and display settings</a><a class="it" data-lxx-action="download">Download complete Greek pack</a><a class="it" data-lxx-action="gaps">Unresolved dictionary words</a><a class="it" data-lxx-action="sources">Sources and coverage</a><a class="it" data-lxx-action="leave">Hebrew / English translations</a>','tr');
   }
-  async function settings(){await ready();api.openSheet('<div class="st">Text size</div><div class="seg"><a class="it" data-lxx-size="-2">Smaller</a><a class="it" data-lxx-size="2">Larger</a></div><div class="st">Search in</div>'+[['ot','Greek Old Testament'],['both','Greek Old and New Testaments'],['nt','Greek New Testament']].map(([k,l])=>`<a class="it${scope===k?' on':''}" data-lxx-scope="${k}">${l}</a>`).join('')+
-    `<label class="it">One Greek OT book <select id="lxxbookfilter" aria-label="Greek book search filter"><option value="">All Greek OT texts</option>${manifest.books.map(b=>`<option value="${b.id}"${b.id===bookFilter?' selected':''}>${esc(b.name)}</option>`).join('')}</select></label>`+
-    `<a class="it" data-lxx-action="accents">Exact accents: ${accents?'on':'off'}</a><div class="note">Search Greek spelling or a quoted phrase. Use lemma:λόγος or G3056 for a dictionary word. Combine pos:verb morph:aor morph:ind for grammar in the Greek OT. Plain English searches dictionary glosses.</div><a class="it" data-lxx-action="menu">Back</a>`,'set');
-    $('lxxbookfilter').onchange=e=>{bookFilter=e.target.value;};
+  async function settings(){await ready();api.openSheet('<div class="st">Text size</div><div class="seg"><a class="it" data-lxx-size="-2">Smaller</a><a class="it" data-lxx-size="2">Larger</a></div><div class="st">Search all Scripture</div><div class="note">Every search checks Hebrew OT, Greek OT and Greek NT. Reading mode does not change the search scope. English searches supplied translations; LXX English coverage is still incomplete.</div>'+`<a class="it" data-lxx-action="accents">Exact accents: ${accents?'on':'off'}</a><div class="note">Use a word or quoted phrase, a Strong’s number, or lemma:λόγος. Grammar filters apply only where grammatical data is available.</div><a class="it" data-lxx-action="menu">Back</a>`,'set');
   }
   function getWorker(){if(worker)return worker;worker=new Worker('lxx-worker.js');worker.onmessage=e=>{
     const m=e.data;if(m.id!==seq)return;if(m.type==='progress'){const el=$('lxxprogress');if(el)el.textContent=`Searching ${m.done} of ${m.total} Greek OT texts…`;return;}
@@ -115,15 +112,15 @@ window.createLXX=function(api){
   async function ntSearch(q){
     await api.waitFor('il');const rows=[],byCode=new Map();
     lex.lemmas.forEach(l=>l.entries.forEach(e=>{const code=C.strong(e.strong);if(!code)return;if(!byCode.has(code))byCode.set(code,new Set());byCode.get(code).add(C.normal(l.lemma));}));
-    const greek=/[\u0370-\u03ff\u1f00-\u1fff]/;
+    const greek=/[\u0370-\u03ff\u1f00-\u1fff]/,original=q.greek||/[א-ת]/.test(q.words.join(''));
     for(const [r,t] of Object.entries(api.data.il)){
-      if(!t.length||!greek.test(t[0][0]))continue;let hits=0;
+      if(!t.length)continue;const corpus=greek.test(t[0][0])?'Greek NT':'Hebrew OT';let hits=0;
       for(const w of t){const code=C.strong(w[4]||''),lemmas=byCode.get(code)||new Set();
         if(q.terms.every(([k,v])=>k==='strong'?code===C.strong(v):k==='lemma'?lemmas.has(C.normal(v)):false))hits++;}
       if(q.terms.length&&!hits)continue;
-      const raw=t.map(w=>q.greek?w[0]:(w[1]||'')).join(' '),stream=C.words(raw,q.accents);
+      const raw=t.map(w=>original?w[0]:(w[1]||'')).join(' '),stream=C.words(raw,q.accents);
       if(q.words.length){if(q.phrase){let yes=false;for(let i=0;i<=stream.length-q.words.length;i++)if(q.words.every((w,j)=>stream[i+j]===w)){yes=true;break;}if(!yes)continue;}else if(!q.words.every(w=>stream.includes(w)))continue;}
-      rows.push({mt:r,text:t.map(w=>w[0]).join(' '),hits:q.terms.length?hits:0});
+      rows.push({mt:r,corpus,text:t.map(w=>w[0]).join(' '),english:t.map(w=>w[1]||'').join(' '),hits:q.terms.length?hits:0});
     }
     return rows;
   }
@@ -133,17 +130,19 @@ window.createLXX=function(api){
     $('q').value=query;
     if(!noPush)push({query,study:!!study},'#lxx/search/'+encodeURIComponent(query));
     $('out').innerHTML='<div class="msg" id="lxxprogress">Preparing Greek search…</div>';
-    const searchScope=study?'both':scope,appliedBook=study?'':bookFilter,ntPromise=searchScope!=='ot'?ntSearch(q):Promise.resolve([]);
+    const searchScope='both',appliedBook='',ntPromise=ntSearch(q);
     let result={rows:[],occurrences:0};
     if(searchScope!=='nt'){
       for(const old of waits.values())old.resolve({cancelled:true});waits.clear();
-      const n=++seq;result=await new Promise((resolve,reject)=>{waits.set(n,{resolve,reject});getWorker().postMessage({type:'search',id:n,query,book:appliedBook,accents,english:mode==='contextual',englishManifest:ENGLISH_MANIFEST});});
+      const n=++seq;result=await new Promise((resolve,reject)=>{waits.set(n,{resolve,reject});getWorker().postMessage({type:'search',id:n,query,book:appliedBook,accents,english:true,englishManifest:ENGLISH_MANIFEST});});
     }
     const nt=await ntPromise;if(id!==operation||result.cancelled)return;
-    state('phrase');lastResults={query,rows:result.rows.concat(nt),shown:0};
-    const n=result.rows.length,ntn=nt.length;
-    let header=`<div class="study"><div class="big">${esc(query)}</div><div class="stat">${n} Greek OT verses${searchScope!=='ot'?' · '+ntn+' Greek NT verses':''}</div>`;
-    if(mode==='contextual'&&q.words.length&&!q.greek)header+='<div class="note">Greek OT English search covers imported source English only. Passages without matching source English are excluded. Choose Greek with word glosses to search dictionary meanings.</div>';
+    const groups=[nt.filter(x=>x.corpus==='Hebrew OT'),result.rows,nt.filter(x=>x.corpus==='Greek NT')],rows=[];
+    for(let i=0;i<Math.max(...groups.map(g=>g.length));i++)for(const g of groups)if(g[i])rows.push(g[i]);
+    state('phrase');lastResults={query,rows,shown:0};
+    const n=result.rows.length,ntn=nt.filter(x=>x.corpus==='Greek NT').length,otn=nt.length-ntn;
+    let header=`<div class="study"><div class="big">${esc(query)}</div><div class="stat">${otn} Hebrew OT verses · ${n} Greek OT verses · ${ntn} Greek NT verses</div>`;
+    if(q.words.length&&!q.greek)header+='<div class="note">Every search checks Hebrew OT, Greek OT and Greek NT. English searches their supplied English renderings. Greek OT coverage is incomplete: imported source English only, currently 1,482 Genesis verses. Untranslated LXX passages cannot yet produce English matches.</div>';
     if(q.terms.length&&searchScope!=='nt')header+=`<div class="sub">${result.occurrences} matching Greek OT words · alternate texts counted separately</div>`;
     if(q.terms.length&&result.forms){
       const details=(label,entries)=>'<details class="note"><summary>'+label+'</summary>'+entries.map(([w,n])=>`<div class="row">${esc(w)} · ${n}</div>`).join('')+'</details>';
@@ -158,8 +157,8 @@ window.createLXX=function(api){
     more();scrollTo(0,0);
   }
   function more(){if(!lastResults)return;const r=lastResults,rows=r.rows.slice(r.shown,r.shown+50);r.shown+=rows.length;
-    $('lxxresults').insertAdjacentHTML('beforeend',rows.map(x=>x.mt?`<a class="li" data-lxx-mt="${esc(x.mt)}"><span class="t">${esc(x.text)}</span><span class="r">${esc(api.refName(x.mt))} · Greek NT</span></a>`:`<a class="li" data-lxx-book="${x.book}" data-lxx-ref="${esc(x.ref)}"><span class="t">${esc(x.text)}</span><span class="r">${esc(name(x.book,x.ref))} · Greek OT</span></a>`).join(''));
-    $('lxxmore').style.display=r.shown<r.rows.length?'block':'none';if(!r.rows.length)$('lxxresults').innerHTML='<div class="msg">No matching Greek verses.</div>';
+    $('lxxresults').insertAdjacentHTML('beforeend',rows.map(x=>x.mt?`<a class="li" data-lxx-mt="${esc(x.mt)}"><span class="t">${esc(x.text)}</span>${x.english?`<span class="t">${esc(x.english)}</span>`:''}<span class="r">${esc(api.refName(x.mt))} · ${esc(x.corpus)}</span></a>`:`<a class="li" data-lxx-book="${x.book}" data-lxx-ref="${esc(x.ref)}"><span class="t">${esc(x.text)}</span>${x.english?`<span class="t">${esc(x.english)}</span>`:''}<span class="r">${esc(name(x.book,x.ref))} · Greek OT</span></a>`).join(''));
+    $('lxxmore').style.display=r.shown<r.rows.length?'block':'none';if(!r.rows.length)$('lxxresults').innerHTML='<div class="msg">No matching verses in the available searchable text.</div>';
   }
   async function gaps(noPush){
     const id=++operation;current=null;activate();api.closeSheet();busy('Opening dictionary coverage…');

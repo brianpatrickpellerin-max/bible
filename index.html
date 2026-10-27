@@ -645,6 +645,7 @@ async function render(q,noPush){
   const out=$("out");q=(q||"").trim();if(!q)return;
   const cmd=q.toLowerCase();if(cmd==="settings"){settingsSheet();return;}if(cmd==="books"){bookSheet(b=>chapterSheet(b),"Books");return;}if(cmd==="translations"||cmd==="translation"){trSheet();return;}
   $("q").blur();
+  if(LXX&&!parseRef(q)){LXX.render(q,noPush);return;}
   setView({t:"busy"});out.innerHTML="<div class='msg'>Searching…</div>";
   const pq=phraseQuery(q);
   if(pq.quoted&&!ORIG.test(pq.inner)&&!/^(?:root\s*)?[HG]\d{1,5}$/i.test(pq.inner)){

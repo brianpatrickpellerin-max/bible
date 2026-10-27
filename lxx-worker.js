@@ -25,13 +25,14 @@ onmessage=async e=>{
     const englishMeta=sourceEnglish?await get(m.englishManifest):null;
     const rows=[],forms={},parsing={},bookCounts={};let occurrences=0;
     for(let k=0;k<selected.length;k++){
+      if(sourceEnglish&&!englishMeta.books[selected[k].id])continue;
       const b=selected[k];let d=books.get(b.id);if(!d){d=await get(b.file);books.set(b.id,d);}if(id!==latest)return;
       let english=null;const en=englishMeta&&englishMeta.books[b.id];
       if(en&&en.base_file===b.file){english=englishBooks.get(en.file);if(!english){english=await get(en.file);englishBooks.set(en.file,english);}if(english.base_file!==b.file)throw Error('English source and Greek text versions differ.');}
       for(const [ref,tokens] of d.verses){
         const labels=english&&english.verses[ref];
         if(sourceEnglish&&(!labels||labels.length!==tokens.length||!labels.every((x,i)=>LXXCore.surfaceKey(x[0])===LXXCore.surfaceKey(tokens[i][0]))))continue;
-        const hit=LXXCore.matches(tokens,q,lex,sourceEnglish?labels.map(x=>x[1]):null);if(hit){rows.push({book:b.id,ref,text:tokens.map(t=>t[0]).join(' '),hits:hit.length});occurrences+=hit.length;
+        const hit=LXXCore.matches(tokens,q,lex,sourceEnglish?labels.map(x=>x[1]):null);if(hit){rows.push({book:b.id,ref,text:tokens.map(t=>t[0]).join(' '),english:sourceEnglish?labels.map(x=>x[1]).join(' '):'',hits:hit.length});occurrences+=hit.length;
         if(q.terms.length)for(const i of hit){const t=tokens[i];forms[t[0]]=(forms[t[0]]||0)+1;const p=lex.morphs[t[2]];parsing[p]=(parsing[p]||0)+1;bookCounts[b.id]=(bookCounts[b.id]||0)+1;}}}
       postMessage({type:'progress',id,done:k+1,total:selected.length});
       await new Promise(r=>setTimeout(r,0));if(id!==latest)return;

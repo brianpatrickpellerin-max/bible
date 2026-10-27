@@ -6,7 +6,7 @@
   function query(text,accents){
     text=text.trim(); const terms=[];
     text=text.replace(/\b(lemma|strong|morph|pos):(?:"([^"]+)"|(\S+))/giu,(_,kind,a,b)=>{terms.push([kind.toLowerCase(),a||b]);return ' ';});
-    const g=text.trim().match(/^(?:root\s*)?(G\d+[a-z]*)$/i);
+    const g=text.trim().match(/^(?:root\s*)?([GH]\d+[a-z]*)$/i);
     if(g){terms.push(['strong',g[1].toUpperCase()]);text='';}
     const quoted=/^["“][\s\S]*["”]$/.test(text.trim());
     return {terms,words:words(text.replace(/["“”]/g,''),accents),greek:/[\u0370-\u03ff\u1f00-\u1fff]/.test(text),phrase:quoted,accents:!!accents};

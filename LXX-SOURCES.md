@@ -188,10 +188,23 @@ the view explicitly states that fallback. Missing passages also show a notice.
 This checks extraction and Greek correspondence, not the accuracy of every
 translation choice. No whole-Bible contextual English coverage is claimed.
 The source PDF remains linked on each matching verse and word sheet.
-In this view, plain English searches use imported source English only and
-exclude passages without matching source text. Greek spelling, lemma and
-Strong's searches continue to use the full Greek corpus. Dictionary-meaning
-search remains available in the existing word-gloss view.
+All ordinary text searches now check Hebrew OT, Greek OT and Greek NT,
+independently of the reading mode. English searches use supplied contextual
+English, not Greek dictionary definitions. Greek OT English coverage remains
+limited to the imported matching Genesis passages. Greek spelling, lemma and
+Strong's searches continue to use the full Greek corpus. Results identify the
+corpus and show the English searched; results from the three corpora are
+interleaved so the first page does not hide the smaller result groups.
+
+The requested final target is a complete literal English translation of the
+LXX, preserving Greek wording, articles and word order, searchable together
+with the Hebrew OT and Greek NT on every search. The current partial imported
+translation does not meet that target: its omitted articles, unmatched
+passages and remaining books still require translation and review. Dictionary
+definitions and the Brenton companion edition must not be silently substituted
+and represented as that completed translation. Source-language queries match
+the entered language; searching all corpora does not imply automatically
+translating a Hebrew or Greek query into the other language.
 
 ```
 python scripts/build_lxx_pdf_english.py /path/to/Gen.pdf genesis https://www.bible.in.ua/underl/pdf/ENG/OT/Gen.pdf

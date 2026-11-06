@@ -59,6 +59,7 @@ body.v-home #out{display:none}
 /* quiet lists (phrase list, other matches, original-word lists) */
 .li{display:block;text-align:center;padding:16px 0 15px;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;cursor:pointer}
 .li .t{display:block;font-size:calc(var(--fs)*.98);line-height:1.5;overflow-wrap:anywhere}
+.result-word{cursor:pointer}.result-word:focus-visible{outline:1px solid currentColor;outline-offset:2px}
 .chap p,.cmpv .vt{overflow-wrap:anywhere}
 .li .r{display:block;font-size:calc(var(--fs)*.7);letter-spacing:.04em;margin-top:6px}
 .sentinel{height:1px}
@@ -111,7 +112,7 @@ body.v-home #out{display:none}
 <script>(function(){var q=document.getElementById("q");function f(){if(!location.hash)try{q.focus({preventScroll:true});}catch(e){q.focus();}}f();addEventListener("load",f);addEventListener("pageshow",f);})();</script>
 <script>
 const FILES={"meta": "data/meta.cd88091618.json.gz", "KJV": "data/KJV.e7b9ede062.json.gz", "AKJV": "data/AKJV.dc8019063e.json.gz", "ASV": "data/ASV.8cba7a78aa.json.gz", "Webster": "data/Webster.b901e53df3.json.gz", "RWebster": "data/RWebster.78e17250c4.json.gz", "Darby": "data/Darby.f4309af123.json.gz", "YLT": "data/YLT.fb0ab84c54.json.gz", "Geneva": "data/Geneva.1caafc259c.json.gz", "Wycliffe": "data/Wycliffe.66c871c789.json.gz", "BBE": "data/BBE.d70dee73be.json.gz", "DRC": "data/DRC.e7dd1c66e8.json.gz", "JPS": "data/JPS.23ad041036.json.gz", "CPDV": "data/CPDV.893aec34d8.json.gz", "Rotherham": "data/Rotherham.ab93419c89.json.gz", "Tyndale": "data/Tyndale.b89e3bce76.json.gz", "Anderson": "data/Anderson.eb66b95257.json.gz", "Haweis": "data/Haweis.ab4b74e830.json.gz", "Noyes": "data/Noyes.7241b8877b.json.gz", "OEB": "data/OEB.4ea7fdedd2.json.gz", "WEB": "data/WEB.ca7fe1c32c.json.gz", "xr": "data/xr.a51e06755d.json.gz", "lex": "data/lex.6caa2f7edb.json.gz", "il0": "data/il0.be46a44f65.json.gz", "il1": "data/il1.da2ca2f39e.json.gz", "il2": "data/il2.a03088da59.json.gz", "il3": "data/il3.d126638d3e.json.gz", "il4": "data/il4.f15b9b518b.json.gz", "il5": "data/il5.0b885925c8.json.gz"};
-try{if(!localStorage.getItem("bl_hl1")){localStorage.setItem("bl_phtr","HLIT");localStorage.setItem("bl_hl1","1");}}catch(e){}
+try{if(!localStorage.getItem("bl_unified_english_1")){localStorage.setItem("bl_phtr","HLIT");localStorage.setItem("bl_hl1","1");localStorage.setItem("bl_unified_english_1","1");}}catch(e){}
 let DATA={order:[],tr:{},il:{},xr:{},lex:{}},META=null,HOOK=null;
 const LOADED=new Set(),FAILED=new Set(),WAITS=[];
 const DCACHE="bible-data";
@@ -388,7 +389,7 @@ function setView(v,keepSheet){if(VIEW&&VIEW.t==="verse"&&LAST){LAST.y=window.scr
 function jget(k,d){try{const v=JSON.parse(localStorage.getItem(k)||"null");return v==null?d:v;}catch(e){return d;}}
 function jset(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 // remove saved data from features that no longer exist
-(()=>{const KEEP=new Set(["bl_filter","bl_theme","bl_fs","bl_recent","bl_phtr","bl_tips","bl_hl1","bl_lxx","bl_lxx_mode"]);
+(()=>{const KEEP=new Set(["bl_filter","bl_theme","bl_fs","bl_recent","bl_phtr","bl_tips","bl_hl1","bl_lxx","bl_lxx_mode","bl_unified_english_1"]);
   try{if(localStorage.getItem("bl_dark")==="1"&&!localStorage.getItem("bl_theme"))localStorage.setItem("bl_theme","dark");
     const ks=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith("bl_")&&!KEEP.has(k))ks.push(k);}ks.forEach(k=>localStorage.removeItem(k));}catch(e){}})();
 // ---- first-visit hints (bl_tips: 0 = show long-press hint, 1 = show corner hint, 2 = done)
@@ -409,14 +410,12 @@ function trSheet(){if(LXX&&LXX.active){LXX.menu();return;}const cur=phTr(),v=VIE
   if(v.t==="verse"&&r) html+=`<div class="st">${esc(refName(r))}</div>`;
   else if(v.t==="chapter") html+=`<div class="st">${esc(chapName(v.ref))}</div>`;
   else html+=`<div class="st">Translation</div>`;
-  html+=it(`data-lxx-enter="1"`,"Greek Old Testament · Septuagint");
   html+=ALLTR().map(n=>it(`data-tr="${n}"`,(NAMES[n]||n)+(n===cur?" ✓":""),false)).join("");
   if(v.t==="verse"&&r){html+=`<div class="gap"></div>`+it(`data-act="cmp"`,v.cmp?"Show one translation":"Compare all translations")+it(`data-act="copy"`,"Copy")+it(`data-act="img"`,"Share as image")+it(`data-act="chap"`,"Open chapter")+it(`data-act="il"`,isHl(r)?"Related verses":"Hebrew / Greek and related verses");}
   if(v.t==="chapter"){html+=`<div class="gap"></div>`+(v.tn2?it(`data-act="nocmp"`,"Stop comparing"):it(`data-act="cmp2"`,"Side by side with…"));}
   html+=`<div class="gap"></div>`+it(`data-act="settings"`,"Settings");
   openSheet(html,"tr");tipUsed(1);
   const box=$("sheetbox");
-  box.querySelector("[data-lxx-enter]").onclick=()=>LXX.select("interlinear",r);
   box.querySelectorAll("[data-tr]").forEach(a=>a.onclick=()=>setTr(a.dataset.tr));
   box.querySelectorAll("[data-act]").forEach(a=>a.onclick=()=>{const k=a.dataset.act;closeSheet();
     if(k==="cmp")show(r,{...LAST,cmp:!v.cmp},true,true);
@@ -437,19 +436,17 @@ async function setTr(n){try{localStorage.setItem("bl_phtr",n);}catch(e){}closeSh
   else if(v.t==="phrase"){await ensurePh(n);showPhrase(v.q,PHS?PHS.words:phraseQuery(v.q).words,0,true);}
   toast(NAMES[n]||n);}
 // ---- settings sheet (long-press or two-finger tap on the top-right corner, or type "settings")
-function settingsSheet(){if(LXX&&LXX.active){LXX.settings();return;}const m=themeMode(),f=getFilter();
+function settingsSheet(){if(LXX&&LXX.active){LXX.settings();return;}
   let html=`<div class="st">Text size</div><div class="seg">${it(`data-fs="-2"`,"Smaller")}${it(`data-fs="2"`,"Larger")}</div>`;
-  html+=`<div class="st">Search in</div><div class="seg">${[["all","Whole Bible"],["ot","Old"],["nt","New"]].map(([k,l])=>it(`data-ft="${k}"`,l,f.t===k)).join("")}</div>`+
-    it(`data-act="fbook"`,f.t==="book"?`One book: ${esc(FULL[f.b]||f.b)}`:"One book…",f.t==="book");
-  html+=`<div class="gap"></div>`+it(`data-act="books"`,"Books")+it(`data-act="tr"`,`Translation: ${esc(NAMES[phTr()]||phTr())}`)+it(`data-act="lxx"`,"Greek Old Testament");
+  html+=`<div class="st">Search all Scripture</div><div class="note">Word searches include Hebrew OT, Greek OT and Greek NT. LXX English coverage is incomplete.</div>`;
+  html+=`<div class="gap"></div>`+it(`data-act="books"`,"Books")+it(`data-act="tr"`,`Translation: ${esc(NAMES[phTr()]||phTr())}`);
   openSheet(html,"set");tipUsed(2);
   const box=$("sheetbox");
   box.querySelectorAll("[data-fs]").forEach(a=>a.onclick=()=>{setFs(curFs()+ +a.dataset.fs);toast("Text size "+curFs());});
   box.querySelectorAll("[data-th]").forEach(a=>a.onclick=()=>{try{localStorage.setItem("bl_theme",a.dataset.th);}catch(e){}applyTheme();box.querySelectorAll("[data-th]").forEach(x=>x.classList.toggle("on",x===a));});
   box.querySelectorAll("[data-ft]").forEach(a=>a.onclick=()=>{setFilter({t:a.dataset.ft});closeSheet();refilter();toast("Searching "+filterName(getFilter()));});
-  box.querySelector("[data-act=fbook]").onclick=()=>bookSheet(b=>{setFilter({t:"book",b});closeSheet();refilter();toast("Searching "+FULL[b]);},"Search in one book");
   box.querySelector("[data-act=books]").onclick=()=>bookSheet(b=>chapterSheet(b),"Books");
-  box.querySelector("[data-act=tr]").onclick=trSheet;box.querySelector("[data-act=lxx]").onclick=()=>LXX.select("interlinear",VIEW&&VIEW.ref);}
+  box.querySelector("[data-act=tr]").onclick=trSheet;}
 function refilter(){if(VIEW&&VIEW.t==="phrase"){render(VIEW.q,true);return;}if(LAST&&LAST.q&&!LAST.isRef&&VIEW&&VIEW.t==="verse")render(LAST.q,true);}
 // ---- books
 function bookSheet(pick,title){if(LXX&&LXX.active){LXX.books();return;}let html=`<div class="st">${esc(title)}</div><div class="st">Old Testament</div><div class="grid bk">`;
@@ -640,8 +637,10 @@ async function showStudy(code){closeSheet();if(!await needIl())return;
 // ---- search
 async function render(q,noPush){
   const lcmd=(q||"").trim().toLowerCase();
-  if(lcmd==="lxx"||lcmd==="septuagint"){LXX.select();return;}
-  if((LXX&&LXX.active||/^lxx\s+/i.test(q||""))&&!["settings","books","translations","translation"].includes(lcmd)){LXX.render(q,noPush);return;}
+  if(lcmd==="lxx"||lcmd==="septuagint"){LXX.books();return;}
+  if(/^lxx\s+/i.test(q||"")){LXX.render(q,noPush);return;}
+  // An LXX verse may be open, but that never changes the next search's scope.
+  if(LXX&&LXX.active&&parseRef(q))LXX.deactivate();
   const out=$("out");q=(q||"").trim();if(!q)return;
   const cmd=q.toLowerCase();if(cmd==="settings"){settingsSheet();return;}if(cmd==="books"){bookSheet(b=>chapterSheet(b),"Books");return;}if(cmd==="translations"||cmd==="translation"){trSheet();return;}
   $("q").blur();
@@ -769,6 +768,7 @@ HOOK=(k,d)=>{
 document.addEventListener("copy",e=>{try{const s=String(window.getSelection());if(s.includes("\u2011")&&e.clipboardData){e.clipboardData.setData("text/plain",s.replace(/\u2011/g,"-"));e.preventDefault();}}catch(_){}});
 applyTheme();
 LXX=window.createLXX({esc,openSheet,closeSheet,toast,setView,home:()=>showHome(true),translations:trSheet,show,refName,setFs,curFs,waitFor,data:DATA,
+  openMtWord:(r,i)=>{try{localStorage.setItem("bl_phtr","HLIT");}catch(e){}$("q").value=refName(r);show(r);const el=$("out").querySelector(`.w[data-i="${i}"]`);if(el)showPop(i,el);},
   mtText:r=>{const n=firstTr(r);return {text:n&&DATA.tr[n]&&DATA.tr[n][r]||"",name:NAMES[n]||n||"",original:isOT(r)?(DATA.il[r]||[]).map(x=>x[0]).join(" "):""};}});
 window.BL_LXX=LXX;
 try{history.scrollRestoration="manual";}catch(e){}

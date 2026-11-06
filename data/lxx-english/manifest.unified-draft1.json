@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "books": {
+    "genesis": {
+      "file": "data/lxx-english/genesis.6c5a4105bd.json.gz",
+      "base_file": "data/lxx/genesis.7825a94239.json.gz",
+      "coverage": "data/lxx-english/genesis-coverage.27fcb5a07e.json",
+      "source_url": "https://www.bible.in.ua/underl/pdf/ENG/OT/Gen.pdf",
+      "bytes": 180505,
+      "counts": {
+        "accepted_verses": 1482,
+        "matched_tokens": 31444,
+        "supplied_glosses": 30834,
+        "blank_source_glosses": 610
+      }
+    },
+    "exodus": {
+      "file": "data/lxx-english/exodus-draft.542b309e63.json",
+      "base_file": "data/lxx/exodus.0b04854be4.json.gz",
+      "kind": "assistant-draft",
+      "bytes": 6722,
+      "counts": {
+        "accepted_verses": 7,
+        "matched_tokens": 79,
+        "supplied_glosses": 79,
+        "blank_source_glosses": 0
+      }
+    }
+  }
+}

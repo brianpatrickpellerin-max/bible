@@ -182,16 +182,15 @@ punctuation removal; accents are retained. References, source Greek spelling,
 English labels, blank labels, PDF page numbers and input SHA-256 are retained.
 Ambiguous pairings and differing Greek verses are excluded and reported.
 
-The optional "Greek with source English" view preserves the author's English
-and square brackets. A blank source label falls back to the dictionary and
-the view explicitly states that fallback. Missing passages also show a notice.
-This checks extraction and Greek correspondence, not the accuracy of every
-translation choice. No whole-Bible contextual English coverage is claimed.
-The source PDF remains linked on each matching verse and word sheet.
+The English-only reading view preserves the author's English and square
+brackets. An ellipsis identifies a blank source label; dictionary definitions
+are not silently substituted for a translation. Missing passages show a
+notice. This checks extraction and Greek correspondence, not the accuracy of
+every translation choice. No whole-Bible contextual English coverage is
+claimed. The source PDF remains linked from matching word sheets.
 All ordinary text searches now check Hebrew OT, Greek OT and Greek NT,
-independently of the reading mode. English searches use supplied contextual
-English, not Greek dictionary definitions. Greek OT English coverage remains
-limited to the imported matching Genesis passages. Greek spelling, lemma and
+independently of the reading mode. English searches use supplied English word
+renderings, not Greek dictionary definitions. Greek spelling, lemma and
 Strong's searches continue to use the full Greek corpus. Results identify the
 corpus and show the English searched; results from the three corpora are
 interleaved so the first page does not hide the smaller result groups.
@@ -209,3 +208,41 @@ translating a Hebrew or Greek query into the other language.
 ```
 python scripts/build_lxx_pdf_english.py /path/to/Gen.pdf genesis https://www.bible.in.ua/underl/pdf/ENG/OT/Gen.pdf
 ```
+
+## Matching MyBible interlinear module
+
+Oleksii Vynokurov's VinG-en+ MyBible module, dated 5 November 2026, provides
+the source English word renderings. The downloaded module explicitly states
+CC BY-NC 4.0; see `data/lxx-english/LICENSE.md`. The input SQLite SHA-256 is
+`9804ef5b47ce9d12738a3e4a9e1dea9a17c797e9f72632418c55789504ff93af`.
+
+`scripts/import_lxx_module.py /path/to/module.sqlite3` matches a complete
+source Greek word sequence and native reference to the pinned site's Greek
+before accepting a verse. It retains source labels and blanks, excludes
+mismatches rather than guessing word links, and overlays the separately
+identified Exodus drafts below. It imports 26,707 matching verse records
+across 53 Greek source texts; alternate textual forms count separately.
+The 26,707 records contain 7,367 blank word labels in 5,498 records. There
+are 2,374 source verses at existing references whose Greek sequences did not
+match and 974 source verse records whose references were absent from the
+corresponding site text. Six site texts are not mapped to the module. See
+`data/lxx-english/coverage.module.json` for per-text counts. These counts
+are not counts of fully translated or independently reviewed verses.
+
+The module supplies interlinear word renderings, not a complete literal
+English translation. Search results and individual verses show missing
+labels as ellipses, and exact-phrase search does not join across a gap.
+
+## Literal Exodus draft
+
+Exodus 1:1–7 has a new draft made for this site from its pinned Rahlfs Greek
+tokens. It is not an import from the Vynokurov edition. The data retains
+word-level coordinates and a separate display order where English places
+the Greek postpositive conjunction before the preceding word. Each draft
+passage is labelled as awaiting further review. The Greek text was checked
+against the German Bible Society's online edition and the sense of πανοικίᾳ
+against the LSJ entry cited in the draft's source metadata.
+
+These seven verses are a small beginning, not a completed LXX translation.
+All remaining passages and disputed translation choices require further work
+and review; searches do not imply the untranslated text has been covered.

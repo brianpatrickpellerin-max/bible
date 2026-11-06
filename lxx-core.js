@@ -12,7 +12,11 @@
     return {terms,words:words(text.replace(/["“”]/g,''),accents),greek:/[\u0370-\u03ff\u1f00-\u1fff]/.test(text),phrase:quoted,accents:!!accents};
   }
   const strong=s=>String(s).replace(/^G0*(\d+)/i,(_,n)=>'G'+Number(n)).toUpperCase();
-  function matches(tokens,q,lex,renderings){
+  function validOrder(value,n){
+    if(!Array.isArray(value)||value.length!==n||value.some(i=>!Number.isInteger(i)||i<0||i>=n)||new Set(value).size!==n)return null;
+    return value;
+  }
+  function matches(tokens,q,lex,renderings,displayOrder){
     // Structured filters must apply to the same token, not unrelated words in a verse.
     const hit=[];
     tokens.forEach((t,i)=>{
@@ -22,7 +26,10 @@
     if(q.terms.length&&!hit.length)return null;
     if(q.words.length){
       const per=tokens.map((t,i)=>words(q.greek?t[0]:renderings?renderings[i]:(lex.lemmas[t[1]]||{}).gloss,q.accents));
-      const stream=per.flat();
+      const order=validOrder(displayOrder,per.length);
+      // A missing rendering is a gap, not permission to join the surrounding
+      // words into an apparently continuous phrase.
+      const stream=(order?order.map(i=>per[i]):per).flatMap(part=>part.length?part:[null]);
       if(q.phrase){let found=false;for(let i=0;i<=stream.length-q.words.length;i++)if(q.words.every((w,j)=>stream[i+j]===w)){found=true;break;}if(!found)return null;}
       else if(!q.words.every(w=>stream.includes(w)))return null;
       return per.map((a,i)=>q.words.some(w=>a.includes(w))?i:-1).filter(i=>i>=0);
@@ -38,6 +45,6 @@
   }
   const hebrew=s=>String(s||'').replace(/[^א-ת]/g,'');
   const surfaceKey=s=>String(s||'').normalize('NFC').toLowerCase().replace(/ς/g,'σ').replace(/[^\p{L}\p{M}]/gu,'');
-  const api={fold,words,normal,query,strong,matches,supplement,hebrew,surfaceKey};root.LXXCore=api;
+  const api={fold,words,normal,query,strong,matches,supplement,hebrew,surfaceKey,validOrder};root.LXXCore=api;
   if(typeof module!=='undefined')module.exports=api;
 })(typeof self!=='undefined'?self:globalThis);

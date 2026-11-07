@@ -1,0 +1,50 @@
+/* Shared search rules. Display spelling is never normalised or rewritten. */
+(function(root){
+  const fold=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ς/g,'σ').toLowerCase();
+  const words=(s,accents)=> (accents?String(s||'').normalize('NFC').toLowerCase():fold(s)).match(/[\p{L}\p{N}]+/gu)||[];
+  const normal=s=>fold(s).replace(/[^\p{L}\p{N}]/gu,'');
+  function query(text,accents){
+    text=text.trim(); const terms=[];
+    text=text.replace(/\b(lemma|strong|morph|pos):(?:"([^"]+)"|(\S+))/giu,(_,kind,a,b)=>{terms.push([kind.toLowerCase(),a||b]);return ' ';});
+    const g=text.trim().match(/^(?:root\s*)?([GH]\d+[a-z]*)$/i);
+    if(g){terms.push(['strong',g[1].toUpperCase()]);text='';}
+    const quoted=/^["“][\s\S]*["”]$/.test(text.trim());
+    return {terms,words:words(text.replace(/["“”]/g,''),accents),greek:/[\u0370-\u03ff\u1f00-\u1fff]/.test(text),phrase:quoted,accents:!!accents};
+  }
+  const strong=s=>String(s).replace(/^G0*(\d+)/i,(_,n)=>'G'+Number(n)).toUpperCase();
+  function validOrder(value,n){
+    if(!Array.isArray(value)||value.length!==n||value.some(i=>!Number.isInteger(i)||i<0||i>=n)||new Set(value).size!==n)return null;
+    return value;
+  }
+  function matches(tokens,q,lex,renderings,displayOrder){
+    // Structured filters must apply to the same token, not unrelated words in a verse.
+    const hit=[];
+    tokens.forEach((t,i)=>{
+      const l=lex.lemmas[t[1]]||{lemma:'',entries:[]};
+      if(q.terms.every(([k,v])=>k==='lemma'?normal(l.lemma)===normal(v):k==='strong'?l.entries.some(e=>strong(e.strong)===strong(v)||strong(e.id)===strong(v)):k==='pos'?words(lex.morphs[t[2]])[0]===fold(v):words(v).every(x=>words(lex.morphs[t[2]]).includes(x))))hit.push(i);
+    });
+    if(q.terms.length&&!hit.length)return null;
+    if(q.words.length){
+      const per=tokens.map((t,i)=>words(q.greek?t[0]:renderings?renderings[i]:(lex.lemmas[t[1]]||{}).gloss,q.accents));
+      const order=validOrder(displayOrder,per.length);
+      // A missing rendering is a gap, not permission to join the surrounding
+      // words into an apparently continuous phrase.
+      const stream=(order?order.map(i=>per[i]):per).flatMap(part=>part.length?part:[null]);
+      if(q.phrase){let found=false;for(let i=0;i<=stream.length-q.words.length;i++)if(q.words.every((w,j)=>stream[i+j]===w)){found=true;break;}if(!found)return null;}
+      else if(!q.words.every(w=>stream.includes(w)))return null;
+      return per.map((a,i)=>q.words.some(w=>a.includes(w))?i:-1).filter(i=>i>=0);
+    }
+    return hit;
+  }
+  function supplement(lex,extra){
+    for(const [i,l] of Object.entries(extra)){
+      if(!lex.lemmas[i]||lex.lemmas[i].entries.length)continue;
+      Object.assign(lex.lemmas[i],l);
+    }
+    return lex;
+  }
+  const hebrew=s=>String(s||'').replace(/[^א-ת]/g,'');
+  const surfaceKey=s=>String(s||'').normalize('NFC').toLowerCase().replace(/ς/g,'σ').replace(/[^\p{L}\p{M}]/gu,'');
+  const api={fold,words,normal,query,strong,matches,supplement,hebrew,surfaceKey,validOrder};root.LXXCore=api;
+  if(typeof module!=='undefined')module.exports=api;
+})(typeof self!=='undefined'?self:globalThis);

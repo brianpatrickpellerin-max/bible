@@ -1,5 +1,5 @@
-const C="bible-v25-unified-english",D="bible-data";
-self.addEventListener("install",e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(["./","icon.png","manifest.json","worker.1ef424f8dd.js","lxx-core.js","lxx.js","lxx-worker.js","LXX-SOURCES.md"])));self.skipWaiting();});
+const C="bible-v26-clean-english",D="bible-data";
+self.addEventListener("install",e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(["./","icon.png","manifest.json","worker.1ef424f8dd.js","lxx-core.3d12cc41d826.js","lxx.32f4deed8c0e.js","lxx-worker.cf0513d75f36.js","LXX-SOURCES.md"])));self.skipWaiting();});
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C&&k!==D&&k!=="bible-lxx-v1").map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
 function timeout(ms){return new Promise((_,rej)=>setTimeout(()=>rej(new Error("timeout")),ms));}
 self.addEventListener("fetch",e=>{const req=e.request;if(req.method!=="GET")return;const url=new URL(req.url);if(url.origin!==location.origin)return;

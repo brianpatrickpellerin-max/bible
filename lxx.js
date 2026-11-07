@@ -146,9 +146,10 @@ window.createLXX=function(api){
     for(let i=0;i<Math.max(...groups.map(g=>g.length));i++)for(const g of groups)if(g[i])rows.push(g[i]);
     state('phrase');lastResults={query,rows,shown:0};
     const n=result.rows.length,ntn=nt.filter(x=>x.corpus==='Greek NT').length,otn=nt.length-ntn;
-    let header=`<div class="study"><div class="big">${esc(query)}</div><div class="stat">${otn} Hebrew OT verses · ${n} Greek OT verses · ${ntn} Greek NT verses</div>`;
+    let header=`<details class="search-details"><summary>${rows.length.toLocaleString()} ${rows.length===1?'verse':'verses'}<span>Search details</span></summary><div class="search-info"><div class="stat">${otn} Hebrew OT verses · ${n} Greek OT verses · ${ntn} Greek NT verses</div>`;
     if(q.words.length&&!q.greek){const translated=Object.values(englishManifest.books).reduce((sum,b)=>sum+(b.counts&&b.counts.accepted_verses||0),0);
       header+=`<div class="note">Every search checks Hebrew OT, Greek OT and Greek NT. Greek OT English coverage is incomplete: ${translated.toLocaleString()} verses have matching English word renderings or a draft, and some contain gaps. Other LXX passages cannot yet produce English matches. English word renderings by Oleksii Vynokurov, bible.in.ua.</div>`;}
+    header+='<div class="note">An ellipsis marks words without supplied English. Tap an English word to see its original-language details.</div>';
     if(q.terms.length&&searchScope!=='nt')header+=`<div class="sub">${result.occurrences} matching Greek OT words · alternate texts counted separately</div>`;
     if(q.terms.length&&result.forms){
       const details=(label,entries)=>'<details class="note"><summary>'+label+'</summary>'+entries.map(([w,n])=>`<div class="row">${esc(w)} · ${n}</div>`).join('')+'</details>';
@@ -158,14 +159,14 @@ window.createLXX=function(api){
     }
     if(appliedBook)header+=`<div class="sub">Greek OT filter: ${esc(book(appliedBook).name)}</div>`;
     if(q.terms.some(t=>t[0]==='morph'||t[0]==='pos')&&searchScope!=='ot')header+='<div class="note">Grammar filters apply to Greek OT data; Greek NT grammar search is not available here.</div>';
-    header+='<a class="link" data-lxx-action="english-sources">English source and coverage</a><a class="link" data-lxx-action="settings">Search settings</a></div>';
+    header+='<a class="link" data-lxx-action="english-sources">English source and coverage</a><a class="link" data-lxx-action="settings">Search settings</a></div></details>';
     $('out').innerHTML=header+'<div id="lxxresults"></div><a class="link" id="lxxmore" data-lxx-action="more">More results</a>';
     more();scrollTo(0,0);
   }
   function more(){if(!lastResults)return;const r=lastResults,start=r.shown,rows=r.rows.slice(start,start+50);r.shown+=rows.length;
     $('lxxresults').insertAdjacentHTML('beforeend',rows.map((x,j)=>{const labels=x.englishWords||[],order=C.validOrder(x.displayOrder,labels.length)||labels.map((_,i)=>i),words=labels.length?order.map(i=>`<span class="result-word" role="button" tabindex="0" data-lxx-result-word="${start+j}" data-word-index="${i}">${esc(labels[i]||'…')}</span>`).join(' '):'English translation not available yet.';
       const ref=x.mt?`<a class="r" data-lxx-mt="${esc(x.mt)}">${esc(api.refName(x.mt))}</a>`:`<a class="r" data-lxx-book="${esc(x.book)}" data-lxx-ref="${esc(x.ref)}">${esc(lxxName(x.book,x.ref))}</a>`;
-      return `<div class="li"><span class="t">${words}</span>${ref}${x.draft?'<span class="sub">Literal English draft · awaiting further review</span>':''}${labels.some(w=>!w)?'<span class="sub">Ellipses mark words without supplied English.</span>':''}</div>`;}).join(''));
+      return `<div class="li"><span class="t">${words}</span>${ref}${x.draft?'<span class="sub">Literal English draft · awaiting further review</span>':''}</div>`;}).join(''));
     $('lxxmore').style.display=r.shown<r.rows.length?'block':'none';if(!r.rows.length)$('lxxresults').innerHTML='<div class="msg">No matching verses in the available searchable text.</div>';
   }
   async function gaps(noPush){

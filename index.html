@@ -60,6 +60,16 @@ body.v-home #out{display:none}
 .li{display:block;text-align:center;padding:16px 0 15px;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;cursor:pointer}
 .li .t{display:block;font-size:calc(var(--fs)*.98);line-height:1.5;overflow-wrap:anywhere}
 .result-word{cursor:pointer}.result-word:focus-visible{outline:1px solid currentColor;outline-offset:2px}
+.search-details{margin:4px 0 10px;font-size:calc(var(--fs)*.72)}
+.search-details>summary{display:flex;justify-content:space-between;align-items:center;gap:16px;list-style:none;cursor:pointer;min-height:44px;opacity:.7}
+.search-details>summary::-webkit-details-marker{display:none}
+.search-details>summary span{text-decoration:underline;text-underline-offset:.2em}
+.search-info{text-align:center;padding:8px 0 20px}
+.search-info .note,.search-info .link,.search-info .sub{font-size:1em}
+#lxxresults .li{text-align:left;padding:24px 0;cursor:default}
+#lxxresults .li .t{font-size:var(--fs);line-height:1.65}
+#lxxresults .li .r{margin-top:5px;padding:0;font-size:calc(var(--fs)*.72);letter-spacing:0;opacity:.7;cursor:pointer;width:fit-content}
+#lxxresults .li .sub{display:block;text-align:left;margin:5px 0 0;font-size:calc(var(--fs)*.67);opacity:.7}
 .chap p,.cmpv .vt{overflow-wrap:anywhere}
 .li .r{display:block;font-size:calc(var(--fs)*.7);letter-spacing:.04em;margin-top:6px}
 .sentinel{height:1px}
@@ -107,8 +117,8 @@ body.v-home #out{display:none}
 <div id="out"></div>
 <div id="loadnote"></div><div id="toast"></div>
 <div id="sheet"><div class="sheetbox" id="sheetbox"></div></div>
-<script src="lxx-core.js"></script>
-<script src="lxx.js"></script>
+<script src="lxx-core.3d12cc41d826.js"></script>
+<script src="lxx.32f4deed8c0e.js"></script>
 <script>(function(){var q=document.getElementById("q");function f(){if(!location.hash)try{q.focus({preventScroll:true});}catch(e){q.focus();}}f();addEventListener("load",f);addEventListener("pageshow",f);})();</script>
 <script>
 const FILES={"meta": "data/meta.cd88091618.json.gz", "KJV": "data/KJV.e7b9ede062.json.gz", "AKJV": "data/AKJV.dc8019063e.json.gz", "ASV": "data/ASV.8cba7a78aa.json.gz", "Webster": "data/Webster.b901e53df3.json.gz", "RWebster": "data/RWebster.78e17250c4.json.gz", "Darby": "data/Darby.f4309af123.json.gz", "YLT": "data/YLT.fb0ab84c54.json.gz", "Geneva": "data/Geneva.1caafc259c.json.gz", "Wycliffe": "data/Wycliffe.66c871c789.json.gz", "BBE": "data/BBE.d70dee73be.json.gz", "DRC": "data/DRC.e7dd1c66e8.json.gz", "JPS": "data/JPS.23ad041036.json.gz", "CPDV": "data/CPDV.893aec34d8.json.gz", "Rotherham": "data/Rotherham.ab93419c89.json.gz", "Tyndale": "data/Tyndale.b89e3bce76.json.gz", "Anderson": "data/Anderson.eb66b95257.json.gz", "Haweis": "data/Haweis.ab4b74e830.json.gz", "Noyes": "data/Noyes.7241b8877b.json.gz", "OEB": "data/OEB.4ea7fdedd2.json.gz", "WEB": "data/WEB.ca7fe1c32c.json.gz", "xr": "data/xr.a51e06755d.json.gz", "lex": "data/lex.6caa2f7edb.json.gz", "il0": "data/il0.be46a44f65.json.gz", "il1": "data/il1.da2ca2f39e.json.gz", "il2": "data/il2.a03088da59.json.gz", "il3": "data/il3.d126638d3e.json.gz", "il4": "data/il4.f15b9b518b.json.gz", "il5": "data/il5.0b885925c8.json.gz"};
@@ -396,6 +406,7 @@ function jset(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 function tips(){return +(localStorage.getItem("bl_tips")||0);}
 function tipUsed(n){if(tips()<n){try{localStorage.setItem("bl_tips",n);}catch(e){}}showHint();}
 function showHint(){const h=$("hint");if(!h)return;const t=tips();
+  if(VIEW&&VIEW.lxx){h.textContent="";h.style.display="none";return;}
   const txt=t===0?"Press and hold a verse to change translation":t===1&&VIEW&&VIEW.t!=="home"?"Press and hold the top-right corner for settings":"";
   h.textContent=txt;h.style.display=txt?"block":"none";}
 // ---- sheet (translations, settings, books, share, word meaning)

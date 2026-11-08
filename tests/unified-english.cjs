@@ -41,7 +41,7 @@ assert.equal(C.matches(tokens, C.query('"and Joseph"', false), lex, verse.map(w 
 const gapTokens = [['α', 0], ['β', 0], ['γ', 0]];
 assert.equal(C.matches(gapTokens, C.query('"beginning God"', false), lex, ['beginning', '', 'God']), null);
 assert.ok(C.matches(gapTokens, C.query('"beginning God"', false), lex, ['beginning', 'God', 'made']));
-const imported = read('data/lxx-english/manifest.unified-module1.json');
+const imported = read('data/lxx-english/manifest.unified-module2.json');
 const combinedExodus = JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(root, imported.books.exodus.file))));
 assert.equal(combinedExodus.draft_refs.length, 7);
 for (const [ref, words] of Object.entries(draft.verses)) {
@@ -50,3 +50,18 @@ for (const [ref, words] of Object.entries(draft.verses)) {
 }
 assert.equal(imported.books.exodus.counts.draft_verses, 7);
 console.log('PASS: draft source matching, word alignment, display order and phrase search');
+
+const psalms = JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(root, imported.books['psalms-lxx'].file))));
+const psalmDraft = read('data/lxx-english/psalms-draft.json');
+assert.equal(psalms.draft_refs.length, 7);
+for (let n=1;n<=7;n++) {
+ const ref='13:'+n, words=psalms.verses[ref];
+ assert.deepEqual(words, psalmDraft.verses[ref]);
+ assert.ok(words.every(w=>w[1].trim()));
+ assert.ok(C.validOrder(psalms.orders[ref],words.length));
+}
+const longVerse=psalms.verses['13:3'];
+assert.ok(longVerse.length>50);
+for(const phrase of ['venom of asps','fear of God'])
+ assert.ok(C.matches(longVerse.map(w=>[w[0],0]),C.query('"'+phrase+'"',false),lex,longVerse.map(w=>w[1]),psalms.orders['13:3']));
+console.log('PASS: complete Psalm 13 draft and long verse 3 phrase searches');

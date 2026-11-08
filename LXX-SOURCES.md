@@ -246,3 +246,17 @@ against the LSJ entry cited in the draft's source metadata.
 These seven verses are a small beginning, not a completed LXX translation.
 All remaining passages and disputed translation choices require further work
 and review; searches do not imply the untranslated text has been covered.
+
+## Literal Psalm 13 draft (8 November 2026)
+
+LXX Psalm 13:1–7 (Hebrew Psalm 14) now has a complete word-aligned site
+draft, checked against https://www.die-bibel.de/bibel/LXX/PSA.13. The long
+verse 3 is retained in full, including its additional clauses. The pinned
+Greek edition, verse numbering and original coordinates are unchanged.
+English display order is recorded separately. Supplied English is bracketed.
+The draft replaces imported renderings only for these seven references;
+the remaining imported passages retain their attribution and gaps.
+
+There are now fourteen site draft verses (Exodus 1:1–7 and Psalm 13:1–7),
+not a completed LXX translation. The importer accepts additional explicitly
+aligned book drafts and rejects duplicate drafts or mismatched word arrays.

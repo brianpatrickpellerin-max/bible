@@ -260,10 +260,10 @@
       "module_mismatches": 42,
       "module_without_site_reference": 1,
       "pdf_only_verses": 0,
-      "draft_verses": 0,
+      "draft_verses": 7,
       "matched_tokens": 34286,
-      "supplied_glosses": 33860,
-      "blank_source_glosses": 426
+      "supplied_glosses": 33864,
+      "blank_source_glosses": 422
     },
     "psalms-of-solomon": {
       "site_verses": 293,
@@ -652,9 +652,9 @@
     "module_mismatches": 2374,
     "module_without_site_reference": 974,
     "matched_tokens": 547007,
-    "supplied_glosses": 539640,
-    "blank_source_glosses": 7367,
+    "supplied_glosses": 539644,
+    "blank_source_glosses": 7363,
     "pdf_only_verses": 0,
-    "draft_verses": 7
+    "draft_verses": 14
   }
 }

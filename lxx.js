@@ -3,7 +3,7 @@ window.createLXX=function(api){
   'use strict';
   const C=LXXCore,$=id=>document.getElementById(id),esc=api.esc,CACHE='bible-lxx-v1';
   const PLUS_MANIFEST='data/lxx-plus/manifest.5f24124c1d.json';
-  const ENGLISH_MANIFEST='data/lxx-english/manifest.unified-module1.json';
+  const ENGLISH_MANIFEST='data/lxx-english/manifest.unified-module2.json';
   let englishManifest=null;
   const PACK_MANIFEST='data/lxx/manifest.de6f6944de.json';
   let active=false,mode='interlinear',manifest=null,plus=null,lex=null,reverse=null,pending=null,worker=null,seq=0,operation=0,current=null,lastResults=null,downloadBusy=false;

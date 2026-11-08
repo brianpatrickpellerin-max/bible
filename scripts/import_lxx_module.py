@@ -78,7 +78,10 @@ def main():
     old_manifest = json.loads((OUTPUT / 'manifest.b85095c8b1.json').read_text())
     old_genesis = json.loads(gzip.decompress(
         (ROOT / old_manifest['books']['genesis']['file']).read_bytes()))
-    draft = json.loads((OUTPUT / 'exodus-draft.542b309e63.json').read_text())
+    drafts = [json.loads(p.read_text()) for p in sorted(OUTPUT.glob('*-draft*.json'))]
+    drafts = [d for d in drafts if d.get('kind') == 'assistant-draft']
+    if len({d['base_file'] for d in drafts}) != len(drafts):
+        raise ValueError('Duplicate draft source for a Greek book')
     module = sqlite3.connect('file:' + str(args.sqlite.resolve()) + '?mode=ro', uri=True)
     output = {'version': 1, 'source': 'Oleksii Vynokurov, bible.in.ua',
               'source_module_sha256': sha(args.sqlite), 'books': {}}
@@ -113,18 +116,17 @@ def main():
                     preserved_pdf += 1
         draft_refs = []
         orders = {}
-        if book_id == 'exodus':
-            if draft['base_file'] != book['file']:
-                raise ValueError('Exodus draft targets a different Greek edition')
+        draft = next((d for d in drafts if d['base_file'] == book['file']), None)
+        if draft is not None:
             for ref, labels in draft['verses'].items():
                 tokens = site_verses.get(ref)
                 order = draft.get('orders', {}).get(ref)
                 if (not tokens or len(labels) != len(tokens)
                         or any(not label[1] or key(label[0]) != key(token[0])
                                for label, token in zip(labels, tokens))):
-                    raise ValueError('Invalid Exodus draft alignment: ' + ref)
+                    raise ValueError('Invalid literal draft alignment: ' + ref)
                 if order is not None and sorted(order) != list(range(len(tokens))):
-                    raise ValueError('Invalid Exodus draft display order: ' + ref)
+                    raise ValueError('Invalid literal draft display order: ' + ref)
                 verses[ref] = labels
                 draft_refs.append(ref)
                 if order is not None:
@@ -163,7 +165,7 @@ def main():
                          'supplied_glosses','blank_source_glosses','pdf_only_verses',
                          'draft_verses']}
     (OUTPUT/'coverage.module.json').write_text(json.dumps(report, indent=2)+'\n')
-    (OUTPUT/'manifest.unified-module1.json').write_text(json.dumps(output, indent=2)+'\n')
+    (OUTPUT/'manifest.unified-module2.json').write_text(json.dumps(output, indent=2)+'\n')
     print(json.dumps({'books':len(output['books']), **report['totals'],
                       'unmapped_site_books':report['unmapped_site_books']}, indent=2))
 

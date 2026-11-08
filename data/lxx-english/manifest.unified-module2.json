@@ -1,0 +1,961 @@
+{
+  "version": 1,
+  "source": "Oleksii Vynokurov, bible.in.ua",
+  "source_module_sha256": "9804ef5b47ce9d12738a3e4a9e1dea9a17c797e9f72632418c55789504ff93af",
+  "books": {
+    "genesis": {
+      "file": "data/lxx-english/genesis.module.a32d1f134c.json.gz",
+      "base_file": "data/lxx/genesis.7825a94239.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 149154,
+      "counts": {
+        "site_verses": 1531,
+        "module_verses": 1533,
+        "accepted_verses": 1484,
+        "module_mismatches": 46,
+        "module_without_site_reference": 3,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 31485,
+        "supplied_glosses": 30873,
+        "blank_source_glosses": 612
+      }
+    },
+    "exodus": {
+      "file": "data/lxx-english/exodus.module.39b0cf7937.json.gz",
+      "base_file": "data/lxx/exodus.0b04854be4.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 96443,
+      "counts": {
+        "site_verses": 1165,
+        "module_verses": 1181,
+        "accepted_verses": 944,
+        "module_mismatches": 214,
+        "module_without_site_reference": 23,
+        "pdf_only_verses": 0,
+        "draft_verses": 7,
+        "matched_tokens": 19618,
+        "supplied_glosses": 19496,
+        "blank_source_glosses": 122
+      }
+    },
+    "leviticus": {
+      "file": "data/lxx-english/leviticus.module.1168d1d17f.json.gz",
+      "base_file": "data/lxx/leviticus.d4544d83c2.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 69421,
+      "counts": {
+        "site_verses": 859,
+        "module_verses": 859,
+        "accepted_verses": 789,
+        "module_mismatches": 63,
+        "module_without_site_reference": 7,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 17395,
+        "supplied_glosses": 17349,
+        "blank_source_glosses": 46
+      }
+    },
+    "numbers": {
+      "file": "data/lxx-english/numbers.module.279c2c217c.json.gz",
+      "base_file": "data/lxx/numbers.fc7ac996ca.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 96721,
+      "counts": {
+        "site_verses": 1287,
+        "module_verses": 1287,
+        "accepted_verses": 1151,
+        "module_mismatches": 121,
+        "module_without_site_reference": 15,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 22354,
+        "supplied_glosses": 22114,
+        "blank_source_glosses": 240
+      }
+    },
+    "deuteronomy": {
+      "file": "data/lxx-english/deuteronomy.module.06cbec37de.json.gz",
+      "base_file": "data/lxx/deuteronomy.cc36f1e009.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 95971,
+      "counts": {
+        "site_verses": 959,
+        "module_verses": 959,
+        "accepted_verses": 844,
+        "module_mismatches": 112,
+        "module_without_site_reference": 3,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 20343,
+        "supplied_glosses": 20224,
+        "blank_source_glosses": 119
+      }
+    },
+    "joshua-vaticanus-b": {
+      "file": "data/lxx-english/joshua-vaticanus-b.module.cc38ca30a2.json.gz",
+      "base_file": "data/lxx/joshua-vaticanus-b.08e5df5ce0.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 62680,
+      "counts": {
+        "site_verses": 659,
+        "module_verses": 651,
+        "accepted_verses": 598,
+        "module_mismatches": 45,
+        "module_without_site_reference": 8,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 13299,
+        "supplied_glosses": 13086,
+        "blank_source_glosses": 213
+      }
+    },
+    "judges": {
+      "file": "data/lxx-english/judges.module.fdd7cc3445.json.gz",
+      "base_file": "data/lxx/judges.432a98d52b.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 74622,
+      "counts": {
+        "site_verses": 618,
+        "module_verses": 618,
+        "accepted_verses": 603,
+        "module_mismatches": 15,
+        "module_without_site_reference": 0,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 15509,
+        "supplied_glosses": 15150,
+        "blank_source_glosses": 359
+      }
+    },
+    "judges-vaticanus-b": {
+      "file": "data/lxx-english/judges-vaticanus-b.module.50085e9469.json.gz",
+      "base_file": "data/lxx/judges-vaticanus-b.42e3ce433f.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 74440,
+      "counts": {
+        "site_verses": 617,
+        "module_verses": 618,
+        "accepted_verses": 608,
+        "module_mismatches": 9,
+        "module_without_site_reference": 1,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 15358,
+        "supplied_glosses": 15021,
+        "blank_source_glosses": 337
+      }
+    },
+    "ruth": {
+      "file": "data/lxx-english/ruth.module.fcaa634411.json.gz",
+      "base_file": "data/lxx/ruth.9e44b9ba34.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 9888,
+      "counts": {
+        "site_verses": 85,
+        "module_verses": 85,
+        "accepted_verses": 70,
+        "module_mismatches": 15,
+        "module_without_site_reference": 0,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 1745,
+        "supplied_glosses": 1717,
+        "blank_source_glosses": 28
+      }
+    },
+    "1-samuel": {
+      "file": "data/lxx-english/1-samuel.module.37f94e8edb.json.gz",
+      "base_file": "data/lxx/1-samuel.e63aa06bd3.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 94601,
+      "counts": {
+        "site_verses": 773,
+        "module_verses": 806,
+        "accepted_verses": 743,
+        "module_mismatches": 29,
+        "module_without_site_reference": 34,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 19337,
+        "supplied_glosses": 19080,
+        "blank_source_glosses": 257
+      }
+    },
+    "2-samuel": {
+      "file": "data/lxx-english/2-samuel.module.3889819f21.json.gz",
+      "base_file": "data/lxx/2-samuel.0fa8db4a5e.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 83688,
+      "counts": {
+        "site_verses": 696,
+        "module_verses": 695,
+        "accepted_verses": 664,
+        "module_mismatches": 31,
+        "module_without_site_reference": 0,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 17160,
+        "supplied_glosses": 16840,
+        "blank_source_glosses": 320
+      }
+    },
+    "1-kings": {
+      "file": "data/lxx-english/1-kings.module.f4db4b9cb3.json.gz",
+      "base_file": "data/lxx/1-kings.175865f46e.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 73639,
+      "counts": {
+        "site_verses": 825,
+        "module_verses": 813,
+        "accepted_verses": 652,
+        "module_mismatches": 90,
+        "module_without_site_reference": 71,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 15873,
+        "supplied_glosses": 15592,
+        "blank_source_glosses": 281
+      }
+    },
+    "2-kings": {
+      "file": "data/lxx-english/2-kings.module.02670ea693.json.gz",
+      "base_file": "data/lxx/2-kings.094d7ec84c.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 84105,
+      "counts": {
+        "site_verses": 723,
+        "module_verses": 719,
+        "accepted_verses": 706,
+        "module_mismatches": 13,
+        "module_without_site_reference": 0,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 18448,
+        "supplied_glosses": 18112,
+        "blank_source_glosses": 336
+      }
+    },
+    "1-chronicles": {
+      "file": "data/lxx-english/1-chronicles.module.9020e6ab3d.json.gz",
+      "base_file": "data/lxx/1-chronicles.121ae30917.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 77331,
+      "counts": {
+        "site_verses": 930,
+        "module_verses": 943,
+        "accepted_verses": 889,
+        "module_mismatches": 41,
+        "module_without_site_reference": 13,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 15506,
+        "supplied_glosses": 14993,
+        "blank_source_glosses": 513
+      }
+    },
+    "2-chronicles": {
+      "file": "data/lxx-english/2-chronicles.module.bb041f9600.json.gz",
+      "base_file": "data/lxx/2-chronicles.bc0d84a032.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 97038,
+      "counts": {
+        "site_verses": 833,
+        "module_verses": 822,
+        "accepted_verses": 796,
+        "module_mismatches": 25,
+        "module_without_site_reference": 1,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 20340,
+        "supplied_glosses": 19935,
+        "blank_source_glosses": 405
+      }
+    },
+    "1-esdras": {
+      "file": "data/lxx-english/1-esdras.module.1ad5c2c1f3.json.gz",
+      "base_file": "data/lxx/1-esdras.3f7013c389.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 49089,
+      "counts": {
+        "site_verses": 434,
+        "module_verses": 434,
+        "accepted_verses": 420,
+        "module_mismatches": 14,
+        "module_without_site_reference": 0,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 8715,
+        "supplied_glosses": 8589,
+        "blank_source_glosses": 126
+      }
+    },
+    "tobit": {
+      "file": "data/lxx-english/tobit.module.374db0eb39.json.gz",
+      "base_file": "data/lxx/tobit.0b03d8b084.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 29714,
+      "counts": {
+        "site_verses": 248,
+        "module_verses": 248,
+        "accepted_verses": 236,
+        "module_mismatches": 12,
+        "module_without_site_reference": 0,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 5204,
+        "supplied_glosses": 5153,
+        "blank_source_glosses": 51
+      }
+    },
+    "tobit-sinaiticus": {
+      "file": "data/lxx-english/tobit-sinaiticus.module.cff3ea0237.json.gz",
+      "base_file": "data/lxx/tobit-sinaiticus.359f1660f3.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 38790,
+      "counts": {
+        "site_verses": 232,
+        "module_verses": 248,
+        "accepted_verses": 231,
+        "module_mismatches": 1,
+        "module_without_site_reference": 16,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 7158,
+        "supplied_glosses": 7083,
+        "blank_source_glosses": 75
+      }
+    },
+    "judith": {
+      "file": "data/lxx-english/judith.module.2b143f0b67.json.gz",
+      "base_file": "data/lxx/judith.655cf559d2.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 49716,
+      "counts": {
+        "site_verses": 340,
+        "module_verses": 340,
+        "accepted_verses": 335,
+        "module_mismatches": 5,
+        "module_without_site_reference": 0,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 8958,
+        "supplied_glosses": 8865,
+        "blank_source_glosses": 93
+      }
+    },
+    "esther-greek": {
+      "file": "data/lxx-english/esther-greek.module.7c7ca2ef6c.json.gz",
+      "base_file": "data/lxx/esther-greek.09d9ab5c24.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 18506,
+      "counts": {
+        "site_verses": 252,
+        "module_verses": 194,
+        "accepted_verses": 145,
+        "module_mismatches": 18,
+        "module_without_site_reference": 31,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 3372,
+        "supplied_glosses": 3317,
+        "blank_source_glosses": 55
+      }
+    },
+    "job-lxx": {
+      "file": "data/lxx-english/job-lxx.module.f9b7744dfa.json.gz",
+      "base_file": "data/lxx/job-lxx.42f752fceb.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 86993,
+      "counts": {
+        "site_verses": 1083,
+        "module_verses": 1070,
+        "accepted_verses": 1056,
+        "module_mismatches": 13,
+        "module_without_site_reference": 1,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 13099,
+        "supplied_glosses": 13044,
+        "blank_source_glosses": 55
+      }
+    },
+    "psalms-lxx": {
+      "file": "data/lxx-english/psalms-lxx.module.afef48121b.json.gz",
+      "base_file": "data/lxx/psalms-lxx.43c9a297b3.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 196616,
+      "counts": {
+        "site_verses": 2534,
+        "module_verses": 2534,
+        "accepted_verses": 2491,
+        "module_mismatches": 42,
+        "module_without_site_reference": 1,
+        "pdf_only_verses": 0,
+        "draft_verses": 7,
+        "matched_tokens": 34286,
+        "supplied_glosses": 33864,
+        "blank_source_glosses": 422
+      }
+    },
+    "psalms-of-solomon": {
+      "file": "data/lxx-english/psalms-of-solomon.module.5a04c37170.json.gz",
+      "base_file": "data/lxx/psalms-of-solomon.beea50414e.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 27394,
+      "counts": {
+        "site_verses": 293,
+        "module_verses": 293,
+        "accepted_verses": 275,
+        "module_mismatches": 18,
+        "module_without_site_reference": 0,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 4519,
+        "supplied_glosses": 4456,
+        "blank_source_glosses": 63
+      }
+    },
+    "proverbs": {
+      "file": "data/lxx-english/proverbs.module.fcfcf32029.json.gz",
+      "base_file": "data/lxx/proverbs.b7e9c46d03.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 59755,
+      "counts": {
+        "site_verses": 939,
+        "module_verses": 917,
+        "accepted_verses": 718,
+        "module_mismatches": 35,
+        "module_without_site_reference": 164,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 8515,
+        "supplied_glosses": 8495,
+        "blank_source_glosses": 20
+      }
+    },
+    "odes": {
+      "file": "data/lxx-english/odes.module.e086459859.json.gz",
+      "base_file": "data/lxx/odes.1b5072b3e4.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 24498,
+      "counts": {
+        "site_verses": 276,
+        "module_verses": 456,
+        "accepted_verses": 264,
+        "module_mismatches": 11,
+        "module_without_site_reference": 181,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 3964,
+        "supplied_glosses": 3938,
+        "blank_source_glosses": 26
+      }
+    },
+    "ecclesiastes": {
+      "file": "data/lxx-english/ecclesiastes.module.c4de6cbd01.json.gz",
+      "base_file": "data/lxx/ecclesiastes.0654239518.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 23280,
+      "counts": {
+        "site_verses": 222,
+        "module_verses": 222,
+        "accepted_verses": 221,
+        "module_mismatches": 1,
+        "module_without_site_reference": 0,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 4535,
+        "supplied_glosses": 4433,
+        "blank_source_glosses": 102
+      }
+    },
+    "song-of-solomon": {
+      "file": "data/lxx-english/song-of-solomon.module.c7d33be9be.json.gz",
+      "base_file": "data/lxx/song-of-solomon.9f9af6fe77.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 11367,
+      "counts": {
+        "site_verses": 117,
+        "module_verses": 116,
+        "accepted_verses": 100,
+        "module_mismatches": 16,
+        "module_without_site_reference": 0,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 1783,
+        "supplied_glosses": 1774,
+        "blank_source_glosses": 9
+      }
+    },
+    "wisdom": {
+      "file": "data/lxx-english/wisdom.module.10073c27ef.json.gz",
+      "base_file": "data/lxx/wisdom.409127c82a.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 52386,
+      "counts": {
+        "site_verses": 435,
+        "module_verses": 435,
+        "accepted_verses": 432,
+        "module_mismatches": 3,
+        "module_without_site_reference": 0,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 6887,
+        "supplied_glosses": 6862,
+        "blank_source_glosses": 25
+      }
+    },
+    "sirach": {
+      "file": "data/lxx-english/sirach.module.c386f09da7.json.gz",
+      "base_file": "data/lxx/sirach.cc4c106ee2.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 45773,
+      "counts": {
+        "site_verses": 1402,
+        "module_verses": 1522,
+        "accepted_verses": 542,
+        "module_mismatches": 818,
+        "module_without_site_reference": 162,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 6619,
+        "supplied_glosses": 6605,
+        "blank_source_glosses": 14
+      }
+    },
+    "isaiah": {
+      "file": "data/lxx-english/isaiah.module.4f90cb018e.json.gz",
+      "base_file": "data/lxx/isaiah.3508e470e9.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 149716,
+      "counts": {
+        "site_verses": 1289,
+        "module_verses": 1291,
+        "accepted_verses": 1225,
+        "module_mismatches": 64,
+        "module_without_site_reference": 2,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 25736,
+        "supplied_glosses": 25532,
+        "blank_source_glosses": 204
+      }
+    },
+    "jeremiah-lxx": {
+      "file": "data/lxx-english/jeremiah-lxx.module.e1460ec0b0.json.gz",
+      "base_file": "data/lxx/jeremiah-lxx.3ffdddecfb.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 152830,
+      "counts": {
+        "site_verses": 1298,
+        "module_verses": 1362,
+        "accepted_verses": 1287,
+        "module_mismatches": 11,
+        "module_without_site_reference": 64,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 28670,
+        "supplied_glosses": 28347,
+        "blank_source_glosses": 323
+      }
+    },
+    "lamentations": {
+      "file": "data/lxx-english/lamentations.module.cf6d63fc27.json.gz",
+      "base_file": "data/lxx/lamentations.404eaa41b4.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 15822,
+      "counts": {
+        "site_verses": 150,
+        "module_verses": 154,
+        "accepted_verses": 147,
+        "module_mismatches": 3,
+        "module_without_site_reference": 4,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 2312,
+        "supplied_glosses": 2294,
+        "blank_source_glosses": 18
+      }
+    },
+    "letter-of-jeremiah": {
+      "file": "data/lxx-english/letter-of-jeremiah.module.129dcba24c.json.gz",
+      "base_file": "data/lxx/letter-of-jeremiah.30c560df50.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 8852,
+      "counts": {
+        "site_verses": 72,
+        "module_verses": 72,
+        "accepted_verses": 71,
+        "module_mismatches": 1,
+        "module_without_site_reference": 0,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 1244,
+        "supplied_glosses": 1230,
+        "blank_source_glosses": 14
+      }
+    },
+    "baruch": {
+      "file": "data/lxx-english/baruch.module.2798819320.json.gz",
+      "base_file": "data/lxx/baruch.321df21fc7.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 15052,
+      "counts": {
+        "site_verses": 141,
+        "module_verses": 141,
+        "accepted_verses": 140,
+        "module_mismatches": 1,
+        "module_without_site_reference": 0,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 2589,
+        "supplied_glosses": 2562,
+        "blank_source_glosses": 27
+      }
+    },
+    "ezekiel": {
+      "file": "data/lxx-english/ezekiel.module.df14035d0c.json.gz",
+      "base_file": "data/lxx/ezekiel.731d9b3e2f.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 134362,
+      "counts": {
+        "site_verses": 1267,
+        "module_verses": 1273,
+        "accepted_verses": 1257,
+        "module_mismatches": 10,
+        "module_without_site_reference": 6,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 29439,
+        "supplied_glosses": 29038,
+        "blank_source_glosses": 401
+      }
+    },
+    "daniel-theodotion": {
+      "file": "data/lxx-english/daniel-theodotion.module.1071ff4e51.json.gz",
+      "base_file": "data/lxx/daniel-theodotion.1c6f306205.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 51251,
+      "counts": {
+        "site_verses": 424,
+        "module_verses": 424,
+        "accepted_verses": 424,
+        "module_mismatches": 0,
+        "module_without_site_reference": 0,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 10453,
+        "supplied_glosses": 10351,
+        "blank_source_glosses": 102
+      }
+    },
+    "daniel": {
+      "file": "data/lxx-english/daniel.module.a8d48abecf.json.gz",
+      "base_file": "data/lxx/daniel.568ccb2ac6.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 46404,
+      "counts": {
+        "site_verses": 412,
+        "module_verses": 529,
+        "accepted_verses": 362,
+        "module_mismatches": 42,
+        "module_without_site_reference": 125,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 8905,
+        "supplied_glosses": 8808,
+        "blank_source_glosses": 97
+      }
+    },
+    "hosea": {
+      "file": "data/lxx-english/hosea.module.194a67b2a5.json.gz",
+      "base_file": "data/lxx/hosea.cb34bcf8cb.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 20616,
+      "counts": {
+        "site_verses": 197,
+        "module_verses": 197,
+        "accepted_verses": 166,
+        "module_mismatches": 29,
+        "module_without_site_reference": 2,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 3154,
+        "supplied_glosses": 3109,
+        "blank_source_glosses": 45
+      }
+    },
+    "joel": {
+      "file": "data/lxx-english/joel.module.eec75fb8eb.json.gz",
+      "base_file": "data/lxx/joel.10565ccd56.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 7092,
+      "counts": {
+        "site_verses": 73,
+        "module_verses": 73,
+        "accepted_verses": 46,
+        "module_mismatches": 6,
+        "module_without_site_reference": 21,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 983,
+        "supplied_glosses": 980,
+        "blank_source_glosses": 3
+      }
+    },
+    "amos": {
+      "file": "data/lxx-english/amos.module.06aeff0d57.json.gz",
+      "base_file": "data/lxx/amos.12036ba4e3.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 14349,
+      "counts": {
+        "site_verses": 146,
+        "module_verses": 146,
+        "accepted_verses": 109,
+        "module_mismatches": 37,
+        "module_without_site_reference": 0,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 2336,
+        "supplied_glosses": 2307,
+        "blank_source_glosses": 29
+      }
+    },
+    "obadiah": {
+      "file": "data/lxx-english/obadiah.module.f9b5787bed.json.gz",
+      "base_file": "data/lxx/obadiah.814275f286.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 3466,
+      "counts": {
+        "site_verses": 21,
+        "module_verses": 21,
+        "accepted_verses": 19,
+        "module_mismatches": 2,
+        "module_without_site_reference": 0,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 420,
+        "supplied_glosses": 414,
+        "blank_source_glosses": 6
+      }
+    },
+    "jonah": {
+      "file": "data/lxx-english/jonah.module.cd21fd386d.json.gz",
+      "base_file": "data/lxx/jonah.afa6dc20be.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 6820,
+      "counts": {
+        "site_verses": 48,
+        "module_verses": 48,
+        "accepted_verses": 47,
+        "module_mismatches": 1,
+        "module_without_site_reference": 0,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 1080,
+        "supplied_glosses": 1062,
+        "blank_source_glosses": 18
+      }
+    },
+    "micah": {
+      "file": "data/lxx-english/micah.module.37c2bb6aa4.json.gz",
+      "base_file": "data/lxx/micah.fa05800590.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 11963,
+      "counts": {
+        "site_verses": 105,
+        "module_verses": 105,
+        "accepted_verses": 76,
+        "module_mismatches": 28,
+        "module_without_site_reference": 1,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 1711,
+        "supplied_glosses": 1695,
+        "blank_source_glosses": 16
+      }
+    },
+    "nahum": {
+      "file": "data/lxx-english/nahum.module.0bc6a7d938.json.gz",
+      "base_file": "data/lxx/nahum.c065de07c6.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 4798,
+      "counts": {
+        "site_verses": 47,
+        "module_verses": 47,
+        "accepted_verses": 29,
+        "module_mismatches": 17,
+        "module_without_site_reference": 1,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 550,
+        "supplied_glosses": 547,
+        "blank_source_glosses": 3
+      }
+    },
+    "habakkuk": {
+      "file": "data/lxx-english/habakkuk.module.95c002d227.json.gz",
+      "base_file": "data/lxx/habakkuk.2178c04468.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 8195,
+      "counts": {
+        "site_verses": 56,
+        "module_verses": 56,
+        "accepted_verses": 53,
+        "module_mismatches": 3,
+        "module_without_site_reference": 0,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 1054,
+        "supplied_glosses": 1036,
+        "blank_source_glosses": 18
+      }
+    },
+    "zephaniah": {
+      "file": "data/lxx-english/zephaniah.module.9b6fe9174f.json.gz",
+      "base_file": "data/lxx/zephaniah.7deb842eb8.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 7062,
+      "counts": {
+        "site_verses": 53,
+        "module_verses": 53,
+        "accepted_verses": 45,
+        "module_mismatches": 8,
+        "module_without_site_reference": 0,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 1018,
+        "supplied_glosses": 1000,
+        "blank_source_glosses": 18
+      }
+    },
+    "haggai": {
+      "file": "data/lxx-english/haggai.module.0e0e82e32b.json.gz",
+      "base_file": "data/lxx/haggai.fed503bb9d.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 4523,
+      "counts": {
+        "site_verses": 38,
+        "module_verses": 38,
+        "accepted_verses": 29,
+        "module_mismatches": 9,
+        "module_without_site_reference": 0,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 707,
+        "supplied_glosses": 696,
+        "blank_source_glosses": 11
+      }
+    },
+    "zechariah": {
+      "file": "data/lxx-english/zechariah.module.e5f9c1d520.json.gz",
+      "base_file": "data/lxx/zechariah.3d271049f4.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 23043,
+      "counts": {
+        "site_verses": 211,
+        "module_verses": 211,
+        "accepted_verses": 181,
+        "module_mismatches": 26,
+        "module_without_site_reference": 4,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 4288,
+        "supplied_glosses": 4243,
+        "blank_source_glosses": 45
+      }
+    },
+    "malachi": {
+      "file": "data/lxx-english/malachi.module.9c97f70450.json.gz",
+      "base_file": "data/lxx/malachi.edab157c13.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 7579,
+      "counts": {
+        "site_verses": 55,
+        "module_verses": 55,
+        "accepted_verses": 45,
+        "module_mismatches": 4,
+        "module_without_site_reference": 6,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 1191,
+        "supplied_glosses": 1179,
+        "blank_source_glosses": 12
+      }
+    },
+    "1-maccabees": {
+      "file": "data/lxx-english/1-maccabees.module.c2e7c820e4.json.gz",
+      "base_file": "data/lxx/1-maccabees.d999a922e1.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 98697,
+      "counts": {
+        "site_verses": 924,
+        "module_verses": 924,
+        "accepted_verses": 907,
+        "module_mismatches": 17,
+        "module_without_site_reference": 0,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 17883,
+        "supplied_glosses": 17561,
+        "blank_source_glosses": 322
+      }
+    },
+    "2-maccabees": {
+      "file": "data/lxx-english/2-maccabees.module.bfc899cb27.json.gz",
+      "base_file": "data/lxx/2-maccabees.fa974178de.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 83726,
+      "counts": {
+        "site_verses": 555,
+        "module_verses": 555,
+        "accepted_verses": 542,
+        "module_mismatches": 13,
+        "module_without_site_reference": 0,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 11598,
+        "supplied_glosses": 11369,
+        "blank_source_glosses": 229
+      }
+    },
+    "3-maccabees": {
+      "file": "data/lxx-english/3-maccabees.module.5b7e5577d4.json.gz",
+      "base_file": "data/lxx/3-maccabees.152a1112c7.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 6066,
+      "counts": {
+        "site_verses": 228,
+        "module_verses": 180,
+        "accepted_verses": 24,
+        "module_mismatches": 156,
+        "module_without_site_reference": 0,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 624,
+        "supplied_glosses": 621,
+        "blank_source_glosses": 3
+      }
+    },
+    "4-maccabees": {
+      "file": "data/lxx-english/4-maccabees.module.2252cb57a9.json.gz",
+      "base_file": "data/lxx/4-maccabees.0b70c09bff.json.gz",
+      "kind": "vynokurov-module",
+      "bytes": 53178,
+      "counts": {
+        "site_verses": 479,
+        "module_verses": 482,
+        "accepted_verses": 469,
+        "module_mismatches": 10,
+        "module_without_site_reference": 3,
+        "pdf_only_verses": 0,
+        "draft_verses": 0,
+        "matched_tokens": 7678,
+        "supplied_glosses": 7603,
+        "blank_source_glosses": 75
+      }
+    }
+  }
+}
